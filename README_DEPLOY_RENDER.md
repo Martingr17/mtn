@@ -48,13 +48,13 @@ ENABLE_WEBSOCKETS=false
 Build command:
 
 ```bash
-cd frontend && npm ci && npm run build && cd .. && pip install -r requirements.txt
+cd frontend && npm ci && VITE_OUT_DIR=../app/static/spa npm run build && cd .. && pip install -r requirements.txt
 ```
 
 Start command:
 
 ```bash
-alembic upgrade head && gunicorn app.main:app -c gunicorn.conf.py
+python -m alembic upgrade head && gunicorn app.main:app -c gunicorn.conf.py
 ```
 
 `gunicorn.conf.py` С‡РёС‚Р°РµС‚ Render-РїРµСЂРµРјРµРЅРЅСѓСЋ `PORT`, РїРѕСЌС‚РѕРјСѓ РѕС‚РґРµР»СЊРЅС‹Р№ bind СѓРєР°Р·С‹РІР°С‚СЊ РЅРµ РЅСѓР¶РЅРѕ.
@@ -78,7 +78,7 @@ CLOUD_FUNCTIONS_MODE=false
 
 PUBLIC_APP_URL=https://mtn-demo.onrender.com
 CORS_ORIGINS=["https://mtn-demo.onrender.com"]
-TRUSTED_HOSTS=["mtn-demo.onrender.com","localhost","127.0.0.1"]
+TRUSTED_HOSTS=["mtn-demo.onrender.com","*.onrender.com","localhost","127.0.0.1"]
 
 DATABASE_URL=<Internal Database URL from Render PostgreSQL>
 REDIS_HOST=memory

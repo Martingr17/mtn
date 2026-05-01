@@ -3,12 +3,14 @@ services:
     name: mtn-demo
     runtime: python
     plan: free
-    buildCommand: cd frontend && npm ci && npm run build && cd .. && pip install -r requirements.txt
-    startCommand: alembic upgrade head && gunicorn app.main:app -c gunicorn.conf.py
+    buildCommand: cd frontend && npm ci && VITE_OUT_DIR=../app/static/spa npm run build && cd .. && pip install -r requirements.txt
+    startCommand: python -m alembic upgrade head && gunicorn app.main:app -c gunicorn.conf.py
     healthCheckPath: /health
     envVars:
       - key: PYTHON_VERSION
-        value: 3.12.10
+        value: 3.11.9
+      - key: NODE_VERSION
+        value: 22.22.0
       - key: ENVIRONMENT
         value: staging
       - key: DEBUG
@@ -44,7 +46,7 @@ services:
       - key: CORS_ORIGINS
         value: '["https://mtn-demo.onrender.com"]'
       - key: TRUSTED_HOSTS
-        value: '["mtn-demo.onrender.com","localhost","127.0.0.1"]'
+        value: '["mtn-demo.onrender.com","*.onrender.com","localhost","127.0.0.1"]'
       - key: VITE_API_BASE_URL
         value: /api/v1
       - key: VITE_WITH_CREDENTIALS

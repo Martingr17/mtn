@@ -9,13 +9,9 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent.parent))
 
-from app.database import Base
-from app.config import settings
-from app.models import (
-    User, UserSession, TokenBlacklist, Tariff, TariffChangeRequest,
-    Ticket, Message, PaymentLog, PaymentMethod, Notification,
-    NotificationTemplate, ActivityLog, AuditLog
-)
+from app.database import Base  # noqa: E402
+from app.config import settings  # noqa: E402
+import app.models  # noqa: E402,F401
 
 if settings.is_ydb:
     raise RuntimeError(
@@ -24,7 +20,7 @@ if settings.is_ydb:
     )
 
 config = context.config
-config.set_main_option("sqlalchemy.url", settings.database_url)
+config.set_main_option("sqlalchemy.url", settings.database_url.replace("%", "%%"))
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
