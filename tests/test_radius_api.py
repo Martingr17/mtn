@@ -131,7 +131,7 @@ def test_radius_support_can_view_sessions(monkeypatch):
         _clear_overrides()
 
     assert response.status_code == 200
-    assert response.json()["items"][0]["subscriber_id"] == 10
+    assert response.json()["items"][0]["subscriber_id"] == "10"
 
 
 def test_radius_support_cannot_block(monkeypatch):

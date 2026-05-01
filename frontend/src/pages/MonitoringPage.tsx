@@ -13,6 +13,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { useButtonFeedback } from "@/hooks/use-button-feedback";
 import { monitoringService } from "@/services/endpoints/analytics";
+import type { EntityId } from "@/types/domain";
 import { formatDate, formatPercent, formatRelative, formatSpeed } from "@/utils/format";
 
 type MonitoringFormState = {
@@ -112,7 +113,7 @@ function MonitoringPage() {
   });
 
   const markReadMutation = useMutation({
-    mutationFn: (alertId: number) => monitoringService.markAlertRead(alertId),
+    mutationFn: (alertId: EntityId) => monitoringService.markAlertRead(alertId),
     onSuccess: () => {
       toast.success("Алерт отмечен как просмотренный.");
       queryClient.invalidateQueries({ queryKey: ["monitoring-page", "alerts"] });

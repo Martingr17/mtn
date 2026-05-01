@@ -3,15 +3,17 @@ from typing import Optional
 
 from pydantic import BaseModel
 
+from app.schemas.ids import BigIntID
+
 
 class ZabbixAlarmResponse(BaseModel):
-    id: int
+    id: BigIntID
     alarm_type: str
     severity: str
     status: str
     source_type: str
     source_name: str
-    source_id: Optional[int] = None
+    source_id: Optional[BigIntID] = None
     title: str
     description: Optional[str] = None
     metric_name: Optional[str] = None
@@ -21,8 +23,8 @@ class ZabbixAlarmResponse(BaseModel):
     last_seen_at: datetime
     acknowledged_at: Optional[datetime] = None
     resolved_at: Optional[datetime] = None
-    acknowledged_by: Optional[int] = None
-    resolved_by: Optional[int] = None
+    acknowledged_by: Optional[BigIntID] = None
+    resolved_by: Optional[BigIntID] = None
 
 
 class ZabbixAlarmListResponse(BaseModel):

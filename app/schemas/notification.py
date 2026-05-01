@@ -6,10 +6,11 @@ from typing import Any, Optional
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.core.constants import NotificationPriority, NotificationType
+from app.schemas.ids import BigIntID
 
 
 class NotificationResponse(BaseModel):
-    id: int
+    id: BigIntID
     title: str
     message: str
     body: str
@@ -107,7 +108,7 @@ class PushSubscriptionCreateRequest(BaseModel):
 
 
 class PushSubscriptionResponse(BaseModel):
-    id: int
+    id: BigIntID
     endpoint: str
     is_active: bool
     created_at: datetime

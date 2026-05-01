@@ -3,11 +3,13 @@ from typing import Optional
 
 from pydantic import BaseModel
 
+from app.schemas.ids import BigIntID
+
 
 class TelegramAlertLogResponse(BaseModel):
-    id: int
+    id: BigIntID
     entity_type: str
-    entity_id: int
+    entity_id: BigIntID
     severity: str
     title: str
     message: str

@@ -1,3 +1,5 @@
+import type { EntityId } from "@/types/domain";
+
 export const queryKeys = {
   auth: {
     me: ["auth", "me"] as const,
@@ -12,7 +14,7 @@ export const queryKeys = {
   },
   tickets: {
     list: ["tickets", "list"] as const,
-    detail: (ticketId: string | number) => ["tickets", "detail", ticketId] as const,
+    detail: (ticketId: EntityId) => ["tickets", "detail", ticketId] as const,
   },
   notifications: {
     list: ["notifications", "list"] as const,

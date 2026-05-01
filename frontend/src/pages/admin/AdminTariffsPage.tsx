@@ -9,11 +9,11 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { tariffsService } from "@/services/endpoints/tariffs";
-import type { Tariff } from "@/types/domain";
+import type { EntityId, Tariff } from "@/types/domain";
 import { formatCurrency } from "@/utils/format";
 
 const EMPTY_FORM = {
-  id: 0,
+  id: "",
   name: "",
   billing_tariff_id: "",
   speed_mbps: 100,
@@ -59,7 +59,7 @@ function AdminTariffsPage() {
   });
 
   const removeMutation = useMutation({
-    mutationFn: (tariffId: number) => tariffsService.remove(tariffId),
+    mutationFn: (tariffId: EntityId) => tariffsService.remove(tariffId),
     onSuccess: () => {
       toast.success("Тариф удалён.");
       setFormState({ ...EMPTY_FORM });

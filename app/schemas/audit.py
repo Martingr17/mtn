@@ -3,18 +3,20 @@ from typing import Any, Optional
 
 from pydantic import BaseModel
 
+from app.schemas.ids import BigIntID
+
 
 class AuditActorResponse(BaseModel):
-    id: int
+    id: BigIntID
     full_name: str
     role: str
 
 
 class AuditLogResponse(BaseModel):
-    id: int
-    user_id: Optional[int] = None
+    id: BigIntID
+    user_id: Optional[BigIntID] = None
     entity_type: str
-    entity_id: int
+    entity_id: BigIntID
     action: str
     operation: str
     changes: Optional[dict[str, Any]] = None

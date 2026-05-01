@@ -167,7 +167,7 @@ def test_incidents_noc_can_run_workflow(monkeypatch):
     assert ack_response.json()["incident"]["status"] == "acknowledged"
     assert start_response.json()["incident"]["status"] == "in_progress"
     assert resolve_response.json()["incident"]["status"] == "resolved"
-    assert assign_self_response.json()["incident"]["assigned_to"] == 77
+    assert assign_self_response.json()["incident"]["assigned_to"] == "77"
 
 
 def test_incidents_noc_cannot_close_or_assign_other_user(monkeypatch):
@@ -193,4 +193,4 @@ def test_incidents_admin_can_close_and_assign_any_user(monkeypatch):
     assert close_response.status_code == 200
     assert close_response.json()["incident"]["status"] == "closed"
     assert assign_response.status_code == 200
-    assert assign_response.json()["incident"]["assigned_to"] == 88
+    assert assign_response.json()["incident"]["assigned_to"] == "88"

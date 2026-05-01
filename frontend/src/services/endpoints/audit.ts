@@ -1,5 +1,5 @@
 import { api } from "@/services/api-client";
-import type { ApiListPayload, AuditLogItem } from "@/types/domain";
+import type { ApiListPayload, AuditLogItem, EntityId } from "@/types/domain";
 
 export interface AuditListParams {
   page?: number;
@@ -7,7 +7,7 @@ export interface AuditListParams {
   entity_type?: string;
   action?: string;
   actor?: string;
-  actor_id?: number;
+  actor_id?: EntityId;
   date_from?: string;
   date_to?: string;
 }

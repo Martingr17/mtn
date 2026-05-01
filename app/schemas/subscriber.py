@@ -3,6 +3,8 @@ from typing import Any, List, Optional
 
 from pydantic import BaseModel, Field
 
+from app.schemas.ids import BigIntID
+
 
 class SubscriberTariffResponse(BaseModel):
     tariff_id: Optional[str] = None
@@ -15,7 +17,7 @@ class SubscriberTariffResponse(BaseModel):
 
 
 class SubscriberBalanceResponse(BaseModel):
-    subscriber_id: int
+    subscriber_id: BigIntID
     billing_id: str
     balance: float
     currency: str = "RUB"
@@ -24,7 +26,7 @@ class SubscriberBalanceResponse(BaseModel):
 
 
 class SubscriberPaymentResponse(BaseModel):
-    id: int
+    id: BigIntID
     amount: float
     fee_amount: float = 0
     net_amount: Optional[float] = None
@@ -38,12 +40,12 @@ class SubscriberPaymentResponse(BaseModel):
 
 
 class SubscriberTicketResponse(BaseModel):
-    id: int
+    id: BigIntID
     subject: str
     category: Optional[str] = None
     status: str
     priority: str
-    assigned_to: Optional[int] = None
+    assigned_to: Optional[BigIntID] = None
     assignee_name: Optional[str] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
@@ -52,7 +54,7 @@ class SubscriberTicketResponse(BaseModel):
 
 
 class SubscriberSummaryResponse(BaseModel):
-    id: int
+    id: BigIntID
     billing_id: str
     full_name: str
     connection_address: Optional[str] = None

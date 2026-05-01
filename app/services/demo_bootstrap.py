@@ -23,6 +23,7 @@ from app.core.constants import (
     UserRole,
 )
 from app.models import (
+    AuditLog,
     IncidentAlarmLink,
     Message,
     NocIncident,
@@ -32,6 +33,7 @@ from app.models import (
     PaymentLog,
     RadiusSession,
     Tariff,
+    TelegramAlertLog,
     Ticket,
     User,
     ZabbixAlarm,
@@ -824,6 +826,161 @@ async def ensure_demo_noc_incidents(db: AsyncSession, operator: User, admin_user
     await db.flush()
 
 
+async def ensure_demo_audit_and_telegram_logs(
+    db: AsyncSession,
+    demo_user: User,
+    operator: User,
+    admin_user: User,
+) -> None:
+    """Seed a small audit trail so production-demo is not empty after first boot."""
+    now = datetime.utcnow()
+    radius_session = (
+        await db.execute(select(RadiusSession).order_by(RadiusSession.updated_at.desc()).limit(1))
+    ).scalar_one_or_none()
+    ont = (await db.execute(select(Ont).order_by(Ont.updated_at.desc()).limit(1))).scalar_one_or_none()
+    alarm = (
+        await db.execute(
+            select(ZabbixAlarm)
+            .where(ZabbixAlarm.status != "resolved")
+            .order_by(ZabbixAlarm.severity.desc(), ZabbixAlarm.last_seen_at.desc())
+            .limit(1),
+        )
+    ).scalar_one_or_none()
+    incident = (
+        await db.execute(select(NocIncident).order_by(NocIncident.created_at.desc()).limit(1))
+    ).scalar_one_or_none()
+
+    existing_audit_result = await db.execute(
+        select(AuditLog.operation).where(AuditLog.reason == "Production-demo bootstrap trail"),
+    )
+    existing_operations = set(existing_audit_result.scalars().all())
+    audit_records = [
+        {
+            "operation": "block",
+            "entity_type": "radius_session",
+            "entity_id": getattr(radius_session, "id", demo_user.id),
+            "user_id": operator.id,
+            "changes": {
+                "old_status": "active",
+                "new_status": "blocked",
+                "mock": True,
+                "demo_seed": True,
+            },
+            "created_at": now - timedelta(minutes=55),
+        },
+        {
+            "operation": "unblock",
+            "entity_type": "radius_session",
+            "entity_id": getattr(radius_session, "id", demo_user.id),
+            "user_id": operator.id,
+            "changes": {
+                "old_status": "blocked",
+                "new_status": "active",
+                "mock": True,
+                "demo_seed": True,
+            },
+            "created_at": now - timedelta(minutes=50),
+        },
+        {
+            "operation": "gpon_refresh_status",
+            "entity_type": "ont",
+            "entity_id": getattr(ont, "id", demo_user.id),
+            "user_id": admin_user.id,
+            "changes": {
+                "status": getattr(ont, "status", "online"),
+                "rx_power": float(getattr(ont, "rx_power", -24.5) or -24.5),
+                "mock": True,
+                "demo_seed": True,
+            },
+            "created_at": now - timedelta(minutes=42),
+        },
+        {
+            "operation": "zabbix_ack",
+            "entity_type": "zabbix_alarm",
+            "entity_id": getattr(alarm, "id", demo_user.id),
+            "user_id": operator.id,
+            "changes": {
+                "old_status": "active",
+                "new_status": "acknowledged",
+                "mock": True,
+                "demo_seed": True,
+            },
+            "created_at": now - timedelta(minutes=35),
+        },
+        {
+            "operation": "incident_create_from_alarm",
+            "entity_type": "noc_incident",
+            "entity_id": getattr(incident, "id", demo_user.id),
+            "user_id": admin_user.id,
+            "changes": {
+                "source": "zabbix",
+                "severity": getattr(incident, "severity", "critical"),
+                "demo_seed": True,
+            },
+            "created_at": now - timedelta(minutes=28),
+        },
+        {
+            "operation": "telegram_skipped",
+            "entity_type": "telegram_alert",
+            "entity_id": getattr(alarm, "id", demo_user.id),
+            "user_id": admin_user.id,
+            "changes": {
+                "entity_type": "zabbix_alarm",
+                "severity": getattr(alarm, "severity", "critical"),
+                "status": "skipped",
+                "mock": settings.telegram_mock_mode,
+                "demo_seed": True,
+            },
+            "created_at": now - timedelta(minutes=20),
+        },
+    ]
+
+    for payload in audit_records:
+        if payload["operation"] in existing_operations:
+            continue
+        db.add(
+            AuditLog(
+                **payload,
+                ip_address="127.0.0.1",
+                user_agent="production-demo-bootstrap",
+                reason="Production-demo bootstrap trail",
+                requires_retention=True,
+            ),
+        )
+
+    alert_entity = incident if incident is not None else alarm
+    if alert_entity is not None:
+        entity_type = "noc_incident" if isinstance(alert_entity, NocIncident) else "zabbix_alarm"
+        existing_alert = (
+            await db.execute(
+                select(TelegramAlertLog.id)
+                .where(
+                    TelegramAlertLog.entity_type == entity_type,
+                    TelegramAlertLog.entity_id == alert_entity.id,
+                    TelegramAlertLog.status == "skipped",
+                )
+                .limit(1),
+            )
+        ).scalar_one_or_none()
+        if existing_alert is None:
+            db.add(
+                TelegramAlertLog(
+                    entity_type=entity_type,
+                    entity_id=alert_entity.id,
+                    severity=getattr(alert_entity, "severity", "critical"),
+                    title=f"Demo Telegram alert: {getattr(alert_entity, 'title', 'critical event')}",
+                    message="Production-demo Telegram alert was not sent because alerts are disabled by default.",
+                    chat_id=settings.telegram_noc_chat_id or "mock-noc-chat",
+                    status="skipped",
+                    error="Telegram alerts are disabled in production-demo mock mode",
+                    sent_at=None,
+                    created_at=now - timedelta(minutes=19),
+                ),
+            )
+
+    await db.flush()
+
+
 async def bootstrap_demo_content(db: AsyncSession) -> None:
     if not settings.demo_mode:
         return
@@ -840,5 +997,6 @@ async def bootstrap_demo_content(db: AsyncSession) -> None:
     await ensure_demo_gpon_assets(db)
     await ensure_demo_zabbix_alarms(db)
     await ensure_demo_noc_incidents(db, demo_operator, demo_super_admin)
+    await ensure_demo_audit_and_telegram_logs(db, demo_user, demo_operator, demo_super_admin)
     await seed_demo_monitoring_data(db, demo_user)
     await db.commit()

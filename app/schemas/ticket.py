@@ -6,6 +6,7 @@ from typing import Optional
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from app.core.constants import TicketPriority, TicketStatus
+from app.schemas.ids import BigIntID
 
 
 class TicketCreate(BaseModel):
@@ -35,8 +36,8 @@ class MessageCreate(BaseModel):
 
 
 class MessageResponse(BaseModel):
-    id: str
-    user_id: str
+    id: BigIntID
+    user_id: BigIntID
     body: str
     is_internal: bool
     attachment_path: Optional[str] = None
@@ -50,7 +51,7 @@ class MessageResponse(BaseModel):
 
 
 class TicketResponse(BaseModel):
-    id: str
+    id: BigIntID
     subject: str
     status: TicketStatus
     priority: TicketPriority
@@ -62,8 +63,8 @@ class TicketResponse(BaseModel):
     resolved_at: Optional[datetime] = None
     sla_deadline: Optional[datetime] = None
     escalated_at: Optional[datetime] = None
-    user_id: str
-    assigned_to: Optional[str] = None
+    user_id: BigIntID
+    assigned_to: Optional[BigIntID] = None
     assignee_name: Optional[str] = None
     user_display_name: Optional[str] = None
     is_overdue: bool = False

@@ -16,7 +16,7 @@ import { StatusBadge } from "@/components/ui/StatusBadge";
 import { VirtualizedInfiniteList } from "@/components/ui/VirtualizedInfiniteList";
 import { useButtonFeedback } from "@/hooks/use-button-feedback";
 import { notificationsService } from "@/services/endpoints/notifications";
-import type { ApiListPayload, NotificationItem } from "@/types/domain";
+import type { ApiListPayload, EntityId, NotificationItem } from "@/types/domain";
 import { formatRelative } from "@/utils/format";
 
 const PAGE_SIZE = 20;
@@ -62,8 +62,8 @@ function getPriorityLabel(priority?: string) {
 }
 
 function NotificationsPage() {
-  const [activeAction, setActiveAction] = useState<{ id: number; type: RowAction }>({
-    id: 0,
+  const [activeAction, setActiveAction] = useState<{ id: EntityId | null; type: RowAction }>({
+    id: null,
     type: null,
   });
   const markAllFeedback = useButtonFeedback();
@@ -80,7 +80,7 @@ function NotificationsPage() {
   const unreadCount = items.filter((item) => !item.is_read).length;
 
   const markReadMutation = useMutation({
-    mutationFn: (notificationId: number) => notificationsService.markRead(notificationId),
+    mutationFn: (notificationId: EntityId) => notificationsService.markRead(notificationId),
     onMutate: async (notificationId) => {
       setActiveAction({ id: notificationId, type: "read" });
       await queryClient.cancelQueries({ queryKey: notificationsListKey });
@@ -113,12 +113,12 @@ function NotificationsPage() {
       toast.error("Не удалось обновить статус уведомления.");
     },
     onSettled: () => {
-      setActiveAction({ id: 0, type: null });
+      setActiveAction({ id: null, type: null });
     },
   });
 
   const archiveMutation = useMutation({
-    mutationFn: (notificationId: number) => notificationsService.archive(notificationId),
+    mutationFn: (notificationId: EntityId) => notificationsService.archive(notificationId),
     onMutate: (notificationId) => {
       setActiveAction({ id: notificationId, type: "archive" });
     },
@@ -130,12 +130,12 @@ function NotificationsPage() {
       toast.error("Не удалось архивировать уведомление.");
     },
     onSettled: () => {
-      setActiveAction({ id: 0, type: null });
+      setActiveAction({ id: null, type: null });
     },
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (notificationId: number) => notificationsService.remove(notificationId),
+    mutationFn: (notificationId: EntityId) => notificationsService.remove(notificationId),
     onMutate: (notificationId) => {
       setActiveAction({ id: notificationId, type: "delete" });
     },
@@ -147,7 +147,7 @@ function NotificationsPage() {
       toast.error("Не удалось удалить уведомление.");
     },
     onSettled: () => {
-      setActiveAction({ id: 0, type: null });
+      setActiveAction({ id: null, type: null });
     },
   });
 

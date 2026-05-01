@@ -5,6 +5,8 @@ from typing import Any, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.schemas.ids import BigIntID
+
 
 class MonitoringMetricPoint(BaseModel):
     timestamp: datetime
@@ -39,7 +41,7 @@ class MonitoringMetricsResponse(BaseModel):
 
 
 class MonitoringAlertResponse(BaseModel):
-    id: int
+    id: BigIntID
     type: str
     severity: str
     status: str
@@ -99,7 +101,7 @@ class MonitoringSummaryResponse(BaseModel):
 
 
 class AlertThresholdResponse(BaseModel):
-    id: int
+    id: BigIntID
     metric_name: str
     condition: str
     warning_value: Optional[float] = None

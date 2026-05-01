@@ -2,6 +2,8 @@ from pydantic import BaseModel
 from typing import List, Dict, Optional
 from datetime import datetime
 
+from app.schemas.ids import BigIntID
+
 class TrafficStatsResponse(BaseModel):
     total_gb: float
     daily_load: List[Dict]
@@ -28,7 +30,7 @@ class TicketStatsResponse(BaseModel):
     monthly_trend: List[Dict]
 
 class UserActivityResponse(BaseModel):
-    user_id: Optional[int] = None
+    user_id: Optional[BigIntID] = None
     action: str
     ip: Optional[str] = None
     created_at: datetime

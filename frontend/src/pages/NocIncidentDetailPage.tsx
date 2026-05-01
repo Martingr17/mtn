@@ -82,6 +82,7 @@ function NocIncidentDetailPage() {
     queryKey: ["incidents", incidentId],
     queryFn: () => incidentsService.detail(incidentId),
     enabled: Boolean(incidentId),
+    retry: false,
   });
 
   const actionMutation = useMutation({
@@ -98,7 +99,7 @@ function NocIncidentDetailPage() {
       if (command === "close") {
         return incidentsService.close(incidentId);
       }
-      return incidentsService.assign(incidentId, Number(user?.id));
+      return incidentsService.assign(incidentId, user?.id ?? "");
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["incidents"] });
@@ -129,7 +130,7 @@ function NocIncidentDetailPage() {
     );
   }
 
-  if (!incidentQuery.data) {
+  if (incidentQuery.isError || !incidentQuery.data) {
     return (
       <Card>
         <EmptyState title="Incident not found" description="Check the incident ID or return to the NOC board." />

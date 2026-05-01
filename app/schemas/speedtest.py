@@ -3,6 +3,8 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
+from app.schemas.ids import BigIntID
+
 
 class SpeedtestSessionResponse(BaseModel):
     session_id: str
@@ -21,7 +23,7 @@ class SpeedtestRunRequest(BaseModel):
 
 
 class SpeedtestResultResponse(BaseModel):
-    id: int
+    id: BigIntID
     download_mbps: float
     upload_mbps: float
     ping_ms: float

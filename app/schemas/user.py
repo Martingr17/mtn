@@ -4,10 +4,11 @@ from typing import Any, Dict, List, Optional
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.core.constants import UserRole
+from app.schemas.ids import BigIntID
 
 
 class UserResponse(BaseModel):
-    id: int
+    id: BigIntID
     billing_id: Optional[str] = None
     phone: str
     email: Optional[str] = None

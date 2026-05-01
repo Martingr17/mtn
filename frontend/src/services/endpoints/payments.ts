@@ -1,7 +1,7 @@
 import { api } from "@/services/api-client";
-import type { Payment, PaymentMethod } from "@/types/domain";
+import type { EntityId, Payment, PaymentMethod } from "@/types/domain";
 
-type PaymentId = string | number;
+type PaymentId = EntityId;
 
 function extractFilename(contentDisposition?: string) {
   if (!contentDisposition) {
@@ -64,7 +64,7 @@ export const paymentsService = {
     const { data } = await api.post<PaymentMethod>("/payments/methods", payload);
     return data;
   },
-  async deleteMethod(methodId: number) {
+  async deleteMethod(methodId: EntityId) {
     const { data } = await api.delete(`/payments/methods/${methodId}`);
     return data;
   },

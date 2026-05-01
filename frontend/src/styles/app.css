@@ -1307,6 +1307,33 @@ small,
   overflow-y: hidden;
 }
 
+.table-scroll--wide table {
+  min-width: 72rem;
+}
+
+.audit-filter-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+}
+
+.audit-filter-grid > .field {
+  grid-column: span 1;
+}
+
+.audit-reset-field {
+  align-self: end;
+}
+
+.audit-reset-field .ui-button {
+  width: 100%;
+  justify-content: center;
+}
+
+.radius-actions {
+  min-width: 18rem;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
 table {
   width: 100%;
   min-width: 42rem;

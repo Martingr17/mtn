@@ -8,6 +8,11 @@ from app.services.cache import redis_cache
 
 logger = logging.getLogger(__name__)
 
+
+def _is_staging_demo_mode() -> bool:
+    environment = getattr(settings.environment, "value", settings.environment)
+    return bool(settings.demo_mode and environment == "staging")
+
 class RequestLoggingMiddleware(BaseHTTPMiddleware):
     """Middleware for logging all requests"""
 
@@ -70,6 +75,9 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
 
         # Determine rate limit based on path
         path = request.url.path
+        if _is_staging_demo_mode() and path in {"/api/v1/auth/login", "/api/v1/auth/2fa/login"}:
+            return await call_next(request)
+
         sensitive_auth_paths = {
             "/api/v1/auth/login",
             "/api/v1/auth/register",

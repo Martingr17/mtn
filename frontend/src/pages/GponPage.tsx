@@ -121,7 +121,7 @@ function GponPage() {
       gponService.onts({
         page,
         page_size: PAGE_SIZE,
-        olt_id: oltId ? Number(oltId) : undefined,
+        olt_id: oltId || undefined,
         status,
         vlan_id: vlanId ? Number(vlanId) : undefined,
         pon_port: ponPort ? Number(ponPort) : undefined,

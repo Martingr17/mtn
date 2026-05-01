@@ -2,9 +2,11 @@ from typing import Any, List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.schemas.ids import BigIntID
+
 
 class TariffResponse(BaseModel):
-    id: int
+    id: BigIntID
     billing_tariff_id: str
     name: str
     name_en: Optional[str] = None

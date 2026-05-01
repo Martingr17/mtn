@@ -7,6 +7,7 @@ import type {
   AdminTicketRow,
   AdminUserRow,
   ApiListPayload,
+  EntityId,
   Tariff,
 } from "@/types/domain";
 
@@ -31,7 +32,7 @@ export const adminService = {
     const { data } = await api.get<ApiListPayload<AdminUserRow>>("/admin/users", { params });
     return data;
   },
-  async getUser(userId: string | number) {
+  async getUser(userId: EntityId) {
     const { data } = await api.get<Record<string, unknown>>(`/admin/users/${userId}`);
     return data;
   },
@@ -39,24 +40,24 @@ export const adminService = {
     const { data } = await api.post("/admin/users", payload);
     return data;
   },
-  async updateUser(userId: string | number, payload: Record<string, unknown>) {
+  async updateUser(userId: EntityId, payload: Record<string, unknown>) {
     const { data } = await api.patch(`/admin/users/${userId}`, payload);
     return data;
   },
-  async manualPayment(userId: string | number, amount: number, comment?: string) {
+  async manualPayment(userId: EntityId, amount: number, comment?: string) {
     const { data } = await api.post(`/admin/users/${userId}/manual-payment`, {
       amount,
       comment,
     });
     return data;
   },
-  async blockUser(userId: string | number, reason?: string) {
+  async blockUser(userId: EntityId, reason?: string) {
     const { data } = await api.post(`/admin/users/${userId}/block`, null, {
       params: reason ? { reason } : undefined,
     });
     return data;
   },
-  async unblockUser(userId: string | number) {
+  async unblockUser(userId: EntityId) {
     const { data } = await api.post(`/admin/users/${userId}/unblock`);
     return data;
   },
@@ -64,23 +65,23 @@ export const adminService = {
     const { data } = await api.get<ApiListPayload<AdminTicketRow>>("/admin/tickets", { params });
     return data;
   },
-  async ticket(ticketId: string | number) {
+  async ticket(ticketId: EntityId) {
     const { data } = await api.get<Record<string, unknown>>(`/admin/tickets/${ticketId}`);
     return data;
   },
-  async assignTicket(ticketId: string | number, assigneeId: string | number) {
+  async assignTicket(ticketId: EntityId, assigneeId: EntityId) {
     const { data } = await api.post(`/admin/tickets/${ticketId}/assign`, null, {
       params: { assignee_id: assigneeId },
     });
     return data;
   },
-  async replyTicket(ticketId: string | number, body: string) {
+  async replyTicket(ticketId: EntityId, body: string) {
     const formData = new FormData();
     formData.append("body", body);
     const { data } = await api.post(`/admin/tickets/${ticketId}/reply`, formData);
     return data;
   },
-  async resolveTicket(ticketId: string | number, resolutionSummary: string) {
+  async resolveTicket(ticketId: EntityId, resolutionSummary: string) {
     const { data } = await api.post(`/admin/tickets/${ticketId}/resolve`, {
       resolution_summary: resolutionSummary,
     });
@@ -90,7 +91,7 @@ export const adminService = {
     const { data } = await api.get<AdminStaffRow[] | ApiListPayload<AdminStaffRow>>("/admin/staff");
     return normalizeStaffListResponse(data);
   },
-  async staffDetail(staffId: string | number) {
+  async staffDetail(staffId: EntityId) {
     const { data } = await api.get<Record<string, unknown>>(`/admin/staff/${staffId}`);
     return data;
   },
@@ -98,7 +99,7 @@ export const adminService = {
     const { data } = await api.post("/admin/staff", payload);
     return data;
   },
-  async updateStaff(staffId: string | number, payload: Record<string, unknown>) {
+  async updateStaff(staffId: EntityId, payload: Record<string, unknown>) {
     const { data } = await api.put(`/admin/staff/${staffId}`, payload);
     return data;
   },

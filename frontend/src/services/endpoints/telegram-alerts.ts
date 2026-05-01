@@ -1,5 +1,5 @@
 import { api } from "@/services/api-client";
-import type { ApiListPayload, TelegramAlertActionResult, TelegramAlertLog } from "@/types/domain";
+import type { ApiListPayload, EntityId, TelegramAlertActionResult, TelegramAlertLog } from "@/types/domain";
 
 export interface TelegramAlertListParams {
   page?: number;
@@ -13,11 +13,11 @@ export const telegramAlertsService = {
     const { data } = await api.get<ApiListPayload<TelegramAlertLog>>("/telegram-alerts", { params });
     return data;
   },
-  async sendZabbix(alarmId: string | number) {
+  async sendZabbix(alarmId: EntityId) {
     const { data } = await api.post<TelegramAlertActionResult>(`/telegram-alerts/zabbix/${alarmId}/send`);
     return data;
   },
-  async sendIncident(incidentId: string | number) {
+  async sendIncident(incidentId: EntityId) {
     const { data } = await api.post<TelegramAlertActionResult>(`/telegram-alerts/incidents/${incidentId}/send`);
     return data;
   },

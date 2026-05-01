@@ -3,11 +3,12 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
+from app.schemas.ids import BigIntID
 from app.schemas.zabbix import ZabbixAlarmResponse
 
 
 class IncidentUserBrief(BaseModel):
-    id: int
+    id: BigIntID
     full_name: str
     role: str
 
@@ -26,7 +27,7 @@ class IncidentAssignRequest(BaseModel):
 
 
 class IncidentResponse(BaseModel):
-    id: int
+    id: BigIntID
     title: str
     description: Optional[str] = None
     severity: str
@@ -34,11 +35,11 @@ class IncidentResponse(BaseModel):
     source: str
     affected_service: str
     affected_subscribers_count: int
-    assigned_to: Optional[int] = None
-    created_by: Optional[int] = None
-    acknowledged_by: Optional[int] = None
-    resolved_by: Optional[int] = None
-    closed_by: Optional[int] = None
+    assigned_to: Optional[BigIntID] = None
+    created_by: Optional[BigIntID] = None
+    acknowledged_by: Optional[BigIntID] = None
+    resolved_by: Optional[BigIntID] = None
+    closed_by: Optional[BigIntID] = None
     created_at: datetime
     acknowledged_at: Optional[datetime] = None
     started_at: Optional[datetime] = None

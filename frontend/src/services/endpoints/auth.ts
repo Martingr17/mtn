@@ -1,9 +1,9 @@
 import { api } from "@/services/api-client";
-import type { LoginResponse } from "@/types/domain";
+import type { EntityId, LoginResponse } from "@/types/domain";
 
 export interface AuthActionResponse {
   message: string;
-  user_id?: number;
+  user_id?: EntityId;
   requires_confirmation?: boolean;
   verification_channel?: "email" | "sms" | null;
   verification_target?: string | null;

@@ -1,6 +1,7 @@
 import { api } from "@/services/api-client";
 import type {
   ApiListPayload,
+  EntityId,
   RadiusActionLog,
   RadiusActionResult,
   RadiusSession,
@@ -25,23 +26,23 @@ export const radiusService = {
     const { data } = await api.get<ApiListPayload<RadiusSession>>("/radius/sessions", { params });
     return data;
   },
-  async subscriberSession(subscriberId: string | number) {
+  async subscriberSession(subscriberId: EntityId) {
     const { data } = await api.get<RadiusSession>(`/radius/subscribers/${subscriberId}/session`);
     return data;
   },
-  async block(subscriberId: string | number) {
+  async block(subscriberId: EntityId) {
     const { data } = await api.post<RadiusActionResult>(`/radius/subscribers/${subscriberId}/block`);
     return data;
   },
-  async unblock(subscriberId: string | number) {
+  async unblock(subscriberId: EntityId) {
     const { data } = await api.post<RadiusActionResult>(`/radius/subscribers/${subscriberId}/unblock`);
     return data;
   },
-  async disconnect(subscriberId: string | number) {
+  async disconnect(subscriberId: EntityId) {
     const { data } = await api.post<RadiusActionResult>(`/radius/subscribers/${subscriberId}/disconnect`);
     return data;
   },
-  async changeSpeed(subscriberId: string | number, speedDown: number, speedUp: number) {
+  async changeSpeed(subscriberId: EntityId, speedDown: number, speedUp: number) {
     const { data } = await api.post<RadiusActionResult>(`/radius/subscribers/${subscriberId}/change-speed`, {
       speed_down: speedDown,
       speed_up: speedUp,

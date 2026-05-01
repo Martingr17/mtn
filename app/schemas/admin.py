@@ -4,6 +4,7 @@ from typing import Dict, List, Literal, Optional
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from app.core.constants import TicketPriority, TicketStatus, UserRole
+from app.schemas.ids import BigIntID
 
 
 def _strip_optional(value: Optional[str]) -> Optional[str]:
@@ -14,7 +15,7 @@ def _strip_optional(value: Optional[str]) -> Optional[str]:
 
 
 class UserAdminResponse(BaseModel):
-    id: str
+    id: BigIntID
     phone: str
     email: Optional[str]
     billing_id: str
@@ -39,7 +40,7 @@ class UserAdminDetailResponse(UserAdminResponse):
 
 
 class AdminStaffResponse(BaseModel):
-    id: str
+    id: BigIntID
     phone: str
     email: Optional[str]
     billing_id: str
@@ -55,11 +56,11 @@ class AdminStaffResponse(BaseModel):
 
 
 class AdminActivityItem(BaseModel):
-    id: int
+    id: BigIntID
     action: str
     status: Optional[str] = None
     created_at: datetime
-    user_id: Optional[str] = None
+    user_id: Optional[BigIntID] = None
     user_name: Optional[str] = None
     ip_address: Optional[str] = None
 
@@ -187,14 +188,14 @@ class AdminManualPaymentRequest(BaseModel):
 
 
 class TicketAdminResponse(BaseModel):
-    id: str
-    user_id: str
+    id: BigIntID
+    user_id: BigIntID
     user_phone: str
     subject: str
     status: TicketStatus
     priority: TicketPriority
     created_at: datetime
-    assigned_to: Optional[str]
+    assigned_to: Optional[BigIntID]
     assigned_to_name: Optional[str]
 
     model_config = ConfigDict(from_attributes=True)

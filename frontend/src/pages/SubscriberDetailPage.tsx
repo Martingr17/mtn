@@ -255,6 +255,7 @@ function SubscriberDetailPage() {
     queryKey: ["subscriber-detail", subscriberId],
     queryFn: () => subscribersService.detail(subscriberId),
     enabled: Boolean(subscriberId),
+    retry: false,
   });
   const balanceQuery = useQuery({
     queryKey: ["subscriber-detail", subscriberId, "balance"],
@@ -365,7 +366,7 @@ function SubscriberDetailPage() {
     );
   }
 
-  if (!detailQuery.data) {
+  if (detailQuery.isError || !detailQuery.data) {
     return (
       <Card>
         <EmptyState

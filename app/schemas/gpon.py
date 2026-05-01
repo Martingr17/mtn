@@ -3,9 +3,11 @@ from typing import Optional
 
 from pydantic import BaseModel
 
+from app.schemas.ids import BigIntID
+
 
 class GponSubscriberBrief(BaseModel):
-    id: int
+    id: BigIntID
     billing_id: str
     full_name: str
     phone: str
@@ -13,7 +15,7 @@ class GponSubscriberBrief(BaseModel):
 
 
 class GponOltResponse(BaseModel):
-    id: int
+    id: BigIntID
     name: str
     vendor: str
     model: str
@@ -28,9 +30,9 @@ class GponOltResponse(BaseModel):
 
 
 class GponOntResponse(BaseModel):
-    id: int
-    subscriber_id: int
-    olt_id: int
+    id: BigIntID
+    subscriber_id: BigIntID
+    olt_id: BigIntID
     serial_number: str
     mac_address: Optional[str] = None
     pon_port: int

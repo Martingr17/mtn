@@ -2,6 +2,7 @@ import { api } from "@/services/api-client";
 import type {
   ApiListPayload,
   DashboardStats,
+  EntityId,
   MonitoringAlert,
   MonitoringMetrics,
   MonitoringSubscription,
@@ -67,7 +68,7 @@ export const monitoringService = {
     });
     return data;
   },
-  async markAlertRead(alertId: number) {
+  async markAlertRead(alertId: EntityId) {
     const { data } = await api.post<MonitoringAlert>(`/monitoring/alerts/${alertId}/read`);
     return data;
   },

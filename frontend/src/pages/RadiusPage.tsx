@@ -200,7 +200,7 @@ function RadiusPage() {
           </div>
 
           {sessions.length ? (
-            <div className="table-scroll">
+            <div className="table-scroll table-scroll--wide">
               <table>
                 <thead>
                   <tr>
@@ -242,7 +242,7 @@ function RadiusPage() {
                         <StatusBadge tone={statusTone(session.status)}>{statusLabel(session.status)}</StatusBadge>
                       </td>
                       <td>
-                        <div className="inline-actions">
+                        <div className="inline-actions radius-actions">
                           {canBlock && session.status !== "blocked" ? (
                             <Button
                               size="sm"

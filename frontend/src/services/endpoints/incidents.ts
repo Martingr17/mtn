@@ -1,5 +1,5 @@
 import { api } from "@/services/api-client";
-import type { ApiListPayload, IncidentActionResult, IncidentCreatePayload, NocIncident } from "@/types/domain";
+import type { ApiListPayload, EntityId, IncidentActionResult, IncidentCreatePayload, NocIncident } from "@/types/domain";
 
 export interface IncidentListParams {
   page?: number;
@@ -16,7 +16,7 @@ export const incidentsService = {
     const { data } = await api.get<ApiListPayload<NocIncident>>("/incidents", { params });
     return data;
   },
-  async detail(incidentId: string | number) {
+  async detail(incidentId: EntityId) {
     const { data } = await api.get<NocIncident>(`/incidents/${incidentId}`);
     return data;
   },
@@ -24,27 +24,27 @@ export const incidentsService = {
     const { data } = await api.post<IncidentActionResult>("/incidents", payload);
     return data;
   },
-  async createFromAlarm(alarmId: string | number) {
+  async createFromAlarm(alarmId: EntityId) {
     const { data } = await api.post<IncidentActionResult>(`/incidents/from-alarm/${alarmId}`);
     return data;
   },
-  async acknowledge(incidentId: string | number) {
+  async acknowledge(incidentId: EntityId) {
     const { data } = await api.post<IncidentActionResult>(`/incidents/${incidentId}/ack`);
     return data;
   },
-  async start(incidentId: string | number) {
+  async start(incidentId: EntityId) {
     const { data } = await api.post<IncidentActionResult>(`/incidents/${incidentId}/start`);
     return data;
   },
-  async resolve(incidentId: string | number) {
+  async resolve(incidentId: EntityId) {
     const { data } = await api.post<IncidentActionResult>(`/incidents/${incidentId}/resolve`);
     return data;
   },
-  async close(incidentId: string | number) {
+  async close(incidentId: EntityId) {
     const { data } = await api.post<IncidentActionResult>(`/incidents/${incidentId}/close`);
     return data;
   },
-  async assign(incidentId: string | number, userId: number) {
+  async assign(incidentId: EntityId, userId: EntityId) {
     const { data } = await api.post<IncidentActionResult>(`/incidents/${incidentId}/assign`, { user_id: userId });
     return data;
   },

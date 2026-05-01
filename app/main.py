@@ -479,8 +479,16 @@ async def spa_incident_detail_route(incident_id: str):
     return render_spa_index()
 
 
-@app.get("/login", response_class=HTMLResponse)
-async def login_page(request: Request, current_user: Optional[User] = Depends(get_optional_current_user)):
+@app.get("/login", include_in_schema=False)
+async def spa_login_page(request: Request, current_user: Optional[User] = Depends(get_optional_current_user)):
+    if settings.demo_mode:
+        return render_spa_index()
+    return await legacy_login_page(request, current_user)
+
+
+@app.get("/legacy-login", response_class=HTMLResponse)
+@app.get("/phone-login", response_class=HTMLResponse)
+async def legacy_login_page(request: Request, current_user: Optional[User] = Depends(get_optional_current_user)):
     if current_user is not None:
         return RedirectResponse(
             url="/admin/dashboard" if _is_staff_user(current_user) else "/dashboard",

@@ -1,7 +1,7 @@
 import { api } from "@/services/api-client";
-import type { ApiListPayload, Ticket, TicketDetail, TicketMessage } from "@/types/domain";
+import type { ApiListPayload, EntityId, Ticket, TicketDetail, TicketMessage } from "@/types/domain";
 
-type TicketId = string | number;
+type TicketId = EntityId;
 
 export const ticketsService = {
   async list(page = 1, pageSize = 20) {

@@ -95,7 +95,7 @@ function AuditLogPage() {
 
       <AnimatedReveal delay={0.05}>
         <Card className="stack-md">
-          <div className="cards-grid">
+          <div className="cards-grid audit-filter-grid">
             <label className="field span-2" htmlFor="audit-entity">
               <span>Entity type</span>
               <select
@@ -184,7 +184,7 @@ function AuditLogPage() {
                 }}
               />
             </label>
-            <div className="field span-2">
+            <div className="field span-2 audit-reset-field">
               <span>&nbsp;</span>
               <Button variant="secondary" onClick={resetFilters}>
                 <Search size={16} />

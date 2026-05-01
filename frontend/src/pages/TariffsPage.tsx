@@ -9,7 +9,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { tariffsService } from "@/services/endpoints/tariffs";
 import { usersService } from "@/services/endpoints/users";
-import type { UserProfile } from "@/types/domain";
+import type { EntityId, UserProfile } from "@/types/domain";
 import { formatCurrency } from "@/utils/format";
 
 const tariffsProfileKey = ["tariffs-page", "me"] as const;
@@ -20,7 +20,7 @@ function TariffsPage() {
   const profileQuery = useQuery({ queryKey: tariffsProfileKey, queryFn: usersService.me });
 
   const changeMutation = useMutation({
-    mutationFn: (payload: { tariffId: number; effectiveFrom: "today" | "next_month" }) =>
+    mutationFn: (payload: { tariffId: EntityId; effectiveFrom: "today" | "next_month" }) =>
       tariffsService.changeTariff(payload.tariffId, payload.effectiveFrom),
     onMutate: async ({ tariffId }) => {
       await queryClient.cancelQueries({ queryKey: tariffsProfileKey });
@@ -52,10 +52,10 @@ function TariffsPage() {
     return <Skeleton className="skeleton-card" />;
   }
 
-  const currentTariffId = (profileQuery.data?.current_tariff as { id?: number } | undefined)?.id;
+  const currentTariffId = (profileQuery.data?.current_tariff as { id?: EntityId } | undefined)?.id;
   const hasDebt = (profileQuery.data?.balance ?? 0) < 0;
 
-  const handleChangeTariff = (tariffId: number, effectiveFrom: "today" | "next_month") => {
+  const handleChangeTariff = (tariffId: EntityId, effectiveFrom: "today" | "next_month") => {
     if (effectiveFrom === "today") {
       if (hasDebt) {
         toast.error("Нельзя активировать тариф сегодня при отрицательном балансе.");

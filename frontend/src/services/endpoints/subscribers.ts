@@ -1,6 +1,7 @@
 import { api } from "@/services/api-client";
 import type {
   ApiListPayload,
+  EntityId,
   SubscriberBalance,
   SubscriberDetail,
   SubscriberPayment,
@@ -22,21 +23,21 @@ export const subscribersService = {
     const { data } = await api.get<ApiListPayload<SubscriberSummary>>("/subscribers", { params });
     return data;
   },
-  async detail(subscriberId: string | number) {
+  async detail(subscriberId: EntityId) {
     const { data } = await api.get<SubscriberDetail>(`/subscribers/${subscriberId}`);
     return data;
   },
-  async balance(subscriberId: string | number) {
+  async balance(subscriberId: EntityId) {
     const { data } = await api.get<SubscriberBalance>(`/subscribers/${subscriberId}/balance`);
     return data;
   },
-  async payments(subscriberId: string | number, limit = 20, offset = 0, status = "all") {
+  async payments(subscriberId: EntityId, limit = 20, offset = 0, status = "all") {
     const { data } = await api.get<ApiListPayload<SubscriberPayment>>(`/subscribers/${subscriberId}/payments`, {
       params: { limit, offset, status },
     });
     return data;
   },
-  async tickets(subscriberId: string | number, page = 1, pageSize = 20, status = "all") {
+  async tickets(subscriberId: EntityId, page = 1, pageSize = 20, status = "all") {
     const { data } = await api.get<ApiListPayload<SubscriberTicket>>(`/subscribers/${subscriberId}/tickets`, {
       params: { page, page_size: pageSize, status },
     });

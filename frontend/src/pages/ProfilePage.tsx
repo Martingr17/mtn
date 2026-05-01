@@ -14,6 +14,7 @@ import { useButtonFeedback } from "@/hooks/use-button-feedback";
 import { usersService } from "@/services/endpoints/users";
 import { useAuthStore } from "@/store/auth-store";
 import type { AuthState } from "@/store/auth-store";
+import type { EntityId } from "@/types/domain";
 import { formatCurrency, formatDate, formatRelative } from "@/utils/format";
 
 type ProfileFormState = {
@@ -97,7 +98,7 @@ function ProfilePage() {
   });
 
   const revokeSessionMutation = useMutation({
-    mutationFn: (sessionId: number) => usersService.revokeSession(sessionId),
+    mutationFn: (sessionId: EntityId) => usersService.revokeSession(sessionId),
     onSuccess: () => {
       toast.success("Сессия завершена.");
       queryClient.invalidateQueries({ queryKey: ["profile-page", "sessions"] });
@@ -290,8 +291,8 @@ function ProfilePage() {
                     <StatusBadge tone={session.is_current ? "success" : "neutral"}>
                       {session.is_current ? "Текущая" : "Активна"}
                     </StatusBadge>
-                    {!session.is_current && typeof session.id === "number" ? (
-                      <Button size="sm" variant="secondary" onClick={() => revokeSessionMutation.mutate(session.id as number)}>
+                    {!session.is_current && session.id ? (
+                      <Button size="sm" variant="secondary" onClick={() => revokeSessionMutation.mutate(String(session.id))}>
                         Завершить
                       </Button>
                     ) : null}

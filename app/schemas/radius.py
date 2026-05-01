@@ -3,9 +3,11 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
+from app.schemas.ids import BigIntID
+
 
 class RadiusSubscriberBrief(BaseModel):
-    id: int
+    id: BigIntID
     billing_id: str
     full_name: str
     phone: str
@@ -13,8 +15,8 @@ class RadiusSubscriberBrief(BaseModel):
 
 
 class RadiusSessionResponse(BaseModel):
-    id: int
-    subscriber_id: int
+    id: BigIntID
+    subscriber_id: BigIntID
     username: str
     framed_ip_address: Optional[str] = None
     mac_address: Optional[str] = None
@@ -31,8 +33,8 @@ class RadiusSessionResponse(BaseModel):
 
 
 class RadiusActionLogResponse(BaseModel):
-    id: int
-    subscriber_id: int
+    id: BigIntID
+    subscriber_id: BigIntID
     action: str
     old_status: Optional[str] = None
     new_status: Optional[str] = None
@@ -40,7 +42,7 @@ class RadiusActionLogResponse(BaseModel):
     new_speed_down: Optional[int] = None
     old_speed_up: Optional[int] = None
     new_speed_up: Optional[int] = None
-    performed_by: Optional[int] = None
+    performed_by: Optional[BigIntID] = None
     performed_by_name: Optional[str] = None
     result: str
     created_at: datetime

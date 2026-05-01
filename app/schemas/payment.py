@@ -5,6 +5,7 @@ from typing import Optional
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.core.constants import PaymentStatus
+from app.schemas.ids import BigIntID
 
 
 class PaymentCreateRequest(BaseModel):
@@ -13,8 +14,8 @@ class PaymentCreateRequest(BaseModel):
 
 
 class PaymentResponse(BaseModel):
-    id: str
-    user_id: str
+    id: BigIntID
+    user_id: BigIntID
     amount: Decimal
     fee_amount: Decimal | int | float = 0
     net_amount: Optional[Decimal] = None
@@ -44,8 +45,8 @@ class PaymentMethodCreateRequest(BaseModel):
 
 
 class PaymentMethodResponse(BaseModel):
-    id: int
-    user_id: int
+    id: BigIntID
+    user_id: BigIntID
     method_type: str
     masked_pan: Optional[str] = None
     card_type: Optional[str] = None

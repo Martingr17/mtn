@@ -3,6 +3,7 @@ export type ThemeMode = "gradient" | "black-beige";
 export type UserRole = "user" | "operator" | "billing" | "noc_engineer" | "admin" | "super_admin";
 
 export type MvpRole = "subscriber" | "support" | "billing" | "noc_engineer" | "admin";
+export type EntityId = string;
 
 export interface ApiListPayload<T> {
   items: T[];
@@ -26,7 +27,7 @@ export interface LoginResponse {
   refresh_token?: string;
   expires_in?: number;
   token_type: string;
-  user_id: number;
+  user_id: EntityId;
   role: UserRole;
   requires_2fa: boolean;
   two_factor_token?: string | null;
@@ -44,7 +45,7 @@ export interface LoginResponse {
 }
 
 export interface UserProfile {
-  id: number;
+  id: EntityId;
   billing_id?: string | null;
   phone: string;
   email?: string | null;
@@ -66,7 +67,7 @@ export interface UserProfile {
 }
 
 export interface Tariff {
-  id: number;
+  id: EntityId;
   billing_tariff_id: string;
   name: string;
   speed_mbps: number;
@@ -83,8 +84,8 @@ export interface Tariff {
 }
 
 export interface Payment {
-  id: string;
-  user_id: string;
+  id: EntityId;
+  user_id: EntityId;
   amount: number;
   fee_amount?: number;
   net_amount?: number | null;
@@ -102,8 +103,8 @@ export interface Payment {
 }
 
 export interface PaymentMethod {
-  id: number;
-  user_id: number;
+  id: EntityId;
+  user_id: EntityId;
   method_type: string;
   masked_pan?: string | null;
   card_type?: string | null;
@@ -115,8 +116,8 @@ export interface PaymentMethod {
 }
 
 export interface TicketMessage {
-  id: string;
-  user_id: string;
+  id: EntityId;
+  user_id: EntityId;
   body: string;
   is_internal: boolean;
   attachment_path?: string | null;
@@ -128,7 +129,7 @@ export interface TicketMessage {
 }
 
 export interface Ticket {
-  id: string;
+  id: EntityId;
   subject: string;
   status: string;
   priority: string;
@@ -140,8 +141,8 @@ export interface Ticket {
   resolved_at?: string | null;
   sla_deadline?: string | null;
   escalated_at?: string | null;
-  user_id: string;
-  assigned_to?: string | null;
+  user_id: EntityId;
+  assigned_to?: EntityId | null;
   assignee_name?: string | null;
   user_display_name?: string | null;
   is_overdue?: boolean;
@@ -157,7 +158,7 @@ export interface TicketDetail extends Ticket {
 }
 
 export interface NotificationItem {
-  id: number;
+  id: EntityId;
   title: string;
   message: string;
   body: string;
@@ -243,7 +244,7 @@ export interface SpeedtestSession {
 }
 
 export interface SpeedtestResult {
-  id: number;
+  id: EntityId;
   download_mbps: number;
   upload_mbps: number;
   ping_ms: number;
@@ -279,7 +280,7 @@ export interface MonitoringMetrics {
 }
 
 export interface MonitoringAlert {
-  id: number;
+  id: EntityId;
   type: string;
   severity: string;
   status: string;
@@ -365,7 +366,7 @@ export interface AdminStats {
 }
 
 export interface AdminUserRow {
-  id: string;
+  id: EntityId;
   phone: string;
   email?: string | null;
   billing_id: string;
@@ -387,24 +388,24 @@ export interface AdminUserRow {
 }
 
 export interface AdminTicketRow {
-  id: string;
+  id: EntityId;
   subject: string;
   status: string;
   priority: string;
   category?: string | null;
-  user_id: string;
+  user_id: EntityId;
   user_phone: string;
   user_email?: string | null;
   created_at?: string | null;
   updated_at?: string | null;
   sla_deadline?: string | null;
   is_overdue?: boolean;
-  assigned_to?: string | null;
+  assigned_to?: EntityId | null;
   assigned_to_name?: string | null;
 }
 
 export interface AdminStaffRow {
-  id: string;
+  id: EntityId;
   phone: string;
   email?: string | null;
   billing_id: string;
@@ -454,7 +455,7 @@ export interface SubscriberTariff {
 }
 
 export interface SubscriberPayment {
-  id: number;
+  id: EntityId;
   amount: number;
   fee_amount: number;
   net_amount?: number | null;
@@ -468,12 +469,12 @@ export interface SubscriberPayment {
 }
 
 export interface SubscriberTicket {
-  id: number;
+  id: EntityId;
   subject: string;
   category?: string | null;
   status: string;
   priority: string;
-  assigned_to?: number | null;
+  assigned_to?: EntityId | null;
   assignee_name?: string | null;
   created_at: string;
   updated_at?: string | null;
@@ -482,7 +483,7 @@ export interface SubscriberTicket {
 }
 
 export interface SubscriberSummary {
-  id: number;
+  id: EntityId;
   billing_id: string;
   full_name: string;
   connection_address?: string | null;
@@ -510,7 +511,7 @@ export interface SubscriberDetail extends SubscriberSummary {
 }
 
 export interface SubscriberBalance {
-  subscriber_id: number;
+  subscriber_id: EntityId;
   billing_id: string;
   balance: number;
   currency: string;
@@ -522,7 +523,7 @@ export type RadiusSessionStatus = "active" | "blocked" | "disconnected";
 export type RadiusAction = "block" | "unblock" | "disconnect" | "change_speed";
 
 export interface RadiusSubscriberBrief {
-  id: number;
+  id: EntityId;
   billing_id: string;
   full_name: string;
   phone: string;
@@ -530,8 +531,8 @@ export interface RadiusSubscriberBrief {
 }
 
 export interface RadiusSession {
-  id: number;
-  subscriber_id: number;
+  id: EntityId;
+  subscriber_id: EntityId;
   username: string;
   framed_ip_address?: string | null;
   mac_address?: string | null;
@@ -548,8 +549,8 @@ export interface RadiusSession {
 }
 
 export interface RadiusActionLog {
-  id: number;
-  subscriber_id: number;
+  id: EntityId;
+  subscriber_id: EntityId;
   action: RadiusAction;
   old_status?: RadiusSessionStatus | null;
   new_status?: RadiusSessionStatus | null;
@@ -557,7 +558,7 @@ export interface RadiusActionLog {
   new_speed_down?: number | null;
   old_speed_up?: number | null;
   new_speed_up?: number | null;
-  performed_by?: number | null;
+  performed_by?: EntityId | null;
   performed_by_name?: string | null;
   result: string;
   created_at: string;
@@ -573,7 +574,7 @@ export type GponOltStatus = "online" | "degraded" | "offline";
 export type GponOntStatus = "online" | "offline" | "blocked" | "rogue_suspected";
 
 export interface GponSubscriberBrief {
-  id: number;
+  id: EntityId;
   billing_id: string;
   full_name: string;
   phone: string;
@@ -581,7 +582,7 @@ export interface GponSubscriberBrief {
 }
 
 export interface GponOlt {
-  id: number;
+  id: EntityId;
   name: string;
   vendor: string;
   model: string;
@@ -596,9 +597,9 @@ export interface GponOlt {
 }
 
 export interface GponOnt {
-  id: number;
-  subscriber_id: number;
-  olt_id: number;
+  id: EntityId;
+  subscriber_id: EntityId;
+  olt_id: EntityId;
   serial_number: string;
   mac_address?: string | null;
   pon_port: number;
@@ -641,13 +642,13 @@ export type ZabbixAlarmStatus = "active" | "acknowledged" | "resolved";
 export type ZabbixSourceType = "core_router" | "aggregation_switch" | "olt" | "ont" | "ups" | "external";
 
 export interface ZabbixAlarm {
-  id: number;
+  id: EntityId;
   alarm_type: ZabbixAlarmType;
   severity: ZabbixSeverity;
   status: ZabbixAlarmStatus;
   source_type: ZabbixSourceType;
   source_name: string;
-  source_id?: number | null;
+  source_id?: EntityId | null;
   title: string;
   description?: string | null;
   metric_name?: string | null;
@@ -657,8 +658,8 @@ export interface ZabbixAlarm {
   last_seen_at: string;
   acknowledged_at?: string | null;
   resolved_at?: string | null;
-  acknowledged_by?: number | null;
-  resolved_by?: number | null;
+  acknowledged_by?: EntityId | null;
+  resolved_by?: EntityId | null;
 }
 
 export interface ZabbixSummary {
@@ -692,13 +693,13 @@ export type IncidentSource = "manual" | "zabbix";
 export type AffectedService = "bgp" | "vrrp" | "erps" | "gpon" | "olt" | "ont" | "cgnat" | "ups" | "ddos" | "other";
 
 export interface IncidentUserBrief {
-  id: number;
+  id: EntityId;
   full_name: string;
   role: UserRole | string;
 }
 
 export interface NocIncident {
-  id: number;
+  id: EntityId;
   title: string;
   description?: string | null;
   severity: IncidentSeverity;
@@ -706,11 +707,11 @@ export interface NocIncident {
   source: IncidentSource;
   affected_service: AffectedService;
   affected_subscribers_count: number;
-  assigned_to?: number | null;
-  created_by?: number | null;
-  acknowledged_by?: number | null;
-  resolved_by?: number | null;
-  closed_by?: number | null;
+  assigned_to?: EntityId | null;
+  created_by?: EntityId | null;
+  acknowledged_by?: EntityId | null;
+  resolved_by?: EntityId | null;
+  closed_by?: EntityId | null;
   created_at: string;
   acknowledged_at?: string | null;
   started_at?: string | null;
@@ -728,7 +729,7 @@ export interface IncidentCreatePayload {
   severity: IncidentSeverity;
   affected_service: AffectedService;
   affected_subscribers_count?: number;
-  assigned_to?: number;
+  assigned_to?: EntityId;
 }
 
 export interface IncidentActionResult {
@@ -742,9 +743,9 @@ export type TelegramAlertStatus = "sent" | "skipped" | "failed";
 export type TelegramAlertEntityType = "zabbix_alarm" | "noc_incident";
 
 export interface TelegramAlertLog {
-  id: number;
+  id: EntityId;
   entity_type: TelegramAlertEntityType;
-  entity_id: number;
+  entity_id: EntityId;
   severity: string;
   title: string;
   message: string;
@@ -762,16 +763,16 @@ export interface TelegramAlertActionResult {
 }
 
 export interface AuditActorBrief {
-  id: number;
+  id: EntityId;
   full_name: string;
   role: UserRole | string;
 }
 
 export interface AuditLogItem {
-  id: number;
-  user_id?: number | null;
+  id: EntityId;
+  user_id?: EntityId | null;
   entity_type: string;
-  entity_id: number;
+  entity_id: EntityId;
   action: string;
   operation: string;
   changes?: Record<string, unknown> | null;

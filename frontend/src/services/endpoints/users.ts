@@ -1,5 +1,5 @@
 import { api } from "@/services/api-client";
-import type { UserProfile } from "@/types/domain";
+import type { EntityId, UserProfile } from "@/types/domain";
 
 export interface UserUpdatePayload {
   email?: string | null;
@@ -31,7 +31,7 @@ export const usersService = {
     const { data } = await api.get<Array<Record<string, unknown>>>("/users/me/sessions");
     return data;
   },
-  async revokeSession(sessionId: number) {
+  async revokeSession(sessionId: EntityId) {
     const { data } = await api.delete(`/users/me/sessions/${sessionId}`);
     return data;
   },

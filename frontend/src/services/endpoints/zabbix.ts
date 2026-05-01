@@ -1,6 +1,7 @@
 import { api } from "@/services/api-client";
 import type {
   ApiListPayload,
+  EntityId,
   ZabbixAlarm,
   ZabbixAlarmActionResult,
   ZabbixRefreshResult,
@@ -14,7 +15,7 @@ export interface ZabbixAlarmListParams {
   status?: string;
   alarm_type?: string;
   source_type?: string;
-  source_id?: number;
+  source_id?: EntityId;
   search?: string;
 }
 
@@ -23,7 +24,7 @@ export const zabbixService = {
     const { data } = await api.get<ApiListPayload<ZabbixAlarm>>("/zabbix/alarms", { params });
     return data;
   },
-  async alarm(alarmId: string | number) {
+  async alarm(alarmId: EntityId) {
     const { data } = await api.get<ZabbixAlarm>(`/zabbix/alarms/${alarmId}`);
     return data;
   },
@@ -31,11 +32,11 @@ export const zabbixService = {
     const { data } = await api.get<ZabbixSummary>("/zabbix/summary");
     return data;
   },
-  async acknowledge(alarmId: string | number) {
+  async acknowledge(alarmId: EntityId) {
     const { data } = await api.post<ZabbixAlarmActionResult>(`/zabbix/alarms/${alarmId}/ack`);
     return data;
   },
-  async resolve(alarmId: string | number) {
+  async resolve(alarmId: EntityId) {
     const { data } = await api.post<ZabbixAlarmActionResult>(`/zabbix/alarms/${alarmId}/resolve`);
     return data;
   },

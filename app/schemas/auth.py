@@ -2,6 +2,7 @@ from pydantic import AliasChoices, BaseModel, Field, field_validator, ConfigDict
 from typing import Optional
 from datetime import datetime
 from app.core.validators import Validators
+from app.schemas.ids import BigIntID
 
 class PhoneNumber(BaseModel):
     phone: str = Field(..., min_length=10, max_length=15)
@@ -48,7 +49,7 @@ class LoginResponse(BaseModel):
     refresh_token: str
     token_type: str = "bearer"
     expires_in: int
-    user_id: int
+    user_id: BigIntID
     role: str
     requires_2fa: bool = False
     two_factor_token: Optional[str] = None

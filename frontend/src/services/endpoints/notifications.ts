@@ -1,6 +1,7 @@
 import { api } from "@/services/api-client";
 import type {
   ApiListPayload,
+  EntityId,
   NotificationEventType,
   NotificationItem,
   NotificationSettings,
@@ -21,7 +22,7 @@ export const notificationsService = {
     const { data } = await api.get<{ unread_count: number }>("/notifications/unread/count");
     return data;
   },
-  async markRead(notificationId: number) {
+  async markRead(notificationId: EntityId) {
     const { data } = await api.post<NotificationItem>(`/notifications/${notificationId}/read`);
     return data;
   },
@@ -29,11 +30,11 @@ export const notificationsService = {
     const { data } = await api.post("/notifications/mark-all-read");
     return data;
   },
-  async archive(notificationId: number) {
+  async archive(notificationId: EntityId) {
     const { data } = await api.post<NotificationItem>(`/notifications/${notificationId}/archive`);
     return data;
   },
-  async remove(notificationId: number) {
+  async remove(notificationId: EntityId) {
     const { data } = await api.delete(`/notifications/${notificationId}`);
     return data;
   },

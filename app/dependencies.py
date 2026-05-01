@@ -21,6 +21,11 @@ security = HTTPBearer(auto_error=False)
 def _role_value(role: object) -> str:
     return role.value if hasattr(role, "value") else str(role)
 
+
+def _is_staging_demo_mode() -> bool:
+    environment = getattr(settings.environment, "value", settings.environment)
+    return bool(settings.demo_mode and environment == "staging")
+
 async def get_current_user(
     request: Request,
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
@@ -169,6 +174,8 @@ def rate_limit(limit: int, window: int):
     """Rate limit dependency"""
     async def dependency(request: Request):
         if not settings.rate_limit_enabled:
+            return True
+        if _is_staging_demo_mode() and request.url.path in {"/api/v1/auth/login", "/api/v1/auth/2fa/login"}:
             return True
 
         client_ip = request.client.host if request.client else "unknown"

@@ -1,5 +1,5 @@
 import { api } from "@/services/api-client";
-import type { Tariff } from "@/types/domain";
+import type { EntityId, Tariff } from "@/types/domain";
 
 export const tariffsService = {
   async list() {
@@ -14,7 +14,7 @@ export const tariffsService = {
     const { data } = await api.get<Array<Record<string, unknown>>>("/tariffs/history");
     return data;
   },
-  async changeTariff(tariffId: number, effectiveFrom: "today" | "next_month") {
+  async changeTariff(tariffId: EntityId, effectiveFrom: "today" | "next_month") {
     const { data } = await api.post("/tariffs/change", {
       tariff_id: tariffId,
       effective_from: effectiveFrom,
@@ -29,11 +29,11 @@ export const tariffsService = {
     const { data } = await api.post<Tariff>("/tariffs/admin", payload);
     return data;
   },
-  async update(tariffId: number, payload: Partial<Tariff>) {
+  async update(tariffId: EntityId, payload: Partial<Tariff>) {
     const { data } = await api.put<Tariff>(`/tariffs/admin/${tariffId}`, payload);
     return data;
   },
-  async remove(tariffId: number) {
+  async remove(tariffId: EntityId) {
     const { data } = await api.delete(`/tariffs/admin/${tariffId}`);
     return data;
   },
