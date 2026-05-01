@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}Статистика | Личный кабинет оператора{% endblock %}
+
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<section class="page-section">
+    <div class="toolbar">
+        <div>
+            <h1 class="toolbar-title">Статистика использования</h1>
+            <p class="toolbar-copy">Графики трафика, финансовая аналитика и быстрый переход к внутреннему speedtest MTN.</p>
+        </div>
+        <div class="chip-row">
+            <a class="btn btn-secondary btn-sm" href="/speedtest">
+                <i class="fas fa-gauge-high"></i>
+                Открыть Speedtest
+            </a>
+        </div>
+    </div>
+
+    <section class="stats-grid">
+        <article class="metric-card">
+            <div class="metric-meta">
+                <span class="metric-label">Всего потрачено</span>
+                <span class="metric-icon"><i class="fas fa-ruble-sign"></i></span>
+            </div>
+            <div class="metric-value" id="statsTotalAmount">—</div>
+            <div class="metric-foot">Сумма успешных платежей за выбранный период.</div>
+        </article>
+        <article class="metric-card">
+            <div class="metric-meta">
+                <span class="metric-label">Средний платёж</span>
+                <span class="metric-icon"><i class="fas fa-chart-area"></i></span>
+            </div>
+            <div class="metric-value" id="statsAverageAmount">—</div>
+            <div class="metric-foot">Помогает быстро понять типичный размер пополнения.</div>
+        </article>
+        <article class="metric-card">
+            <div class="metric-meta">
+                <span class="metric-label">Количество платежей</span>
+                <span class="metric-icon"><i class="fas fa-receipt"></i></span>
+            </div>
+            <div class="metric-value" id="statsPaymentsCount">0</div>
+            <div class="metric-foot">Успешные платежи, попавшие в текущую выборку.</div>
+        </article>
+        <article class="metric-card">
+            <div class="metric-meta">
+                <span class="metric-label">Пиковый платёж</span>
+                <span class="metric-icon"><i class="fas fa-bolt"></i></span>
+            </div>
+            <div class="metric-value" id="statsLargestPayment">—</div>
+            <div class="metric-foot">Максимальная сумма единичной успешной операции.</div>
+        </article>
+    </section>
+
+    <section class="payments-grid">
+        <article class="feed-card span-7">
+            <div class="section-title-wrap">
+                <div>
+                    <h2 class="section-title">Трафик по дням</h2>
+                    <p class="section-subtitle">Лента потребления показывает, как менялась нагрузка по дням и где были пики.</p>
+                </div>
+            </div>
+            <canvas id="trafficStatsChart" height="130"></canvas>
+        </article>
+
+        <article class="feed-card span-5">
+            <div class="section-title-wrap">
+                <div>
+                    <h2 class="section-title">Платежи по месяцам</h2>
+                    <p class="section-subtitle">График месячной динамики помогает увидеть сезонность пополнений.</p>
+                </div>
+            </div>
+            <canvas id="paymentsStatsChart" height="130"></canvas>
+        </article>
+    </section>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    let trafficStatsChart = null;
+    let paymentsStatsChart = null;
+
+    function renderTrafficStatsChart(data) {
+        const ctx = document.getElementById("trafficStatsChart").getContext("2d");
+        if (trafficStatsChart) trafficStatsChart.destroy();
+
+        trafficStatsChart = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: data.daily_load.map((item) => item.date),
+                datasets: [{
+                    label: "Трафик (ГБ)",
+                    data: data.daily_load.map((item) => item.gb),
+                    borderColor: "#0891b2",
+                    backgroundColor: "rgba(8, 145, 178, 0.12)",
+                    pointBackgroundColor: "#0f766e",
+                    fill: true,
+                    tension: 0.35,
+                }],
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: "bottom" } },
+            },
+        });
+    }
+
+    function renderPaymentsStatsChart(data) {
+        const ctx = document.getElementById("paymentsStatsChart").getContext("2d");
+        if (paymentsStatsChart) paymentsStatsChart.destroy();
+
+        paymentsStatsChart = new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: data.monthly_totals.map((item) => item.month),
+                datasets: [{
+                    label: "Сумма пополнений",
+                    data: data.monthly_totals.map((item) => item.amount),
+                    backgroundColor: ["rgba(15, 118, 110, 0.82)", "rgba(8, 145, 178, 0.82)", "rgba(249, 115, 22, 0.82)", "rgba(15, 118, 110, 0.82)", "rgba(8, 145, 178, 0.82)", "rgba(249, 115, 22, 0.82)"],
+                    borderRadius: 14,
+                }],
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: "bottom" } },
+            },
+        });
+    }
+
+    async function loadStatistics() {
+        if (!OperatorUI.isAuthenticated()) {
+            OperatorUI.renderAuthRequired(document.querySelector(".site-main"));
+            return;
+        }
+
+        try {
+            const [traffic, payments] = await Promise.all([
+                OperatorUI.request("/api/v1/statistics/traffic", { auth: true }),
+                OperatorUI.request("/api/v1/statistics/payments", { auth: true }),
+            ]);
+
+            document.getElementById("statsTotalAmount").textContent = OperatorUI.formatCurrency(payments.total_amount || 0);
+            document.getElementById("statsAverageAmount").textContent = OperatorUI.formatCurrency(payments.average_amount || 0);
+            document.getElementById("statsPaymentsCount").textContent = String(payments.payment_count || 0);
+            document.getElementById("statsLargestPayment").textContent = OperatorUI.formatCurrency(payments.largest_payment || 0);
+
+            renderTrafficStatsChart(traffic);
+            renderPaymentsStatsChart(payments);
+        } catch (error) {
+            OperatorUI.toast(error.message || "Не удалось загрузить статистику.", "error");
+        }
+    }
+
+    loadStatistics();
+</script>
+{% endblock %}

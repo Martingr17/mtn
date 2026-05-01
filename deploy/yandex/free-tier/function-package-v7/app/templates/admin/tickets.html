@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Очередь заявок | MTN{% endblock %}
+{% block body_class %}admin-page admin-suite-page{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="/static/css/admin-extra-sections.css?v={{ asset_version }}">
+{% endblock %}
+
+{% block content %}
+<section class="page-section admin-suite-shell" data-admin-page="tickets-queue" id="adminTicketsQueuePage">
+    {% include "admin/_subnav.html" %}
+
+    <section class="hero admin-suite-hero">
+        <div class="hero-grid hero-grid-single">
+            <div>
+                <div class="eyebrow">
+                    <i class="fas fa-headset"></i>
+                    Очередь обращений
+                </div>
+                <h1 class="hero-title">Заявки</h1>
+                <p class="hero-subtitle">Один экран для поиска, фильтрации, SLA-контроля и быстрой обработки обращений без лишних переходов. Список обновляется автоматически.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="admin-suite-toolbar">
+        <div class="admin-suite-head">
+            <div>
+                <h2>Очередь поддержки</h2>
+                <p>Быстрые фильтры, массовые действия, подсветка времени ожидания и назначение оператора прямо из списка.</p>
+            </div>
+            <div class="admin-suite-actions">
+                <button class="btn btn-secondary btn-sm" type="button" id="adminTicketsReload">Обновить</button>
+                <button class="btn btn-primary btn-sm" type="button" id="adminTicketsCreate">Новая заявка</button>
+            </div>
+        </div>
+
+        <div class="admin-suite-actions" id="adminTicketsQuickChips"></div>
+
+        <div class="admin-suite-filter-grid">
+            <label class="field"><span class="field-label">Поиск</span><input class="input" id="adminTicketsSearch" type="search" placeholder="Номер, телефон, тема, ФИО"></label>
+            <label class="field"><span class="field-label">Статус</span><select class="select" id="adminTicketsStatus"><option value="all">Все</option><option value="new">Новые</option><option value="in_progress">В работе</option><option value="resolved">Решены</option><option value="closed">Закрыты</option><option value="waiting_customer">Ожидают клиента</option></select></label>
+            <label class="field"><span class="field-label">Приоритет</span><select class="select" id="adminTicketsPriority"><option value="all">Все</option><option value="high">Высокий</option><option value="medium">Средний</option><option value="low">Низкий</option></select></label>
+            <label class="field"><span class="field-label">Оператор</span><select class="select" id="adminTicketsOperator"><option value="all">Все</option><option value="mine">Назначенные на меня</option><option value="unassigned">Не назначенные</option></select></label>
+            <label class="field"><span class="field-label">Дата создания</span><select class="select" id="adminTicketsPeriod"><option value="all">За всё время</option><option value="today">Сегодня</option><option value="yesterday">Вчера</option><option value="week">За неделю</option><option value="month">За месяц</option></select></label>
+            <div class="admin-suite-actions">
+                <button class="btn btn-secondary btn-sm" type="button" id="adminTicketsReset">Сбросить</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="admin-suite-table-shell">
+        <div class="admin-suite-head">
+            <div>
+                <h3>Список обращений</h3>
+                <p id="adminTicketsSummary">Загрузка очереди...</p>
+            </div>
+            <div class="admin-suite-actions">
+                <button class="btn btn-secondary btn-sm" type="button" id="adminTicketsBulkTake">Взять в работу</button>
+                <button class="btn btn-secondary btn-sm" type="button" id="adminTicketsBulkResolve">Отметить решёнными</button>
+            </div>
+        </div>
+
+        <div class="admin-suite-table-wrap">
+            <table class="admin-suite-table">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" id="adminTicketsCheckAll"></th>
+                        <th data-sort="id">№</th>
+                        <th data-sort="created_at">Дата</th>
+                        <th>Абонент</th>
+                        <th>Контакты</th>
+                        <th>Тема</th>
+                        <th data-sort="priority">Приоритет</th>
+                        <th data-sort="status">Статус</th>
+                        <th>Оператор</th>
+                        <th>SLA</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody id="adminTicketsTableBody"></tbody>
+            </table>
+        </div>
+        <div id="adminTicketsMobileList" class="admin-list-cards" hidden></div>
+
+        <div class="admin-suite-pagination">
+            <div id="adminTicketsPaginationInfo" class="admin-suite-meta">Страница 1</div>
+            <div class="admin-suite-actions">
+                <button class="btn btn-secondary btn-sm" type="button" id="adminTicketsPrev">Назад</button>
+                <button class="btn btn-secondary btn-sm" type="button" id="adminTicketsNext">Вперёд</button>
+            </div>
+        </div>
+    </section>
+</section>
+
+<div class="admin-suite-modal" id="adminTicketsCreateModal" hidden>
+    <div class="admin-suite-modal-card">
+        <div class="admin-suite-head">
+            <div>
+                <h3>Новая заявка</h3>
+                <p>Создание обращения от имени абонента для тестов и внутренних сценариев.</p>
+            </div>
+            <button class="btn btn-secondary btn-sm" type="button" data-admin-modal-close="adminTicketsCreateModal">Закрыть</button>
+        </div>
+        <form id="adminTicketsCreateForm" class="admin-suite-modal-grid">
+            <label class="field"><span class="field-label">Абонент</span><input class="input" id="adminTicketsCreateUser" placeholder="ФИО или телефон" required></label>
+            <label class="field"><span class="field-label">Телефон</span><input class="input" id="adminTicketsCreatePhone" placeholder="+7 999 123-45-67" required></label>
+            <label class="field"><span class="field-label">Тема</span><input class="input" id="adminTicketsCreateSubject" required></label>
+            <label class="field"><span class="field-label">Приоритет</span><select class="select" id="adminTicketsCreatePriority"><option value="high">Высокий</option><option value="medium">Средний</option><option value="low">Низкий</option></select></label>
+            <label class="field" style="grid-column:1/-1"><span class="field-label">Описание</span><textarea class="input" id="adminTicketsCreateDescription" rows="4" required></textarea></label>
+            <div class="admin-suite-actions" style="grid-column:1/-1">
+                <button class="btn btn-secondary btn-sm" type="button" data-admin-modal-close="adminTicketsCreateModal">Отмена</button>
+                <button class="btn btn-primary btn-sm" type="submit">Создать заявку</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="/static/js/admin-tickets-queue.js?v={{ asset_version }}"></script>
+{% endblock %}

@@ -1,0 +1,67 @@
+upstream app_backend {
+    server app:8000;
+}
+
+server {
+    listen 80;
+    server_name localhost;
+    
+    client_max_body_size 10M;
+    
+    # Static files
+    location /static/ {
+        alias /usr/share/nginx/html/static/;
+        expires 30d;
+        add_header Cache-Control "public, immutable";
+    }
+    
+    # Uploaded files
+    location /uploads/ {
+        alias /usr/share/nginx/html/uploads/;
+        expires 1d;
+        add_header Cache-Control "public";
+    }
+    
+    # WebSocket support
+    location /ws {
+        proxy_pass http://app_backend;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 86400;
+    }
+    
+    # API and app
+    location / {
+        proxy_pass http://app_backend;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        # Buffering off for SSE
+        proxy_buffering off;
+        proxy_cache off;
+        
+        # Timeouts
+        proxy_connect_timeout 60s;
+        proxy_send_timeout 60s;
+        proxy_read_timeout 60s;
+    }
+    
+    # Health check endpoint
+    location /health {
+        proxy_pass http://app_backend/health;
+        access_log off;
+    }
+    
+    # Gzip compression
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 1024;
+    gzip_types text/plain text/css text/xml text/javascript application/javascript application/json application/xml+rss;
+}

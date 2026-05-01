@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block title %}Тарифы | Админ-панель MTN{% endblock %}
+{% block body_class %}admin-page admin-suite-page{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="/static/css/admin-extra-sections.css?v={{ asset_version }}">
+{% endblock %}
+
+{% block content %}
+<section class="page-section admin-suite-shell" data-admin-page="tariffs" id="adminTariffsPage">
+    {% include "admin/_subnav.html" %}
+
+    <section class="hero admin-suite-hero">
+        <div class="hero-grid hero-grid-single">
+            <div>
+                <div class="eyebrow">
+                    <i class="fas fa-tags"></i>
+                    Управление тарифной линейкой
+                </div>
+                <h1 class="hero-title">Тарифы</h1>
+                <p class="hero-subtitle">Создавайте, копируйте, скрывайте и проверяйте тарифы так, как их увидят абоненты. Режим просмотра сохраняется локально.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="admin-suite-toolbar">
+        <div class="admin-suite-head">
+            <div>
+                <h2>Каталог тарифов</h2>
+                <p>Поиск, фильтры, переключение таблица/карточки, массовая публикация и предпросмотр для абонентской части.</p>
+            </div>
+            <div class="admin-suite-actions">
+                <button class="btn btn-secondary btn-sm" type="button" id="adminTariffsExport">Экспорт CSV</button>
+                <button class="btn btn-secondary btn-sm" type="button" id="adminTariffsViewTable">Таблица</button>
+                <button class="btn btn-secondary btn-sm" type="button" id="adminTariffsViewCards">Карточки</button>
+                <button class="btn btn-primary btn-sm" type="button" id="adminTariffsCreate">Добавить тариф</button>
+            </div>
+        </div>
+        <div class="admin-suite-filter-grid">
+            <label class="field">
+                <span class="field-label">Поиск</span>
+                <input class="input" id="adminTariffsSearch" type="search" placeholder="Название, скорость, цена">
+            </label>
+            <label class="field">
+                <span class="field-label">Статус</span>
+                <select class="select" id="adminTariffsStatus">
+                    <option value="all">Все</option>
+                    <option value="active">Активные</option>
+                    <option value="hidden">Скрытые</option>
+                </select>
+            </label>
+            <label class="field">
+                <span class="field-label">Тип</span>
+                <select class="select" id="adminTariffsType">
+                    <option value="all">Все</option>
+                    <option value="home">Для дома</option>
+                    <option value="work">Для работы</option>
+                    <option value="business">Для бизнеса</option>
+                </select>
+            </label>
+            <label class="field">
+                <span class="field-label">Скорость</span>
+                <select class="select" id="adminTariffsSpeed">
+                    <option value="all">Все</option>
+                    <option value="100">до 100 Мбит/с</option>
+                    <option value="300">100-300</option>
+                    <option value="500">300-500</option>
+                    <option value="501">500+</option>
+                </select>
+            </label>
+        </div>
+    </section>
+
+    <section class="admin-suite-table-shell">
+        <div class="admin-suite-head">
+            <div>
+                <h3>Список тарифов</h3>
+                <p id="adminTariffsSummary">Загрузка каталога...</p>
+            </div>
+            <div class="admin-suite-inline">
+                <button class="btn btn-secondary btn-sm" type="button" id="adminTariffsBulkHide">Скрыть выбранные</button>
+                <button class="btn btn-secondary btn-sm" type="button" id="adminTariffsBulkShow">Показать выбранные</button>
+            </div>
+        </div>
+
+        <div id="adminTariffsTableView" class="admin-suite-table-wrap">
+            <table class="admin-suite-table">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" id="adminTariffsCheckAll"></th>
+                        <th data-sort="id">ID</th>
+                        <th data-sort="name">Название</th>
+                        <th>Тип</th>
+                        <th data-sort="speed">Скорость</th>
+                        <th data-sort="price">Цена</th>
+                        <th data-sort="popularity">Популярность</th>
+                        <th>Статус</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody id="adminTariffsTableBody"></tbody>
+            </table>
+        </div>
+
+        <div id="adminTariffsCardsView" class="admin-suite-cards" hidden></div>
+
+        <div class="admin-suite-pagination">
+            <div id="adminTariffsPaginationInfo" class="admin-suite-meta">Страница 1</div>
+            <div class="admin-suite-actions">
+                <button class="btn btn-secondary btn-sm" type="button" id="adminTariffsPrev">Назад</button>
+                <button class="btn btn-secondary btn-sm" type="button" id="adminTariffsNext">Вперёд</button>
+            </div>
+        </div>
+    </section>
+</section>
+
+<div class="admin-suite-modal" id="adminTariffsModal" hidden>
+    <div class="admin-suite-modal-card">
+        <div class="admin-suite-head">
+            <div>
+                <h3 id="adminTariffsModalTitle">Добавить тариф</h3>
+                <p>Заполните параметры тарифа, настройте услуги и сразу проверьте, как он выглядит у абонента.</p>
+            </div>
+            <button class="btn btn-secondary btn-sm" type="button" data-admin-modal-close="adminTariffsModal">Закрыть</button>
+        </div>
+        <form id="adminTariffsForm" class="admin-suite-modal-grid">
+            <input type="hidden" id="adminTariffsId">
+            <label class="field"><span class="field-label">Название</span><input class="input" id="adminTariffsName" required></label>
+            <label class="field"><span class="field-label">Тип</span><select class="select" id="adminTariffsTypeInput"><option value="home">Для дома</option><option value="work">Для работы</option><option value="business">Для бизнеса</option></select></label>
+            <label class="field"><span class="field-label">Скорость</span><input class="input" id="adminTariffsSpeedInput" type="number" min="10" max="10000" required></label>
+            <label class="field"><span class="field-label">Цена</span><input class="input" id="adminTariffsPriceInput" type="number" min="1" required></label>
+            <label class="field" style="grid-column:1/-1"><span class="field-label">Описание</span><textarea class="input" id="adminTariffsDescription" rows="3"></textarea></label>
+            <label class="field" style="grid-column:1/-1"><span class="field-label">Особенности</span><input class="input" id="adminTariffsFeatures" placeholder="Безлимит, роутер в подарок, TV"></label>
+            <label class="field"><span class="field-label">Порядок сортировки</span><input class="input" id="adminTariffsSortOrder" type="number" min="1" value="1"></label>
+            <label class="field"><span class="field-label">Статус</span><select class="select" id="adminTariffsStatusInput"><option value="active">Активен</option><option value="hidden">Скрыт</option></select></label>
+            <div class="field" style="grid-column:1/-1">
+                <span class="field-label">Дополнительные услуги</span>
+                <div class="admin-suite-actions">
+                    <label><input type="checkbox" value="tv50" data-service-check> ТВ 50 каналов</label>
+                    <label><input type="checkbox" value="tv150" data-service-check> ТВ 150 каналов</label>
+                    <label><input type="checkbox" value="ip" data-service-check> Статический IP</label>
+                    <label><input type="checkbox" value="router" data-service-check> Wi-Fi роутер</label>
+                </div>
+            </div>
+            <div class="field" style="grid-column:1/-1">
+                <div class="admin-suite-inline">
+                    <span class="admin-suite-meta">Предпросмотр цены: <strong id="adminTariffsPricePreview">0 ₽/мес</strong></span>
+                    <span id="adminTariffsValidation" class="admin-suite-danger-copy"></span>
+                </div>
+            </div>
+            <div class="admin-suite-actions" style="grid-column:1/-1">
+                <button class="btn btn-danger btn-sm" type="button" id="adminTariffsDelete">Удалить</button>
+                <button class="btn btn-secondary btn-sm" type="button" data-admin-modal-close="adminTariffsModal">Отмена</button>
+                <button class="btn btn-primary btn-sm" type="submit">Сохранить</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="admin-suite-modal" id="adminTariffsPreviewModal" hidden>
+    <div class="admin-suite-modal-card">
+        <div class="admin-suite-head">
+            <div>
+                <h3>Предпросмотр тарифа</h3>
+                <p>Так карточка будет выглядеть у абонента.</p>
+            </div>
+            <button class="btn btn-secondary btn-sm" type="button" data-admin-modal-close="adminTariffsPreviewModal">Закрыть</button>
+        </div>
+        <div id="adminTariffsPreviewBody"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="/static/js/admin-extra-sections.js?v={{ asset_version }}"></script>
+{% endblock %}

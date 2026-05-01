@@ -1,0 +1,336 @@
+{% extends "base.html" %}
+
+{% block title %}Журнал и логи | Админ-панель MTN{% endblock %}
+{% block body_class %}admin-page{% endblock %}
+
+{% block content %}
+<section class="page-section">
+    {% include "admin/_subnav.html" %}
+
+    <section class="hero">
+        <div class="hero-grid">
+            <div>
+                <div class="eyebrow">
+                    <i class="fas fa-scroll"></i>
+                    Аудит и диагностика MTN
+                </div>
+                <h1 class="hero-title">Журнал действий сотрудников и живой поток системных логов в одном рабочем экране</h1>
+                <p class="hero-subtitle">
+                    Операторы и администраторы видят, кто и когда менял данные, а также оперативно проверяют ошибки приложения,
+                    предупреждения и служебные сообщения без выхода из административного контура.
+                </p>
+            </div>
+            <div class="hero-panel">
+                <div class="hero-panel-grid">
+                    <div class="insight-card">
+                        <div class="insight-label">Записей аудита</div>
+                        <div class="insight-value" id="adminActivityTotalHero">—</div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-label">Записей app log</div>
+                        <div class="insight-value" id="adminLogsTotalHero">—</div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-label">Последнее обновление</div>
+                        <div class="insight-value" id="adminLogsUpdatedHero">—</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="settings-grid">
+        <article class="profile-panel span-5">
+            <div class="section-title-wrap">
+                <div>
+                    <h2 class="section-title">Фильтры аудита</h2>
+                    <p class="section-subtitle">Отберите записи по действию, ID пользователя или просмотрите всю историю.</p>
+                </div>
+            </div>
+            <div class="page-section">
+                <div class="field">
+                    <label class="field-label" for="adminActivityAction">Действие</label>
+                    <input class="input" id="adminActivityAction" type="search" placeholder="Например, admin_view_abonent">
+                </div>
+                <div class="field">
+                    <label class="field-label" for="adminActivityUserId">ID пользователя</label>
+                    <input class="input" id="adminActivityUserId" type="number" min="1" placeholder="Например, 8">
+                </div>
+                <button class="btn btn-primary" id="adminActivityApplyBtn" type="button">
+                    <i class="fas fa-filter"></i>
+                    Применить
+                </button>
+            </div>
+        </article>
+
+        <article class="profile-panel span-7">
+            <div class="section-title-wrap">
+                <div>
+                    <h2 class="section-title">Фильтры системных логов</h2>
+                    <p class="section-subtitle">Показываем свежие логи приложения с фильтрацией по уровню и экспортом в файл.</p>
+                </div>
+            </div>
+            <div class="page-section">
+                <div class="field-row">
+                    <div class="field">
+                        <label class="field-label" for="adminLogLevel">Уровень</label>
+                        <select class="select" id="adminLogLevel">
+                            <option value="all">Все уровни</option>
+                            <option value="ERROR">Ошибки</option>
+                            <option value="WARNING">Предупреждения</option>
+                            <option value="INFO">Информация</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label class="field-label" for="adminLogsAutorefresh">Обновление</label>
+                        <select class="select" id="adminLogsAutorefresh">
+                            <option value="60000">Раз в минуту</option>
+                            <option value="30000">Раз в 30 секунд</option>
+                            <option value="0">Только вручную</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="action-row u-action-row-reset">
+                    <button class="btn btn-secondary" id="adminLogRefreshBtn" type="button">
+                        <i class="fas fa-rotate"></i>
+                        Обновить
+                    </button>
+                    <button class="btn btn-primary" id="adminLogDownloadBtn" type="button">
+                        <i class="fas fa-download"></i>
+                        Скачать лог
+                    </button>
+                </div>
+            </div>
+        </article>
+    </section>
+
+    <section class="profile-grid">
+        <article class="table-shell span-6">
+            <div class="section-title-wrap">
+                <div>
+                    <h2 class="section-title">Журнал действий</h2>
+                    <p class="section-subtitle">Авторизация, просмотр карточек, смена тарифов и другие значимые действия сотрудников.</p>
+                </div>
+                <span class="chip" id="adminActivityInfo">Загрузка...</span>
+            </div>
+            <div id="adminActivityStream" class="admin-activity-list u-mt-18">
+                <div class="skeleton skeleton-card-96"></div>
+            </div>
+            <div class="toolbar u-mt-20">
+                <div class="table-copy" id="adminActivityPageInfo">Страница 1</div>
+                <div class="action-row u-action-row-reset">
+                    <button class="btn btn-secondary btn-sm" id="adminActivityPrevBtn" type="button">Назад</button>
+                    <button class="btn btn-secondary btn-sm" id="adminActivityNextBtn" type="button">Вперёд</button>
+                </div>
+            </div>
+        </article>
+
+        <article class="table-shell span-6">
+            <div class="section-title-wrap">
+                <div>
+                    <h2 class="section-title">Системные логи</h2>
+                    <p class="section-subtitle">Файл логов приложения в обратном порядке: самые свежие события показываются первыми.</p>
+                </div>
+                <span class="chip" id="adminLogInfo">Загрузка...</span>
+            </div>
+            <div id="adminLogsStream" class="admin-activity-list u-mt-18">
+                <div class="skeleton skeleton-card-96"></div>
+            </div>
+            <div class="toolbar u-mt-20">
+                <div class="table-copy" id="adminLogsPageInfo">Страница 1</div>
+                <div class="action-row u-action-row-reset">
+                    <button class="btn btn-secondary btn-sm" id="adminLogsPrevBtn" type="button">Назад</button>
+                    <button class="btn btn-secondary btn-sm" id="adminLogsNextBtn" type="button">Вперёд</button>
+                </div>
+            </div>
+        </article>
+    </section>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const queryParams = new URLSearchParams(window.location.search);
+    let adminActivityPage = 1;
+    let adminActivityTotalPages = 1;
+    let adminLogsPage = 1;
+    let adminLogsTotalPages = 1;
+    let adminLogsTimer = null;
+
+    function adminLogBadge(level) {
+        if (level === "ERROR") return "badge-danger";
+        if (level === "WARNING") return "badge-warning";
+        return "badge-info";
+    }
+
+    async function loadActivityJournal() {
+        const action = document.getElementById("adminActivityAction").value.trim();
+        const userId = document.getElementById("adminActivityUserId").value.trim();
+        const params = new URLSearchParams({
+            page: String(adminActivityPage),
+            page_size: "16",
+        });
+        if (action) params.set("action", action);
+        if (userId) params.set("user_id", userId);
+
+        try {
+            const data = await OperatorUI.request(
+                `/api/v1/admin/activity-log?${params.toString()}`,
+                { auth: true }
+            );
+
+            adminActivityTotalPages = data.total_pages || 1;
+            document.getElementById("adminActivityInfo").textContent = `Записей: ${data.total}`;
+            document.getElementById("adminActivityPageInfo").textContent = `Страница ${data.page} из ${data.total_pages}`;
+            document.getElementById("adminActivityPrevBtn").disabled = adminActivityPage <= 1;
+            document.getElementById("adminActivityNextBtn").disabled = adminActivityPage >= adminActivityTotalPages;
+            document.getElementById("adminActivityTotalHero").textContent = String(data.total || 0);
+
+            const stream = document.getElementById("adminActivityStream");
+            if (!data.items?.length) {
+                stream.innerHTML = OperatorUI.createEmptyState("fas fa-clock-rotate-left", "Совпадений не найдено", "Измените фильтры или откройте журнал без ограничений.");
+                return;
+            }
+
+            stream.innerHTML = data.items.map((item) => `
+                <article class="admin-activity-item">
+                    <div class="toolbar">
+                        <div>
+                            <div class="table-title">${OperatorUI.escapeHTML(item.action)}</div>
+                            <div class="table-copy">${item.created_at ? OperatorUI.formatDate(item.created_at, { includeTime: true }) : "Без времени"} · user #${item.user_id || "—"}</div>
+                        </div>
+                        <span class="badge ${item.status === "success" ? "badge-success" : "badge-info"}">${OperatorUI.escapeHTML(item.status || "info")}</span>
+                    </div>
+                    <div class="table-copy">
+                        IP: ${OperatorUI.escapeHTML(item.ip_address || "не зафиксирован")}
+                        ${item.resource_type ? ` · ${OperatorUI.escapeHTML(item.resource_type)} #${OperatorUI.escapeHTML(String(item.resource_id || "—"))}` : ""}
+                    </div>
+                </article>
+            `).join("");
+        } catch (error) {
+            document.getElementById("adminActivityStream").innerHTML = OperatorUI.createEmptyState(
+                "fas fa-triangle-exclamation",
+                "Не удалось загрузить аудит",
+                error.message || "Проверьте права доступа и повторите попытку."
+            );
+        }
+    }
+
+    async function loadAppLogs() {
+        const level = document.getElementById("adminLogLevel").value;
+
+        try {
+            const data = await OperatorUI.request(
+                `/api/v1/admin/logs?page=${adminLogsPage}&page_size=18&level=${encodeURIComponent(level)}`,
+                { auth: true }
+            );
+
+            adminLogsTotalPages = data.total_pages || 1;
+            document.getElementById("adminLogInfo").textContent = `Записей: ${data.total}`;
+            document.getElementById("adminLogsPageInfo").textContent = `Страница ${data.page} из ${data.total_pages}`;
+            document.getElementById("adminLogsPrevBtn").disabled = adminLogsPage <= 1;
+            document.getElementById("adminLogsNextBtn").disabled = adminLogsPage >= adminLogsTotalPages;
+            document.getElementById("adminLogsTotalHero").textContent = String(data.total || 0);
+            document.getElementById("adminLogsUpdatedHero").textContent = new Date().toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" });
+
+            const stream = document.getElementById("adminLogsStream");
+            if (!data.logs?.length) {
+                stream.innerHTML = OperatorUI.createEmptyState("fas fa-scroll", "Логи не найдены", "Измените уровень фильтра или попробуйте обновить страницу.");
+                return;
+            }
+
+            stream.innerHTML = data.logs.map((log) => `
+                <article class="admin-activity-item">
+                    <div class="toolbar">
+                        <div>
+                            <div class="table-title">${OperatorUI.escapeHTML(log.logger || "app")}</div>
+                            <div class="table-copy">${OperatorUI.escapeHTML(log.timestamp || "Без времени")}</div>
+                        </div>
+                        <span class="badge ${adminLogBadge(log.level)}">${OperatorUI.escapeHTML(log.level || "INFO")}</span>
+                    </div>
+                    <div class="content-note">${OperatorUI.escapeHTML(log.message || "—")}</div>
+                </article>
+            `).join("");
+        } catch (error) {
+            document.getElementById("adminLogsStream").innerHTML = OperatorUI.createEmptyState(
+                "fas fa-triangle-exclamation",
+                "Не удалось загрузить логи приложения",
+                error.message || "Проверьте доступность API и повторите попытку."
+            );
+        }
+    }
+
+    async function downloadAdminLogs() {
+        const level = document.getElementById("adminLogLevel").value;
+        try {
+            const token = localStorage.getItem("access_token");
+            const response = await fetch(`/api/v1/admin/logs/export?level=${encodeURIComponent(level)}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (!response.ok) throw new Error("Экспорт логов не удался.");
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `app_logs_${level}.log`;
+            link.click();
+            URL.revokeObjectURL(url);
+        } catch (error) {
+            OperatorUI.toast(error.message || "Не удалось выгрузить логи.", "error");
+        }
+    }
+
+    function syncLogsAutorefresh() {
+        if (adminLogsTimer) {
+            window.clearInterval(adminLogsTimer);
+            adminLogsTimer = null;
+        }
+
+        const interval = Number(document.getElementById("adminLogsAutorefresh").value || 0);
+        if (interval > 0) {
+            adminLogsTimer = window.setInterval(loadAppLogs, interval);
+        }
+    }
+
+    document.getElementById("adminActivityAction").value = queryParams.get("action") || "";
+    document.getElementById("adminActivityUserId").value = queryParams.get("user_id") || "";
+
+    document.getElementById("adminActivityApplyBtn").addEventListener("click", () => {
+        adminActivityPage = 1;
+        loadActivityJournal();
+    });
+
+    document.getElementById("adminActivityPrevBtn").addEventListener("click", () => {
+        if (adminActivityPage <= 1) return;
+        adminActivityPage -= 1;
+        loadActivityJournal();
+    });
+
+    document.getElementById("adminActivityNextBtn").addEventListener("click", () => {
+        if (adminActivityPage >= adminActivityTotalPages) return;
+        adminActivityPage += 1;
+        loadActivityJournal();
+    });
+
+    document.getElementById("adminLogRefreshBtn").addEventListener("click", loadAppLogs);
+    document.getElementById("adminLogDownloadBtn").addEventListener("click", downloadAdminLogs);
+    document.getElementById("adminLogLevel").addEventListener("change", () => {
+        adminLogsPage = 1;
+        loadAppLogs();
+    });
+    document.getElementById("adminLogsAutorefresh").addEventListener("change", syncLogsAutorefresh);
+    document.getElementById("adminLogsPrevBtn").addEventListener("click", () => {
+        if (adminLogsPage <= 1) return;
+        adminLogsPage -= 1;
+        loadAppLogs();
+    });
+    document.getElementById("adminLogsNextBtn").addEventListener("click", () => {
+        if (adminLogsPage >= adminLogsTotalPages) return;
+        adminLogsPage += 1;
+        loadAppLogs();
+    });
+
+    syncLogsAutorefresh();
+    Promise.all([loadActivityJournal(), loadAppLogs()]);
+</script>
+{% endblock %}

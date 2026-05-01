@@ -1,0 +1,131 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: operator_postgres
+    environment:
+      POSTGRES_USER: operator
+      POSTGRES_PASSWORD: securepassword
+      POSTGRES_DB: operator
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U operator"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - operator_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: operator_redis
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - operator_network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: operator_app
+    working_dir: /app
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    environment: &app_env
+      PYTHONPATH: /app:/app/app
+      ENVIRONMENT: development
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: operator
+      POSTGRES_PASSWORD: securepassword
+      POSTGRES_DB: operator
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      DEBUG: "true"
+      DEMO_MODE: "true"
+      DEMO_SHOW_SMS_CODE: "true"
+      AUTO_SCHEMA_SYNC: "true"
+      RELOAD: "true"
+      PUBLIC_APP_URL: "http://localhost:8000"
+      SECRET_KEY: "supersecretkey12345678901234567890"
+      JWT_SECRET_KEY: "jwtsecretkey12345678901234567890"
+      BILLING_API_KEY: "12345678901234567890123456789012"
+      SMS_PROVIDER: "mock"
+      YKASSA_TEST_MODE: "true"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - operator_network
+
+  celery_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: operator_celery_worker
+    working_dir: /app
+    user: "10001:10001"
+    volumes:
+      - .:/app
+    command: celery -A app.workers.celery_app worker --loglevel=info
+    environment:
+      <<: *app_env
+      POSTGRES_USE_NULL_POOL: "true"
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks:
+      - operator_network
+
+  celery_beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: operator_celery_beat
+    working_dir: /app
+    user: "10001:10001"
+    volumes:
+      - .:/app
+    command: celery -A app.workers.celery_app beat --loglevel=info --schedule=/home/appuser/celerybeat-schedule
+    environment:
+      <<: *app_env
+      POSTGRES_USE_NULL_POOL: "true"
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks:
+      - operator_network
+
+  nginx:
+    image: nginx:alpine
+    container_name: operator_nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/nginx.dev.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./app/static:/app/app/static:ro
+      - ./uploads:/app/uploads
+    depends_on:
+      - app
+    networks:
+      - operator_network
+
+networks:
+  operator_network:
+    driver: bridge
+
+volumes:
+  postgres_data:

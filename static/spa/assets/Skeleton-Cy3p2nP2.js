@@ -1,0 +1,2 @@
+import{r as e,t}from"./cn-Dxg1DMZx.js";var n=e();function r({className:e}){return(0,n.jsx)(`div`,{className:t(`ui-skeleton`,e),"aria-hidden":`true`})}export{r as t};
+//# sourceMappingURL=Skeleton-Cy3p2nP2.js.map

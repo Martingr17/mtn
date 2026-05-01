@@ -1,0 +1,55 @@
+<section class="admin-workbench" data-reveal>
+    <div class="admin-workbench-head">
+        <div class="eyebrow">
+            <i class="fas fa-shield-halved"></i>
+            Операторский контур MTN
+        </div>
+        <div class="chip-row">
+            <span class="chip is-accent"><i class="fas fa-lock"></i>Только для staff-ролей</span>
+            <span class="chip"><i class="fas fa-bolt"></i>Живые данные и быстрые действия</span>
+        </div>
+    </div>
+    <nav class="admin-tabs" aria-label="Разделы административного модуля">
+        <a class="admin-tab {% if request.url.path.startswith('/admin/dashboard') %}is-active{% endif %}" href="/admin/dashboard">
+            <i class="fas fa-gauge-high"></i>
+            <span>Дашборд</span>
+        </a>
+        <a class="admin-tab {% if request.url.path.startswith('/admin/abonents') or request.url.path.startswith('/admin/users') %}is-active{% endif %}" href="/admin/abonents">
+            <i class="fas fa-users"></i>
+            <span>Абоненты</span>
+        </a>
+        <a class="admin-tab {% if request.url.path.startswith('/admin/tickets') %}is-active{% endif %}" href="/admin/tickets">
+            <i class="fas fa-headset"></i>
+            <span>Заявки</span>
+        </a>
+        {% set role_name = current_user.role.value if current_user and current_user.role and current_user.role.value is defined else (current_user.role if current_user and current_user.role else '') %}
+        {% if role_name in ['admin', 'super_admin'] %}
+        <a class="admin-tab {% if request.url.path.startswith('/admin/payments') %}is-active{% endif %}" href="/admin/payments">
+            <i class="fas fa-money-bill-wave"></i>
+            <span>Платежи</span>
+        </a>
+        <a class="admin-tab {% if request.url.path.startswith('/admin/tariffs') %}is-active{% endif %}" href="/admin/tariffs">
+            <i class="fas fa-tags"></i>
+            <span>Тарифы</span>
+        </a>
+        <a class="admin-tab {% if request.url.path.startswith('/admin/operators') %}is-active{% endif %}" href="/admin/operators">
+            <i class="fas fa-user-shield"></i>
+            <span>Операторы</span>
+        </a>
+        {% endif %}
+        <a class="admin-tab {% if request.url.path.startswith('/admin/activity-log') or request.url.path.startswith('/admin/logs') %}is-active{% endif %}" href="/admin/activity-log">
+            <i class="fas fa-scroll"></i>
+            <span>Журнал</span>
+        </a>
+        <a class="admin-tab {% if request.url.path.startswith('/admin/metrics') %}is-active{% endif %}" href="/admin/metrics">
+            <i class="fas fa-chart-column"></i>
+            <span>Метрики</span>
+        </a>
+        {% if role_name in ['admin', 'super_admin'] %}
+        <a class="admin-tab {% if request.url.path.startswith('/admin/settings') %}is-active{% endif %}" href="/admin/settings">
+            <i class="fas fa-sliders"></i>
+            <span>Настройки</span>
+        </a>
+        {% endif %}
+    </nav>
+</section>

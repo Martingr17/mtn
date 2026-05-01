@@ -1,0 +1,382 @@
+{% extends "base.html" %}
+
+{% block title %}Карточка заявки | MTN{% endblock %}
+{% block body_class %}admin-page{% endblock %}
+
+{% block content %}
+<section class="page-section">
+    {% include "admin/_subnav.html" %}
+    <div class="toolbar">
+        <div>
+            <a class="chip" href="/admin/tickets">
+                <i class="fas fa-arrow-left"></i>
+                Назад к очереди
+            </a>
+            <h1 class="toolbar-title u-mt-16">Карточка заявки #{{ ticket_id }}</h1>
+            <p class="toolbar-copy">Полная история обращения, SLA и действия оператора в одном рабочем окне.</p>
+        </div>
+        <div class="chip-row">
+            <span class="chip" id="ticketDetailStatusChip">Загрузка...</span>
+            <span class="chip" id="ticketDetailPriorityChip">Приоритет</span>
+        </div>
+    </div>
+
+    <section class="settings-grid">
+        <article class="profile-panel span-8">
+            <div class="section-title-wrap">
+                <div>
+                    <h2 class="section-title" id="ticketDetailSubject">Загружаем заявку...</h2>
+                    <p class="section-subtitle" id="ticketDetailMeta">Подготавливаем переписку, SLA и профиль абонента.</p>
+                </div>
+            </div>
+
+            <div class="metrics-grid u-mt-18">
+                <div class="metric-card">
+                    <div class="metric-label">Категория</div>
+                    <div class="metric-value" id="ticketDetailCategory">—</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">SLA</div>
+                    <div class="metric-value" id="ticketDetailSla">—</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Абонент</div>
+                    <div class="metric-value" id="ticketDetailUser">—</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Исполнитель</div>
+                    <div class="metric-value" id="ticketDetailAssignee">—</div>
+                </div>
+            </div>
+
+            <section class="table-shell u-mt-20">
+                <div class="section-title-wrap">
+                    <div>
+                        <h3 class="section-title">Переписка</h3>
+                        <p class="section-subtitle">Сообщения абонента, ответы оператора и внутренние заметки.</p>
+                    </div>
+                </div>
+                <div id="ticketResolutionNote" class="u-mt-18" hidden></div>
+                <div id="ticketMessagesList" class="list-stack u-mt-18">
+                    <div class="skeleton skeleton-card-md"></div>
+                    <div class="skeleton skeleton-card-md"></div>
+                </div>
+            </section>
+        </article>
+
+        <article class="profile-panel span-4">
+            <div class="section-title-wrap">
+                <div>
+                    <h2 class="section-title">Операции</h2>
+                    <p class="section-subtitle">Назначение исполнителя, ответы и перевод заявки в итоговый статус.</p>
+                </div>
+            </div>
+
+            <form id="ticketAssignForm" class="list-stack u-mt-18">
+                <div class="field">
+                    <label class="field-label" for="ticketAssigneeSelect">Исполнитель</label>
+                    <select class="select" id="ticketAssigneeSelect">
+                        <option value="">Не назначен</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" id="ticketAssignBtn" type="submit">
+                    <i class="fas fa-user-check"></i>
+                    Назначить исполнителя
+                </button>
+            </form>
+
+            <div class="separator"></div>
+
+            <form id="ticketReplyForm" class="list-stack">
+                <div class="field">
+                    <label class="field-label" for="ticketReplyBody">Ответ операторa</label>
+                    <textarea class="textarea" id="ticketReplyBody" rows="5" placeholder="Опишите решение или задайте уточняющий вопрос" required></textarea>
+                </div>
+                <div class="field">
+                    <label class="field-label" for="ticketReplyAttachment">Вложение</label>
+                    <input class="input" id="ticketReplyAttachment" type="file">
+                </div>
+                <label class="feature-card toolbar">
+                    <span>
+                        <span class="table-title">Внутренняя заметка</span>
+                        <span class="table-copy">Сообщение увидят только сотрудники, абоненту оно не отправится.</span>
+                    </span>
+                    <input type="checkbox" id="ticketReplyInternal">
+                </label>
+                <button class="btn btn-secondary" id="ticketReplyBtn" type="submit">
+                    <i class="fas fa-reply"></i>
+                    Отправить ответ
+                </button>
+            </form>
+
+            <div class="separator"></div>
+
+            <form id="ticketResolveForm" class="list-stack">
+                <div class="field">
+                    <label class="field-label" for="ticketResolutionSummary">Итог решения</label>
+                    <textarea class="textarea" id="ticketResolutionSummary" rows="4" placeholder="Кратко зафиксируйте, что было сделано и что получил клиент" required></textarea>
+                </div>
+                <button class="btn btn-primary" id="ticketResolveBtn" type="submit">
+                    <i class="fas fa-circle-check"></i>
+                    Отметить как решённую
+                </button>
+            </form>
+
+            <div class="separator"></div>
+
+            <div class="list-stack">
+                <a class="btn btn-secondary" href="/admin/tickets">
+                    <i class="fas fa-list"></i>
+                    Вернуться к очереди
+                </a>
+                <a class="btn btn-ghost" href="/admin/dashboard">
+                    <i class="fas fa-chart-line"></i>
+                    Открыть админ-дашборд
+                </a>
+            </div>
+        </article>
+    </section>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const adminTicketId = {{ ticket_id }};
+    let adminTicketData = null;
+    let staffDirectory = [];
+
+    function ticketStatusText(status) {
+        const map = {
+            new: "Новая",
+            in_progress: "В работе",
+            waiting_customer: "Ожидает клиента",
+            resolved: "Решена",
+            closed: "Закрыта",
+            escalated: "Эскалация",
+        };
+        return map[status] || status || "—";
+    }
+
+    function ticketStatusClass(status) {
+        const map = {
+            new: "status-new",
+            in_progress: "status-in-progress",
+            waiting_customer: "status-waiting-customer",
+            resolved: "status-resolved",
+            closed: "status-closed",
+            escalated: "status-critical",
+        };
+        return map[status] || "status-new";
+    }
+
+    function roleText(role) {
+        const map = {
+            user: "Абонент",
+            operator: "Оператор",
+            admin: "Администратор",
+            super_admin: "Суперадмин",
+        };
+        return map[role] || role || "Участник";
+    }
+
+    function populateAssigneeSelect(selectedId = null) {
+        const select = document.getElementById("ticketAssigneeSelect");
+        const options = ['<option value="">Не назначен</option>'];
+        staffDirectory.forEach((staff) => {
+            options.push(
+                `<option value="${staff.id}" ${Number(selectedId) === Number(staff.id) ? "selected" : ""}>` +
+                `${OperatorUI.escapeHTML(staff.display_name || staff.full_name || staff.phone)} · ${OperatorUI.escapeHTML(staff.role_label || "")}` +
+                `</option>`
+            );
+        });
+        select.innerHTML = options.join("");
+    }
+
+    function renderResolutionNote(ticket) {
+        const node = document.getElementById("ticketResolutionNote");
+        if (!ticket.resolution_summary) {
+            node.hidden = true;
+            node.innerHTML = "";
+            return;
+        }
+
+        node.hidden = false;
+        node.innerHTML = `
+            <article class="feature-card">
+                <div class="toolbar">
+                    <div>
+                        <div class="table-title">Итог решения</div>
+                        <div class="table-copy">${ticket.resolved_at ? OperatorUI.formatDate(ticket.resolved_at, { includeTime: true }) : "Без отметки времени"}</div>
+                    </div>
+                    <span class="status-badge ${ticketStatusClass(ticket.status)}">${ticketStatusText(ticket.status)}</span>
+                </div>
+                <div class="content-note">${OperatorUI.escapeHTML(ticket.resolution_summary)}</div>
+            </article>
+        `;
+    }
+
+    function renderMessages(messages) {
+        const list = document.getElementById("ticketMessagesList");
+        if (!messages?.length) {
+            list.innerHTML = OperatorUI.createEmptyState(
+                "fas fa-comments",
+                "Сообщений пока нет",
+                "Переписка появится здесь после первого ответа оператора или абонента."
+            );
+            return;
+        }
+
+        list.innerHTML = messages.map((message) => `
+            <article class="feature-card">
+                <div class="toolbar">
+                    <div>
+                        <div class="table-title">
+                            ${OperatorUI.escapeHTML(message.author_name || `Пользователь #${message.user_id}`)}
+                            <span class="table-copy">· ${OperatorUI.escapeHTML(roleText(message.author_role))}</span>
+                        </div>
+                        <div class="table-copy">
+                            ${message.created_at ? OperatorUI.formatDate(message.created_at, { includeTime: true }) : "—"}
+                            ${message.author_phone ? `· ${OperatorUI.escapeHTML(message.author_phone)}` : ""}
+                        </div>
+                    </div>
+                    <div class="action-row">
+                        ${message.is_internal ? '<span class="badge badge-danger">Внутренняя заметка</span>' : ""}
+                        ${message.attachment_name ? `<span class="chip"><i class="fas fa-paperclip"></i>${OperatorUI.escapeHTML(message.attachment_name)}</span>` : ""}
+                    </div>
+                </div>
+                <div class="content-note">${OperatorUI.escapeHTML(message.body || "—")}</div>
+            </article>
+        `).join("");
+    }
+
+    async function loadAdminTicketContext() {
+        const adminUser = await OperatorUI.ensureAdminAccess(document.querySelector(".site-main"), {
+            errorTitle: "Не удалось открыть карточку заявки",
+        });
+        if (!adminUser) {
+            return;
+        }
+
+        try {
+            const [ticket, staff] = await Promise.all([
+                OperatorUI.request(`/api/v1/admin/tickets/${adminTicketId}`, { auth: true }),
+                OperatorUI.request("/api/v1/admin/staff?include_inactive=false", { auth: true }),
+            ]);
+
+            adminTicketData = ticket;
+            staffDirectory = staff.items || [];
+            populateAssigneeSelect(ticket.assigned_to);
+
+            document.getElementById("ticketDetailSubject").textContent = ticket.subject || `Заявка #${adminTicketId}`;
+            document.getElementById("ticketDetailMeta").textContent =
+                `Создана ${ticket.created_at ? OperatorUI.formatDate(ticket.created_at, { includeTime: true }) : "—"} · ` +
+                `последняя активность ${ticket.last_activity_at ? OperatorUI.formatDate(ticket.last_activity_at, { includeTime: true }) : "—"}`;
+            document.getElementById("ticketDetailCategory").textContent = ticket.category || "Без категории";
+            document.getElementById("ticketDetailSla").textContent = ticket.sla_deadline
+                ? OperatorUI.formatDate(ticket.sla_deadline, { includeTime: true })
+                : "Не задан";
+            document.getElementById("ticketDetailUser").textContent =
+                `${ticket.user_name || `Абонент #${ticket.user_id}`}${ticket.user_phone ? ` · ${ticket.user_phone}` : ""}`;
+            document.getElementById("ticketDetailAssignee").textContent = ticket.assigned_to_name || "Не назначен";
+
+            const statusChip = document.getElementById("ticketDetailStatusChip");
+            statusChip.textContent = ticketStatusText(ticket.status);
+            statusChip.className = `chip ${ticketStatusClass(ticket.status)}`;
+
+            const priorityChip = document.getElementById("ticketDetailPriorityChip");
+            priorityChip.textContent = `Приоритет: ${ticket.priority || "medium"}`;
+
+            document.getElementById("ticketResolutionSummary").value = ticket.resolution_summary || "";
+            renderResolutionNote(ticket);
+            renderMessages(ticket.messages || []);
+        } catch (error) {
+            document.getElementById("ticketMessagesList").innerHTML = OperatorUI.createEmptyState(
+                "fas fa-triangle-exclamation",
+                "Не удалось загрузить карточку заявки",
+                error.message || "Проверьте права доступа и попробуйте снова."
+            );
+        }
+    }
+
+    document.getElementById("ticketAssignForm").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const assigneeId = Number(document.getElementById("ticketAssigneeSelect").value || 0);
+        if (!assigneeId) {
+            OperatorUI.toast("Выберите сотрудника для назначения.", "error");
+            return;
+        }
+
+        const submit = document.getElementById("ticketAssignBtn");
+        OperatorUI.setButtonLoading(submit, true, "Назначаем...");
+        try {
+            await OperatorUI.request(`/api/v1/admin/tickets/${adminTicketId}/assign?assignee_id=${assigneeId}`, {
+                method: "POST",
+                auth: true,
+            });
+            OperatorUI.toast("Исполнитель назначен.", "success");
+            await loadAdminTicketContext();
+        } catch (error) {
+            OperatorUI.toast(error.message || "Не удалось назначить исполнителя.", "error");
+        } finally {
+            OperatorUI.setButtonLoading(submit, false);
+        }
+    });
+
+    document.getElementById("ticketReplyForm").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const submit = document.getElementById("ticketReplyBtn");
+        const formData = new FormData();
+        formData.append("body", document.getElementById("ticketReplyBody").value.trim());
+        formData.append("is_internal", document.getElementById("ticketReplyInternal").checked ? "true" : "false");
+
+        const attachment = document.getElementById("ticketReplyAttachment").files?.[0];
+        if (attachment) {
+            formData.append("attachment", attachment);
+        }
+
+        OperatorUI.setButtonLoading(submit, true, "Отправляем...");
+        try {
+            await OperatorUI.request(`/api/v1/admin/tickets/${adminTicketId}/reply`, {
+                method: "POST",
+                auth: true,
+                body: formData,
+            });
+            document.getElementById("ticketReplyForm").reset();
+            OperatorUI.toast("Ответ сохранён.", "success");
+            await loadAdminTicketContext();
+        } catch (error) {
+            OperatorUI.toast(error.message || "Не удалось отправить ответ.", "error");
+        } finally {
+            OperatorUI.setButtonLoading(submit, false);
+        }
+    });
+
+    document.getElementById("ticketResolveForm").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const submit = document.getElementById("ticketResolveBtn");
+        const resolutionSummary = document.getElementById("ticketResolutionSummary").value.trim();
+        if (resolutionSummary.length < 10) {
+            OperatorUI.toast("Опишите решение чуть подробнее.", "error");
+            return;
+        }
+
+        OperatorUI.setButtonLoading(submit, true, "Фиксируем...");
+        try {
+            await OperatorUI.request(`/api/v1/admin/tickets/${adminTicketId}/resolve`, {
+                method: "POST",
+                auth: true,
+                json: true,
+                body: { resolution_summary: resolutionSummary },
+            });
+            OperatorUI.toast("Заявка переведена в статус «Решена».", "success");
+            await loadAdminTicketContext();
+        } catch (error) {
+            OperatorUI.toast(error.message || "Не удалось обновить статус заявки.", "error");
+        } finally {
+            OperatorUI.setButtonLoading(submit, false);
+        }
+    });
+
+    loadAdminTicketContext();
+</script>
+{% endblock %}

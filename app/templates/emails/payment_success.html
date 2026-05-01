@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: #10B981;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            background: #f9f9f9;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+        }
+        .amount {
+            font-size: 36px;
+            font-weight: bold;
+            color: #10B981;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .details {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            background: #10B981;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 12px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Платёж успешно выполнен!</h1>
+        </div>
+        <div class="content">
+            <p>Здравствуйте, <strong>{{ name }}</strong>!</p>
+            
+            <p>Ваш платёж успешно обработан.</p>
+            
+            <div class="amount">
+                {{ amount }} ₽
+            </div>
+            
+            <div class="details">
+                <p><strong>Детали платежа:</strong></p>
+                <p>Дата: {{ date }}</p>
+                <p>Способ оплаты: {{ method }}</p>
+                <p>Номер транзакции: {{ transaction_id }}</p>
+            </div>
+            
+            <center>
+                <a href="{{ dashboard_url }}" class="button">Перейти в личный кабинет</a>
+            </center>
+            
+            <p>Спасибо, что пользуетесь нашими услугами!</p>
+            
+            <p>С уважением,<br>Команда Оператор</p>
+        </div>
+        <div class="footer">
+            <p>© {{ year }} Оператор связи. Все права защищены.</p>
+        </div>
+    </div>
+</body>
+</html>

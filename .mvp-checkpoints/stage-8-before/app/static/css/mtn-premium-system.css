@@ -1,0 +1,1419 @@
+:root {
+  --color-primary: #0a2b4e;
+  --color-primary-dark: #051c33;
+  --color-accent: #2563eb;
+  --color-accent-strong: #1d4ed8;
+  --color-accent-light: #eff6ff;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #0ea5e9;
+  --color-text-primary: #1a2c3e;
+  --color-text-secondary: #5a6b7c;
+  --color-text-muted: #8a9bae;
+  --color-text-white: #ffffff;
+  --color-bg-page: #f4f6fa;
+  --color-bg-card: #ffffff;
+  --color-bg-soft: #f8fafe;
+  --color-bg-hover: #eef4ff;
+  --color-bg-dark: #07182c;
+  --color-border: #e5e7eb;
+  --color-border-strong: #d6dee8;
+  --font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.75rem;
+  --font-size-4xl: 2rem;
+  --font-size-5xl: 2.5rem;
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 20px;
+  --spacing-2xl: 24px;
+  --spacing-3xl: 32px;
+  --spacing-4xl: 48px;
+  --spacing-5xl: 64px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 1px rgba(15, 23, 42, 0.03);
+  --shadow-md: 0 10px 30px rgba(15, 23, 42, 0.06), 0 2px 10px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 18px 48px rgba(15, 23, 42, 0.1), 0 8px 24px rgba(15, 23, 42, 0.06);
+  --shadow-xl: 0 24px 60px rgba(15, 23, 42, 0.14), 0 12px 28px rgba(15, 23, 42, 0.08);
+  --shadow-hover: 0 24px 44px rgba(15, 23, 42, 0.14);
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.2s ease;
+  --transition-slow: 0.3s ease;
+  --breakpoint-mobile: 768px;
+  --breakpoint-tablet: 1024px;
+  --breakpoint-desktop: 1280px;
+  --surface-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.86) 0%, rgba(255, 255, 255, 0.98) 100%);
+  --page-gradient:
+    radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 30%),
+    radial-gradient(circle at top right, rgba(14, 165, 233, 0.08), transparent 24%),
+    linear-gradient(180deg, #f8fbff 0%, #f4f6fa 38%, #eef3f9 100%);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body.mtn-premium {
+  min-height: 100vh;
+  background: var(--page-gradient);
+  color: var(--color-text-primary);
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+body.mtn-premium::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    linear-gradient(120deg, rgba(255, 255, 255, 0.36), transparent 42%),
+    radial-gradient(circle at 20% 0%, rgba(255, 255, 255, 0.42), transparent 28%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+body.mtn-premium a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--transition-fast), opacity var(--transition-fast), transform var(--transition-fast);
+}
+
+body.mtn-premium a:hover {
+  color: var(--color-accent-strong);
+}
+
+body.mtn-premium button,
+body.mtn-premium input,
+body.mtn-premium select,
+body.mtn-premium textarea {
+  font: inherit;
+}
+
+body.mtn-premium img {
+  display: block;
+  max-width: 100%;
+}
+
+body.mtn-premium [hidden] {
+  display: none !important;
+}
+
+body.mtn-premium :focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+body.mtn-premium ::selection {
+  background: rgba(37, 99, 235, 0.18);
+  color: var(--color-primary-dark);
+}
+
+.container {
+  width: min(100%, var(--breakpoint-desktop));
+  margin: 0 auto;
+  padding-inline: var(--spacing-2xl);
+}
+
+.grid-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-2xl);
+}
+
+body.mtn-premium h1,
+body.mtn-premium .h1,
+body.mtn-premium .hero-title,
+body.mtn-premium .toolbar-title,
+body.mtn-premium .mtn-hero__title,
+body.mtn-premium .tariffs-hero-v3__title,
+body.mtn-premium .payments-hero-v2__title,
+body.mtn-premium .mtn-auth-title {
+  color: var(--color-text-primary);
+  font-size: clamp(2.25rem, 1.9rem + 1.2vw, var(--font-size-5xl));
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.08;
+}
+
+body.mtn-premium h2,
+body.mtn-premium .h2,
+body.mtn-premium .section-title,
+body.mtn-premium .table-title,
+body.mtn-premium .mtn-section__title,
+body.mtn-premium .payments-card-v2__title,
+body.mtn-premium .tariffs-recommendation-v3__title,
+body.mtn-premium .admin-widget h2 {
+  color: var(--color-text-primary);
+  font-size: clamp(1.25rem, 1.1rem + 0.5vw, var(--font-size-2xl));
+  font-weight: 650;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+
+body.mtn-premium h3,
+body.mtn-premium .text-large,
+body.mtn-premium .mtn-widget-card__title,
+body.mtn-premium .tariff-card-v3__name {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-xl);
+  font-weight: 650;
+  line-height: 1.25;
+}
+
+body.mtn-premium p,
+body.mtn-premium .hero-subtitle,
+body.mtn-premium .toolbar-copy,
+body.mtn-premium .section-subtitle,
+body.mtn-premium .table-copy,
+body.mtn-premium .mtn-auth-subtitle,
+body.mtn-premium .payments-card-v2__subtitle,
+body.mtn-premium .tariffs-hero-v3__lead,
+body.mtn-premium .text-small {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-base);
+  line-height: 1.65;
+}
+
+body.mtn-premium .text-muted,
+body.mtn-premium .field-help,
+body.mtn-premium .mtn-meta-note,
+body.mtn-premium .site-footer-copy,
+body.mtn-premium .user-chip-role,
+body.mtn-premium .payments-balance-card-v2__hint {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+body.mtn-premium .site-shell {
+  position: relative;
+  width: min(100%, 1600px);
+  margin: 0 auto;
+  padding: var(--spacing-xl);
+}
+
+body.mtn-premium .site-header {
+  position: sticky;
+  top: var(--spacing-lg);
+  z-index: 40;
+  background: rgba(255, 255, 255, 0.74);
+  border: 1px solid rgba(255, 255, 255, 0.62);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(18px);
+}
+
+body.mtn-premium .site-header::after,
+body.mtn-premium .site-sidebar::after,
+body.mtn-premium .hero::after,
+body.mtn-premium .card::after,
+body.mtn-premium .feature-card::after,
+body.mtn-premium .dialog::after,
+body.mtn-premium .mtn-card::after,
+body.mtn-premium .payments-card-v2::after,
+body.mtn-premium .tariff-card-v3::after,
+body.mtn-premium .admin-widget::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.52);
+  pointer-events: none;
+}
+
+body.mtn-premium .site-header-inner {
+  gap: var(--spacing-2xl);
+  padding: var(--spacing-lg) var(--spacing-xl);
+}
+
+body.mtn-premium .brand-lockup,
+body.mtn-premium .site-footer-lockup {
+  gap: var(--spacing-md);
+}
+
+body.mtn-premium .brand-mark,
+body.mtn-premium .mtn-auth-logo-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--color-primary) 0%, #0d3a6c 56%, var(--color-accent) 100%);
+  color: var(--color-text-white);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 12px 28px rgba(10, 43, 78, 0.2);
+}
+
+body.mtn-premium .brand-title,
+body.mtn-premium .site-footer-title,
+body.mtn-premium .mtn-auth-logo-mark {
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+body.mtn-premium .brand-subtitle,
+body.mtn-premium .mtn-auth-logo-subtitle {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+body.mtn-premium .header-actions,
+body.mtn-premium .hero-actions,
+body.mtn-premium .action-row,
+body.mtn-premium .mtn-inline-banner__actions,
+body.mtn-premium .tariffs-recommendation-v3__actions,
+body.mtn-premium .admin-dashboard-toolbar-actions,
+body.mtn-premium .tariffs-modal-v3__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
+body.mtn-premium .site-header-nav {
+  gap: var(--spacing-xs);
+  padding: 6px;
+  border-radius: var(--radius-full);
+  background: rgba(247, 249, 252, 0.92);
+  border: 1px solid rgba(214, 222, 232, 0.7);
+}
+
+body.mtn-premium .header-nav-link,
+body.mtn-premium .nav-link,
+body.mtn-premium .chip,
+body.mtn-premium .tariffs-filter-v3,
+body.mtn-premium .tariffs-view-switch-v3__button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  min-height: 44px;
+  padding: 10px 16px;
+  border-radius: var(--radius-full);
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+body.mtn-premium .header-nav-link:hover,
+body.mtn-premium .header-nav-link.is-active,
+body.mtn-premium .nav-link:hover,
+body.mtn-premium .nav-link.is-active,
+body.mtn-premium .chip:hover,
+body.mtn-premium .chip.is-accent,
+body.mtn-premium .tariffs-filter-v3:hover,
+body.mtn-premium .tariffs-filter-v3.is-active,
+body.mtn-premium .tariffs-view-switch-v3__button:hover,
+body.mtn-premium .tariffs-view-switch-v3__button.is-active {
+  background: var(--color-primary);
+  color: var(--color-text-white);
+  box-shadow: 0 10px 22px rgba(10, 43, 78, 0.18);
+}
+
+body.mtn-premium .user-chip,
+body.mtn-premium .header-notifications-trigger,
+body.mtn-premium .mobile-sidebar-toggle {
+  min-height: 48px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+body.mtn-premium .user-chip {
+  padding: 8px 14px 8px 8px;
+}
+
+body.mtn-premium .user-chip-avatar,
+body.mtn-premium .sidebar-avatar,
+body.mtn-premium .mtn-profile-avatar-preview {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.16), rgba(10, 43, 78, 0.16));
+  color: var(--color-primary);
+  font-weight: 700;
+  box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.08);
+}
+
+body.mtn-premium .layout-grid {
+  gap: var(--spacing-xl);
+  margin-top: var(--spacing-xl);
+}
+
+body.mtn-premium .site-sidebar,
+body.mtn-premium .hero,
+body.mtn-premium .hero-panel,
+body.mtn-premium .card,
+body.mtn-premium .dialog,
+body.mtn-premium .feature-card,
+body.mtn-premium .profile-panel,
+body.mtn-premium .feed-card,
+body.mtn-premium .metric-card,
+body.mtn-premium .story-card,
+body.mtn-premium .settings-block,
+body.mtn-premium .payments-card-v2,
+body.mtn-premium .payments-balance-card-v2,
+body.mtn-premium .payments-summary-v2,
+body.mtn-premium .tariffs-current-v3,
+body.mtn-premium .tariffs-recommendation-v3,
+body.mtn-premium .tariff-card-v3,
+body.mtn-premium .tariffs-table-shell-v3,
+body.mtn-premium .tariffs-state-v3,
+body.mtn-premium .tariffs-modal-v3,
+body.mtn-premium .mtn-card,
+body.mtn-premium .mtn-auth-card,
+body.mtn-premium .mtn-auth-side,
+body.mtn-premium .mtn-auth-feature,
+body.mtn-premium .mtn-auth-status,
+body.mtn-premium .admin-widget,
+body.mtn-premium .admin-dashboard-modal-card,
+body.mtn-premium .dropdown,
+body.mtn-premium .notification-type-card {
+  position: relative;
+  background: var(--surface-gradient);
+  border: 1px solid rgba(229, 231, 235, 0.72);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(14px);
+}
+
+body.mtn-premium .card,
+body.mtn-premium .hero,
+body.mtn-premium .profile-panel,
+body.mtn-premium .feed-card,
+body.mtn-premium .metric-card,
+body.mtn-premium .story-card,
+body.mtn-premium .settings-block,
+body.mtn-premium .payments-card-v2,
+body.mtn-premium .payments-summary-v2,
+body.mtn-premium .tariffs-current-v3,
+body.mtn-premium .tariffs-recommendation-v3,
+body.mtn-premium .tariff-card-v3,
+body.mtn-premium .tariffs-state-v3,
+body.mtn-premium .mtn-card,
+body.mtn-premium .admin-widget,
+body.mtn-premium .dropdown,
+body.mtn-premium .notification-type-card {
+  padding: var(--spacing-2xl);
+}
+
+body.mtn-premium .hero,
+body.mtn-premium .mtn-hero,
+body.mtn-premium .payments-hero-v2,
+body.mtn-premium .tariffs-hero-v3 {
+  overflow: hidden;
+  background:
+    radial-gradient(circle at top right, rgba(37, 99, 235, 0.1), transparent 32%),
+    radial-gradient(circle at bottom left, rgba(10, 43, 78, 0.08), transparent 28%),
+    var(--surface-gradient);
+}
+
+body.mtn-premium .hero,
+body.mtn-premium .mtn-hero,
+body.mtn-premium .payments-hero-v2,
+body.mtn-premium .tariffs-hero-v3,
+body.mtn-premium .mtn-auth-shell {
+  padding: clamp(24px, 2vw, 32px);
+  border-radius: calc(var(--radius-2xl) + 4px);
+}
+
+body.mtn-premium .hero-grid,
+body.mtn-premium .payments-layout-v2,
+body.mtn-premium .profile-grid,
+body.mtn-premium .settings-grid,
+body.mtn-premium .tariffs-hero-v3,
+body.mtn-premium .mtn-auth-shell,
+body.mtn-premium .admin-dashboard-widget-grid,
+body.mtn-premium .admin-dashboard-actions-grid,
+body.mtn-premium .hero-panel-grid,
+body.mtn-premium .payments-form-grid-v2,
+body.mtn-premium .tariffs-grid-v3 {
+  gap: var(--spacing-2xl);
+}
+
+body.mtn-premium .page-section,
+body.mtn-premium .mtn-dashboard,
+body.mtn-premium .payments-page-v2__shell,
+body.mtn-premium .tariffs-page-v3,
+body.mtn-premium .mtn-auth-page,
+body.mtn-premium .admin-dashboard-page {
+  display: grid;
+  gap: var(--spacing-2xl);
+  width: min(100%, 1320px);
+  margin-inline: auto;
+}
+
+body.mtn-premium .site-main {
+  min-width: 0;
+}
+
+body.mtn-premium .site-main > * + * {
+  margin-top: var(--spacing-2xl);
+}
+
+body.mtn-premium .hero-subtitle,
+body.mtn-premium .payments-hero-v2__lead,
+body.mtn-premium .tariffs-hero-v3__lead {
+  max-width: 72ch;
+  margin-top: var(--spacing-md);
+}
+
+body.mtn-premium .eyebrow,
+body.mtn-premium .payments-hero-v2__eyebrow,
+body.mtn-premium .tariffs-hero-v3__eyebrow,
+body.mtn-premium .mtn-auth-kicker,
+body.mtn-premium .tariffs-current-v3__eyebrow,
+body.mtn-premium .mtn-widget-card__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  width: fit-content;
+  padding: 8px 12px;
+  margin-bottom: var(--spacing-lg);
+  border-radius: var(--radius-full);
+  background: rgba(37, 99, 235, 0.09);
+  color: var(--color-primary);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+body.mtn-premium .insight-card,
+body.mtn-premium .hero-kpi,
+body.mtn-premium .tariffs-recommendation-v3__stat,
+body.mtn-premium .payments-summary-v2__row,
+body.mtn-premium .mtn-charge-row,
+body.mtn-premium .admin-kpi-card,
+body.mtn-premium .admin-widget-list > * {
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-xl);
+  background: var(--color-bg-soft);
+  border: 1px solid rgba(229, 231, 235, 0.82);
+}
+
+body.mtn-premium .insight-label,
+body.mtn-premium .hero-kpi-label,
+body.mtn-premium .payments-balance-card-v2__label,
+body.mtn-premium .mtn-action-card__label,
+body.mtn-premium .mtn-widget-card__subtext {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+body.mtn-premium .insight-value,
+body.mtn-premium .hero-kpi-value,
+body.mtn-premium .payments-balance-card-v2__value,
+body.mtn-premium .tariffs-current-v3__price,
+body.mtn-premium .mtn-action-card__value,
+body.mtn-premium .mtn-widget-card__value,
+body.mtn-premium .payments-summary-v2__row dd,
+body.mtn-premium .admin-kpi-card__value {
+  color: var(--color-primary-dark);
+  font-size: clamp(1.8rem, 1.45rem + 0.8vw, 2.6rem);
+  font-weight: 750;
+  letter-spacing: -0.04em;
+  line-height: 1.04;
+}
+
+body.mtn-premium .btn,
+body.mtn-premium .mtn-button,
+body.mtn-premium .mtn-auth-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 12px 22px;
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background var(--transition-fast),
+    color var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+body.mtn-premium .btn:hover,
+body.mtn-premium .mtn-button:hover,
+body.mtn-premium .mtn-auth-btn:hover {
+  transform: translateY(-1px);
+}
+
+body.mtn-premium .btn:disabled,
+body.mtn-premium .mtn-button:disabled,
+body.mtn-premium .mtn-auth-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+body.mtn-premium .btn-primary,
+body.mtn-premium .mtn-button--primary,
+body.mtn-premium .mtn-auth-btn--primary {
+  background: linear-gradient(135deg, var(--color-primary) 0%, #0d3b70 55%, var(--color-accent) 100%);
+  color: var(--color-text-white);
+  box-shadow: 0 16px 32px rgba(10, 43, 78, 0.22);
+}
+
+body.mtn-premium .btn-primary:hover,
+body.mtn-premium .mtn-button--primary:hover,
+body.mtn-premium .mtn-auth-btn--primary:hover {
+  background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 52%, var(--color-accent-strong) 100%);
+  box-shadow: 0 18px 36px rgba(10, 43, 78, 0.26);
+}
+
+body.mtn-premium .btn-secondary,
+body.mtn-premium .btn-ghost,
+body.mtn-premium .mtn-button--secondary,
+body.mtn-premium .mtn-button--ghost,
+body.mtn-premium .mtn-auth-btn--secondary,
+body.mtn-premium .mtn-auth-btn--ghost {
+  background: rgba(255, 255, 255, 0.86);
+  color: var(--color-primary);
+  border: 1px solid rgba(10, 43, 78, 0.12);
+  box-shadow: var(--shadow-sm);
+}
+
+body.mtn-premium .btn-secondary:hover,
+body.mtn-premium .btn-ghost:hover,
+body.mtn-premium .mtn-button--secondary:hover,
+body.mtn-premium .mtn-button--ghost:hover,
+body.mtn-premium .mtn-auth-btn--secondary:hover,
+body.mtn-premium .mtn-auth-btn--ghost:hover {
+  background: var(--color-accent-light);
+}
+
+body.mtn-premium .btn-danger {
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  color: var(--color-text-white);
+  box-shadow: 0 14px 28px rgba(239, 68, 68, 0.24);
+}
+
+body.mtn-premium .btn-sm,
+body.mtn-premium .mtn-button--sm,
+body.mtn-premium .mtn-auth-btn--sm {
+  min-height: 40px;
+  padding: 10px 18px;
+  font-size: var(--font-size-sm);
+}
+
+body.mtn-premium .input,
+body.mtn-premium .select,
+body.mtn-premium .payments-input-v2,
+body.mtn-premium .mtn-auth-input,
+body.mtn-premium .mtn-header-service__select,
+body.mtn-premium .admin-dashboard-search input {
+  width: 100%;
+  min-height: 52px;
+  padding: 14px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--color-text-primary);
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.03);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background var(--transition-fast);
+}
+
+body.mtn-premium .input::placeholder,
+body.mtn-premium .payments-input-v2::placeholder,
+body.mtn-premium .mtn-auth-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+body.mtn-premium .input:focus,
+body.mtn-premium .select:focus,
+body.mtn-premium .payments-input-v2:focus,
+body.mtn-premium .mtn-auth-input:focus,
+body.mtn-premium .mtn-header-service__select:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  background: #ffffff;
+  box-shadow:
+    0 0 0 3px rgba(37, 99, 235, 0.12),
+    0 10px 22px rgba(37, 99, 235, 0.08);
+}
+
+body.mtn-premium .field,
+body.mtn-premium .payments-field-v2,
+body.mtn-premium .mtn-auth-field {
+  display: grid;
+  gap: var(--spacing-sm);
+}
+
+body.mtn-premium .field-label,
+body.mtn-premium .payments-field-v2__label,
+body.mtn-premium .mtn-auth-label {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+body.mtn-premium .field-row,
+body.mtn-premium .filters-grid,
+body.mtn-premium .admin-dashboard-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--spacing-xl);
+}
+
+body.mtn-premium textarea.input {
+  min-height: 120px;
+  resize: vertical;
+}
+
+body.mtn-premium .dropdown {
+  min-width: 320px;
+  padding: var(--spacing-md);
+}
+
+body.mtn-premium .dropdown-head,
+body.mtn-premium .dropdown-foot {
+  padding: var(--spacing-md);
+}
+
+body.mtn-premium .dropdown-list {
+  display: grid;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) 0;
+}
+
+body.mtn-premium .dropdown-item {
+  border: 1px solid transparent;
+  border-radius: var(--radius-xl);
+  background: transparent;
+  transition: background var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+}
+
+body.mtn-premium .dropdown-item:hover {
+  background: var(--color-bg-soft);
+  border-color: rgba(37, 99, 235, 0.12);
+  transform: translateY(-1px);
+}
+
+body.mtn-premium .badge {
+  border-radius: var(--radius-full);
+  font-weight: 700;
+}
+
+body.mtn-premium .badge-danger {
+  background: rgba(239, 68, 68, 0.14);
+  color: #b91c1c;
+}
+
+body.mtn-premium .badge-neutral {
+  background: rgba(10, 43, 78, 0.08);
+  color: var(--color-primary);
+}
+
+body.mtn-premium .toolbar,
+body.mtn-premium .section-title-wrap,
+body.mtn-premium .payments-card-v2__head,
+body.mtn-premium .admin-widget-head,
+body.mtn-premium .settings-block-head,
+body.mtn-premium .mtn-section__head,
+body.mtn-premium .dialog-header,
+body.mtn-premium .modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-lg);
+}
+
+body.mtn-premium .list-stack,
+body.mtn-premium .chip-row,
+body.mtn-premium .mtn-chip-row,
+body.mtn-premium .mtn-auth-feature-list,
+body.mtn-premium .admin-widget-list {
+  display: grid;
+  gap: var(--spacing-md);
+}
+
+body.mtn-premium .separator {
+  height: 1px;
+  border: 0;
+  background: linear-gradient(90deg, transparent, rgba(90, 107, 124, 0.26), transparent);
+}
+
+body.mtn-premium .toolbar,
+body.mtn-premium .mtn-inline-banner,
+body.mtn-premium .payments-banner-v2,
+body.mtn-premium .tariffs-modal-v3__notice,
+body.mtn-premium .mtn-toast,
+body.mtn-premium .mtn-inline-empty {
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(229, 231, 235, 0.82);
+  background: rgba(255, 255, 255, 0.82);
+}
+
+body.mtn-premium .mtn-inline-banner--soft,
+body.mtn-premium .payments-banner-v2,
+body.mtn-premium .mtn-toast {
+  background: linear-gradient(135deg, rgba(239, 246, 255, 0.96), rgba(255, 255, 255, 0.94));
+}
+
+body.mtn-premium .payments-banner-v2--danger,
+body.mtn-premium .tariffs-modal-v3__notice--danger,
+body.mtn-premium .mtn-toast--error {
+  border-color: rgba(239, 68, 68, 0.18);
+  background: linear-gradient(135deg, rgba(254, 242, 242, 0.96), rgba(255, 255, 255, 0.96));
+}
+
+body.mtn-premium .tariffs-modal-v3__notice--success {
+  border-color: rgba(16, 185, 129, 0.18);
+  background: linear-gradient(135deg, rgba(236, 253, 245, 0.98), rgba(255, 255, 255, 0.96));
+}
+
+body.mtn-premium .modal,
+body.mtn-premium .admin-dashboard-modal {
+  padding: var(--spacing-xl);
+  background: rgba(7, 24, 44, 0.48);
+  backdrop-filter: blur(10px);
+}
+
+body.mtn-premium .dialog,
+body.mtn-premium .modal-content,
+body.mtn-premium .admin-dashboard-modal-card {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: var(--spacing-2xl);
+}
+
+body.mtn-premium .dialog-body {
+  padding-top: var(--spacing-xl);
+}
+
+body.mtn-premium .dialog-close,
+body.mtn-premium .icon-btn,
+body.mtn-premium .payments-help-v2,
+body.mtn-premium .mtn-auth-input-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid rgba(10, 43, 78, 0.1);
+  background: rgba(255, 255, 255, 0.86);
+  color: var(--color-primary);
+}
+
+body.mtn-premium .mtn-auth-page {
+  min-height: calc(100vh - 220px);
+}
+
+body.mtn-premium .mtn-auth-shell {
+  grid-template-columns: minmax(0, 1.05fr) minmax(380px, 0.95fr);
+  background: transparent;
+  padding: 0;
+}
+
+body.mtn-premium .mtn-auth-side,
+body.mtn-premium .mtn-auth-card {
+  height: 100%;
+  padding: clamp(24px, 3vw, 40px);
+}
+
+body.mtn-premium .mtn-auth-side {
+  background:
+    radial-gradient(circle at top left, rgba(37, 99, 235, 0.14), transparent 28%),
+    linear-gradient(160deg, rgba(7, 24, 44, 0.98), rgba(10, 43, 78, 0.94));
+  color: var(--color-text-white);
+}
+
+body.mtn-premium .mtn-auth-side .mtn-auth-title,
+body.mtn-premium .mtn-auth-side .mtn-auth-subtitle,
+body.mtn-premium .mtn-auth-side .mtn-auth-help,
+body.mtn-premium .mtn-auth-side .mtn-auth-logo-subtitle,
+body.mtn-premium .mtn-auth-side .mtn-auth-kicker {
+  color: rgba(255, 255, 255, 0.88);
+}
+
+body.mtn-premium .mtn-auth-feature,
+body.mtn-premium .mtn-auth-demo-banner {
+  padding: var(--spacing-lg);
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+body.mtn-premium .mtn-auth-status {
+  padding: var(--spacing-lg);
+}
+
+body.mtn-premium .mtn-auth-input-wrap {
+  position: relative;
+}
+
+body.mtn-premium .mtn-auth-input {
+  padding-inline: 44px 48px;
+}
+
+body.mtn-premium .mtn-auth-input-icon {
+  position: absolute;
+  top: 50%;
+  left: 16px;
+  transform: translateY(-50%);
+  color: var(--color-text-muted);
+}
+
+body.mtn-premium .mtn-auth-input-action {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+}
+
+body.mtn-premium .mtn-dashboard {
+  gap: var(--spacing-3xl);
+}
+
+body.mtn-premium .mtn-quick-actions__track,
+body.mtn-premium .mtn-action-grid,
+body.mtn-premium .mtn-smart-grid {
+  display: grid;
+  gap: var(--spacing-xl);
+}
+
+body.mtn-premium .mtn-action-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+body.mtn-premium .mtn-smart-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+body.mtn-premium .mtn-quick-actions__track {
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(180px, 1fr);
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+body.mtn-premium .mtn-action-card,
+body.mtn-premium .mtn-widget-card {
+  min-height: 100%;
+}
+
+body.mtn-premium .mtn-quick-actions__item {
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-2xl);
+  background: var(--surface-gradient);
+  border: 1px solid rgba(229, 231, 235, 0.72);
+  box-shadow: var(--shadow-md);
+}
+
+body.mtn-premium .mtn-quick-actions__item:hover,
+body.mtn-premium .mtn-card:hover,
+body.mtn-premium .card:hover,
+body.mtn-premium .feature-card:hover,
+body.mtn-premium .payments-card-v2:hover,
+body.mtn-premium .tariff-card-v3:hover,
+body.mtn-premium .admin-widget:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+body.mtn-premium .mtn-quick-actions__icon,
+body.mtn-premium .mtn-action-card__icon,
+body.mtn-premium .payments-balance-card-v2__icon,
+body.mtn-premium .tariffs-state-v3__icon,
+body.mtn-premium .notification-type-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: rgba(37, 99, 235, 0.1);
+  color: var(--color-primary);
+}
+
+body.mtn-premium .mtn-balance-trend__chart,
+body.mtn-premium .admin-widget-chart,
+body.mtn-premium .payments-qr-v2 {
+  border-radius: var(--radius-xl);
+  background: linear-gradient(180deg, rgba(244, 246, 250, 0.86), rgba(255, 255, 255, 0.96));
+  border: 1px solid rgba(229, 231, 235, 0.82);
+}
+
+body.mtn-premium .mtn-bonus-progress,
+body.mtn-premium .mtn-quality-indicator__track {
+  overflow: hidden;
+  height: 10px;
+  border-radius: var(--radius-full);
+  background: rgba(10, 43, 78, 0.08);
+}
+
+body.mtn-premium .mtn-bonus-progress__bar,
+body.mtn-premium .mtn-quality-indicator__bar {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--color-accent), #60a5fa);
+}
+
+body.mtn-premium .payments-layout-v2 {
+  grid-template-columns: minmax(0, 1.5fr) minmax(320px, 0.78fr);
+  align-items: start;
+}
+
+body.mtn-premium .payments-methods-v2,
+body.mtn-premium .payments-presets-v2,
+body.mtn-premium .tariffs-filters-v3,
+body.mtn-premium .tariffs-view-switch-v3 {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+}
+
+body.mtn-premium .payments-method-v2,
+body.mtn-premium .payments-preset-v2,
+body.mtn-premium .tariffs-schedule-v3 {
+  border: 1px solid rgba(10, 43, 78, 0.1);
+  border-radius: var(--radius-xl);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--color-text-primary);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast),
+    background var(--transition-fast);
+}
+
+body.mtn-premium .payments-method-v2,
+body.mtn-premium .tariffs-schedule-v3 {
+  padding: var(--spacing-lg);
+}
+
+body.mtn-premium .payments-preset-v2 {
+  min-height: 48px;
+  padding: 12px 16px;
+  font-weight: 600;
+}
+
+body.mtn-premium .payments-method-v2:hover,
+body.mtn-premium .payments-method-v2.is-active,
+body.mtn-premium .payments-preset-v2:hover,
+body.mtn-premium .payments-preset-v2.is-active,
+body.mtn-premium .tariffs-schedule-v3:hover,
+body.mtn-premium .tariffs-schedule-v3:has(input:checked) {
+  border-color: rgba(37, 99, 235, 0.34);
+  background: var(--color-accent-light);
+  box-shadow: 0 14px 28px rgba(37, 99, 235, 0.1);
+  transform: translateY(-1px);
+}
+
+body.mtn-premium .payments-checkbox-v2,
+body.mtn-premium .tariffs-schedule-v3,
+body.mtn-premium .settings-toggle,
+body.mtn-premium .notification-type-card {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+}
+
+body.mtn-premium .payments-summary-v2__list,
+body.mtn-premium .tariffs-modal-v3__summary,
+body.mtn-premium .tariffs-modal-v3__timing,
+body.mtn-premium .payments-secondary-v2,
+body.mtn-premium .payments-primary-v2 {
+  display: grid;
+  gap: var(--spacing-lg);
+}
+
+body.mtn-premium .tariffs-toolbar-v3 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-lg) var(--spacing-xl);
+  border-radius: var(--radius-2xl);
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(229, 231, 235, 0.76);
+  box-shadow: var(--shadow-sm);
+}
+
+body.mtn-premium .tariffs-grid-v3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+body.mtn-premium .tariffs-table-v3 {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+body.mtn-premium .tariffs-table-v3 th,
+body.mtn-premium .tariffs-table-v3 td {
+  padding: 18px 16px;
+  text-align: left;
+  border-bottom: 1px solid rgba(229, 231, 235, 0.76);
+}
+
+body.mtn-premium .tariffs-table-v3 th {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+body.mtn-premium .tariffs-table-v3 tbody tr {
+  transition: background var(--transition-fast);
+}
+
+body.mtn-premium .tariffs-table-v3 tbody tr:hover {
+  background: rgba(37, 99, 235, 0.04);
+}
+
+body.mtn-premium .admin-dashboard-widget-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+}
+
+body.mtn-premium .admin-widget {
+  display: grid;
+  gap: var(--spacing-lg);
+  grid-column: span 4;
+}
+
+body.mtn-premium .admin-widget--wide {
+  grid-column: span 8;
+}
+
+body.mtn-premium .admin-widget-footer-link {
+  justify-self: start;
+}
+
+body.mtn-premium .admin-dashboard-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+body.mtn-premium .admin-action-button {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  border: 1px solid rgba(10, 43, 78, 0.08);
+  border-radius: var(--radius-xl);
+  background: rgba(255, 255, 255, 0.86);
+  color: var(--color-text-primary);
+  font-weight: 600;
+  text-align: left;
+  transition:
+    transform var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background var(--transition-fast);
+}
+
+body.mtn-premium .admin-action-button:hover {
+  background: var(--color-accent-light);
+  border-color: rgba(37, 99, 235, 0.16);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+body.mtn-premium .site-footer-wrap {
+  margin-top: var(--spacing-xl);
+}
+
+body.mtn-premium .site-footer-card {
+  padding: var(--spacing-xl);
+}
+
+body.mtn-premium .site-footer-grid,
+body.mtn-premium .site-footer-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-lg);
+}
+
+body.mtn-premium .site-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+}
+
+body.mtn-premium [data-reveal],
+body.mtn-premium [data-animate="fade"],
+body.mtn-premium .mtn-fade-in,
+body.mtn-premium .animate-in,
+body.mtn-premium .card,
+body.mtn-premium .feature-card,
+body.mtn-premium .profile-panel,
+body.mtn-premium .payments-card-v2,
+body.mtn-premium .tariff-card-v3,
+body.mtn-premium .admin-widget {
+  animation: fadeInUp 0.48s ease-out both;
+}
+
+body.mtn-premium .animate-delay-1 {
+  animation-delay: 0.05s;
+}
+
+body.mtn-premium .animate-delay-2 {
+  animation-delay: 0.1s;
+}
+
+body.mtn-premium .animate-delay-3 {
+  animation-delay: 0.15s;
+}
+
+body.mtn-premium .animate-delay-4 {
+  animation-delay: 0.2s;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 1279px) {
+  body.mtn-premium .mtn-action-grid,
+  body.mtn-premium .tariffs-grid-v3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  body.mtn-premium .mtn-smart-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  body.mtn-premium .admin-widget {
+    grid-column: span 6;
+  }
+}
+
+@media (max-width: 1024px) {
+  .grid-cards,
+  body.mtn-premium .hero-grid,
+  body.mtn-premium .payments-layout-v2,
+  body.mtn-premium .profile-grid,
+  body.mtn-premium .settings-grid,
+  body.mtn-premium .mtn-auth-shell,
+  body.mtn-premium .field-row,
+  body.mtn-premium .filters-grid,
+  body.mtn-premium .payments-form-grid-v2,
+  body.mtn-premium .admin-dashboard-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  body.mtn-premium .layout-grid {
+    grid-template-columns: 1fr;
+  }
+
+  body.mtn-premium .site-sidebar {
+    width: min(86vw, 360px);
+  }
+
+  body.mtn-premium .tariffs-grid-v3,
+  body.mtn-premium .mtn-action-grid,
+  body.mtn-premium .mtn-smart-grid,
+  body.mtn-premium .admin-dashboard-actions-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  body.mtn-premium .admin-widget,
+  body.mtn-premium .admin-widget--wide {
+    grid-column: span 12;
+  }
+
+  body.mtn-premium .tariffs-toolbar-v3,
+  body.mtn-premium .site-footer-grid,
+  body.mtn-premium .site-footer-meta {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+
+  .container {
+    padding-inline: var(--spacing-lg);
+  }
+
+  .grid-cards,
+  body.mtn-premium .tariffs-grid-v3,
+  body.mtn-premium .mtn-action-grid,
+  body.mtn-premium .mtn-smart-grid,
+  body.mtn-premium .admin-dashboard-actions-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
+  }
+
+  body.mtn-premium .site-shell {
+    padding: var(--spacing-md);
+  }
+
+  body.mtn-premium .site-header {
+    top: var(--spacing-sm);
+  }
+
+  body.mtn-premium .site-header-inner,
+  body.mtn-premium .page-section,
+  body.mtn-premium .mtn-dashboard,
+  body.mtn-premium .payments-page-v2__shell,
+  body.mtn-premium .tariffs-page-v3,
+  body.mtn-premium .mtn-auth-page {
+    gap: var(--spacing-lg);
+  }
+
+  body.mtn-premium .card,
+  body.mtn-premium .hero,
+  body.mtn-premium .profile-panel,
+  body.mtn-premium .feature-card,
+  body.mtn-premium .settings-block,
+  body.mtn-premium .payments-card-v2,
+  body.mtn-premium .payments-summary-v2,
+  body.mtn-premium .tariffs-current-v3,
+  body.mtn-premium .tariffs-recommendation-v3,
+  body.mtn-premium .tariff-card-v3,
+  body.mtn-premium .mtn-card,
+  body.mtn-premium .mtn-auth-card,
+  body.mtn-premium .mtn-auth-side,
+  body.mtn-premium .admin-widget,
+  body.mtn-premium .dialog,
+  body.mtn-premium .modal-content,
+  body.mtn-premium .admin-dashboard-modal-card,
+  body.mtn-premium .dropdown {
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-xl);
+  }
+
+  body.mtn-premium h1,
+  body.mtn-premium .h1,
+  body.mtn-premium .hero-title,
+  body.mtn-premium .toolbar-title,
+  body.mtn-premium .mtn-hero__title,
+  body.mtn-premium .tariffs-hero-v3__title,
+  body.mtn-premium .payments-hero-v2__title,
+  body.mtn-premium .mtn-auth-title {
+    font-size: var(--font-size-2xl);
+  }
+
+  body.mtn-premium h2,
+  body.mtn-premium .h2,
+  body.mtn-premium .section-title,
+  body.mtn-premium .table-title,
+  body.mtn-premium .mtn-section__title,
+  body.mtn-premium .payments-card-v2__title,
+  body.mtn-premium .tariffs-recommendation-v3__title,
+  body.mtn-premium .admin-widget h2 {
+    font-size: var(--font-size-xl);
+  }
+
+  body.mtn-premium .site-header-nav {
+    width: 100%;
+    justify-content: flex-start;
+    overflow-x: auto;
+  }
+
+  body.mtn-premium .toolbar,
+  body.mtn-premium .section-title-wrap,
+  body.mtn-premium .payments-card-v2__head,
+  body.mtn-premium .admin-widget-head,
+  body.mtn-premium .settings-block-head,
+  body.mtn-premium .dialog-header,
+  body.mtn-premium .modal-header {
+    flex-direction: column;
+  }
+
+  body.mtn-premium .payments-methods-v2,
+  body.mtn-premium .payments-presets-v2,
+  body.mtn-premium .tariffs-filters-v3,
+  body.mtn-premium .tariffs-view-switch-v3,
+  body.mtn-premium .action-row,
+  body.mtn-premium .header-actions {
+    width: 100%;
+  }
+
+  body.mtn-premium .btn,
+  body.mtn-premium .mtn-button,
+  body.mtn-premium .mtn-auth-btn {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (prefers-contrast: high) {
+  :root {
+    --color-text-primary: #000000;
+    --color-bg-page: #ffffff;
+    --color-border: #000000;
+  }
+
+  body.mtn-premium .site-header,
+  body.mtn-premium .site-sidebar,
+  body.mtn-premium .hero,
+  body.mtn-premium .card,
+  body.mtn-premium .feature-card,
+  body.mtn-premium .dialog,
+  body.mtn-premium .mtn-card,
+  body.mtn-premium .payments-card-v2,
+  body.mtn-premium .tariff-card-v3,
+  body.mtn-premium .admin-widget {
+    border-width: 2px;
+    box-shadow: none;
+  }
+}

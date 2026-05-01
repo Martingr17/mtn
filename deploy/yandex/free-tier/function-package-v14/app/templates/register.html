@@ -1,0 +1,336 @@
+{% extends "base.html" %}
+
+{% block title %}Регистрация | Личный кабинет оператора{% endblock %}
+{% block body_class %}page-public{% endblock %}
+
+{% block content %}
+<section class="auth-shell scene-section" data-scene="register">
+    <aside class="auth-showcase" data-reveal>
+        <div class="eyebrow">
+            <i class="fas fa-layer-group"></i>
+            Подключение личного кабинета за один проход
+        </div>
+        <div>
+            <h1 class="hero-title cinematic-title">Регистрируйте абонента так же легко, как подключаете цифровой продукт.</h1>
+            <p class="hero-subtitle">
+                Один лицевой счёт, один номер, короткая форма и подтверждение через SMS.
+                Для демо-показа код подтверждения сразу появляется на экране, поэтому можно пройти весь сценарий без внешнего шлюза.
+            </p>
+        </div>
+
+        <div class="list-stack">
+            <div class="chip is-accent"><i class="fas fa-id-card"></i>Привязка к лицевому счёту</div>
+            <div class="chip"><i class="fas fa-message"></i>SMS-активация номера</div>
+            <div class="chip"><i class="fas fa-user-shield"></i>Готовность к последующей защите 2FA</div>
+        </div>
+
+        {% if demo_mode %}
+        <div class="demo-credentials-card" data-reveal>
+            <div class="demo-credentials-head">
+                <span class="chip is-accent"><i class="fas fa-wand-magic-sparkles"></i>Демо-заполнение</span>
+                <button class="btn btn-secondary btn-sm" type="button" id="fillDemoRegisterBtn">
+                    <i class="fas fa-bolt"></i>
+                    Заполнить форму
+                </button>
+            </div>
+            <div class="demo-credentials-grid">
+                <div>
+                    <div class="table-copy">Пример телефона</div>
+                    <div class="table-title text-mono">+7 900 777-11-22</div>
+                </div>
+                <div>
+                    <div class="table-copy">Пример счёта</div>
+                    <div class="table-title text-mono">DEMO77722</div>
+                </div>
+            </div>
+            <p class="content-note">Биллинг на локальном стенде работает в безопасном демонстрационном режиме, поэтому можно использовать тестовые данные и сразу пройти активацию кабинета.</p>
+        </div>
+        {% endif %}
+    </aside>
+
+    <section class="auth-card" data-reveal>
+        <div class="section-title-wrap">
+            <div>
+                <h2 class="section-title">Регистрация пользователя</h2>
+                <p class="section-subtitle">Сначала создаём профиль, затем подтверждаем номер SMS-кодом и открываем путь ко входу.</p>
+            </div>
+        </div>
+
+        <div id="registerProgress" class="auth-progress" aria-label="Шаги регистрации">
+            <div class="auth-progress-step is-current">
+                <span class="auth-progress-index">1</span>
+                <div>
+                    <div class="auth-progress-title">Профиль</div>
+                    <div class="auth-progress-copy">Счёт и контакты</div>
+                </div>
+            </div>
+            <div class="auth-progress-step">
+                <span class="auth-progress-index">2</span>
+                <div>
+                    <div class="auth-progress-title">Подтверждение</div>
+                    <div class="auth-progress-copy">SMS и активация</div>
+                </div>
+            </div>
+            <div class="auth-progress-step">
+                <span class="auth-progress-index">3</span>
+                <div>
+                    <div class="auth-progress-title">Готово</div>
+                    <div class="auth-progress-copy">Можно входить в кабинет</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="auth-hint-grid">
+            <article class="auth-note-card">
+                <div class="auth-note-title">Умный повтор</div>
+                <div class="auth-note-copy">Если регистрация уже была начата, форма не ломается, а переотправляет новый код.</div>
+            </article>
+            <article class="auth-note-card">
+                <div class="auth-note-title">Демо-код на экране</div>
+                <div class="auth-note-copy">На локальном стенде код отображается в интерфейсе, поэтому активацию можно пройти сразу.</div>
+            </article>
+        </div>
+
+        <div id="registerStatusPanel" class="auth-status-panel is-visible" aria-live="polite">
+            <div class="auth-status-icon">
+                <i class="fas fa-sparkles"></i>
+            </div>
+            <div>
+                <div id="registerStatusTitle" class="auth-status-kicker">Подключение кабинета</div>
+                <div id="registerStatusCopy" class="auth-status-copy">Заполните короткую форму. После этого система отправит код и подскажет, как завершить активацию без лишних переходов.</div>
+            </div>
+        </div>
+
+        <div id="registerDemoSmsPanel" class="demo-sms-panel" hidden>
+            <div class="demo-sms-kicker">Демо-SMS</div>
+            <div class="demo-sms-code" data-demo-code>000000</div>
+            <div class="demo-sms-meta">
+                <span>Номер: <strong data-demo-phone>—</strong></span>
+                <span>Действует: <strong data-demo-ttl>5 мин</strong></span>
+            </div>
+        </div>
+
+        <form id="registerForm" class="page-section">
+            <div class="field">
+                <label class="field-label" for="billingId">Лицевой счёт</label>
+                <input class="input" id="billingId" type="text" name="billing_id" required placeholder="Например: DEMO77722">
+                <p class="field-help">Подойдёт номер из договора, квитанции или демо-счёт для локального просмотра интерфейса.</p>
+            </div>
+
+            <div class="field-row">
+                <div class="field">
+                    <label class="field-label" for="registerPhone">Телефон</label>
+                    <input class="input" id="registerPhone" type="tel" name="phone" required placeholder="+7 900 000-00-00">
+                </div>
+                <div class="field">
+                    <label class="field-label" for="registerEmail">Электронная почта</label>
+                    <input class="input" id="registerEmail" type="email" name="email" placeholder="name@example.ru">
+                </div>
+            </div>
+
+            <div class="field-row">
+                <div class="field">
+                    <label class="field-label" for="registerFirstName">Имя</label>
+                    <input class="input" id="registerFirstName" type="text" name="first_name" placeholder="Алина">
+                </div>
+                <div class="field">
+                    <label class="field-label" for="registerLastName">Фамилия</label>
+                    <input class="input" id="registerLastName" type="text" name="last_name" placeholder="Волкова">
+                </div>
+            </div>
+
+            <div class="field hidden" id="registerSmsField">
+                <label class="field-label" for="registerSmsCode">Код подтверждения</label>
+                <div class="dual-column auth-code-row">
+                    <input class="input" id="registerSmsCode" type="text" name="sms_code" maxlength="6" placeholder="6 цифр">
+                    <button class="btn btn-secondary" type="button" id="resendCodeBtn" disabled>
+                        <i class="fas fa-rotate"></i>
+                        Повторить
+                    </button>
+                </div>
+            </div>
+
+            <div class="field hidden" id="registerPasswordField">
+                <label class="field-label" for="registerPassword">Пароль для внутренних ролей</label>
+                <input class="input" id="registerPassword" type="password" name="password" placeholder="Заполняется только для внутренних аккаунтов">
+                <p class="field-help">Для обычного абонента это поле можно оставить пустым.</p>
+            </div>
+
+            <div class="action-row auth-form-actions">
+                <a class="helper-inline" href="/login">
+                    <i class="fas fa-arrow-left"></i>
+                    Уже есть аккаунт
+                </a>
+                <button class="btn btn-primary" id="registerSubmitBtn" type="submit">
+                    <i class="fas fa-user-check"></i>
+                    Продолжить
+                </button>
+            </div>
+        </form>
+    </section>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const registerForm = document.getElementById("registerForm");
+    const registerPhone = document.getElementById("registerPhone");
+    const registerSubmitBtn = document.getElementById("registerSubmitBtn");
+    const registerSmsField = document.getElementById("registerSmsField");
+    const registerPasswordField = document.getElementById("registerPasswordField");
+    const billingIdInput = document.getElementById("billingId");
+    const resendCodeBtn = document.getElementById("resendCodeBtn");
+    const registerSmsCodeInput = document.getElementById("registerSmsCode");
+    const registerProgressSteps = Array.from(document.querySelectorAll("#registerProgress .auth-progress-step"));
+    const registerStatusTitle = document.getElementById("registerStatusTitle");
+    const registerStatusCopy = document.getElementById("registerStatusCopy");
+    let registrationStep = 1;
+
+    function normalizePhone(raw) {
+        let value = String(raw || "").replace(/\D/g, "");
+        if (!value) return "";
+        if (value.startsWith("8")) value = "7" + value.slice(1);
+        if (!value.startsWith("7")) value = "7" + value;
+        return `+${value.slice(0, 11)}`;
+    }
+
+    function normalizeBillingId(raw) {
+        return String(raw || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+    }
+
+    function setRegistrationStep(step) {
+        registerProgressSteps.forEach((item, index) => {
+            item.classList.toggle("is-current", index === step - 1);
+            item.classList.toggle("is-complete", index < step - 1);
+        });
+    }
+
+    function setRegisterStatus(title, message) {
+        registerStatusTitle.textContent = title;
+        registerStatusCopy.textContent = message;
+    }
+
+    function showRegisterDemoCode(data) {
+        if (data?.demo_sms_code) {
+            OperatorUI.showDemoSms("registerDemoSmsPanel", data);
+        }
+    }
+
+    function startResendTimer(seconds) {
+        let remaining = seconds;
+        resendCodeBtn.disabled = true;
+        const timer = setInterval(() => {
+            remaining -= 1;
+            resendCodeBtn.innerHTML = `<i class="fas fa-clock"></i>${remaining}с`;
+            if (remaining <= 0) {
+                clearInterval(timer);
+                resendCodeBtn.disabled = false;
+                resendCodeBtn.innerHTML = `<i class="fas fa-rotate"></i>Повторить`;
+            }
+        }, 1000);
+    }
+
+    registerPhone.addEventListener("input", (event) => {
+        event.target.value = normalizePhone(event.target.value);
+    });
+
+    billingIdInput.addEventListener("input", (event) => {
+        event.target.value = normalizeBillingId(event.target.value);
+    });
+
+    document.getElementById("fillDemoRegisterBtn")?.addEventListener("click", () => {
+        billingIdInput.value = "DEMO77722";
+        registerPhone.value = "+79007771122";
+        document.getElementById("registerEmail").value = "demo-showcase@operator.local";
+        document.getElementById("registerFirstName").value = "Алина";
+        document.getElementById("registerLastName").value = "Соколова";
+        setRegisterStatus("Форма подготовлена", "Демо-данные уже подставлены. Теперь можно запустить регистрацию и увидеть код подтверждения прямо в интерфейсе.");
+    });
+
+    resendCodeBtn.addEventListener("click", async () => {
+        const phone = normalizePhone(registerPhone.value);
+        const billingId = normalizeBillingId(billingIdInput.value);
+        if (!phone || !billingId) return;
+
+        try {
+            const data = await OperatorUI.request("/api/v1/auth/register", {
+                method: "POST",
+                json: true,
+                body: {
+                    billing_id: billingId,
+                    phone,
+                    email: document.getElementById("registerEmail").value,
+                    first_name: document.getElementById("registerFirstName").value,
+                    last_name: document.getElementById("registerLastName").value,
+                },
+            });
+            showRegisterDemoCode(data);
+            OperatorUI.toast(data.message || "Код отправлен повторно.", "success");
+            setRegistrationStep(2);
+            setRegisterStatus("Код отправлен повторно", data.message || "Новый код уже на экране. Введите его и завершите активацию аккаунта.");
+            startResendTimer(60);
+        } catch (error) {
+            OperatorUI.toast(error.message || "Не удалось переотправить код.", "error");
+        }
+    });
+
+    registerForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const formData = new FormData(registerForm);
+        const payload = Object.fromEntries(formData.entries());
+        payload.phone = normalizePhone(payload.phone);
+        payload.billing_id = normalizeBillingId(payload.billing_id);
+
+        OperatorUI.setButtonLoading(registerSubmitBtn, true, registrationStep === 1 ? "Создание..." : "Подтверждение...");
+
+        try {
+            if (registrationStep === 1) {
+                const data = await OperatorUI.request("/api/v1/auth/register", {
+                    method: "POST",
+                    json: true,
+                    body: {
+                        billing_id: payload.billing_id,
+                        phone: payload.phone,
+                        email: payload.email,
+                        first_name: payload.first_name,
+                        last_name: payload.last_name,
+                    },
+                });
+
+                registrationStep = 2;
+                setRegistrationStep(2);
+                registerSmsField.classList.remove("hidden");
+                registerPasswordField.classList.remove("hidden");
+                registerSubmitBtn.innerHTML = `<i class="fas fa-shield-check"></i>Подтвердить регистрацию`;
+                registerSubmitBtn.dataset.originalLabel = registerSubmitBtn.innerHTML;
+                showRegisterDemoCode(data);
+                OperatorUI.toast(data.message || "Код подтверждения отправлен.", "success");
+                setRegisterStatus("Почти готово", "Кабинет создан в черновом режиме. Осталось ввести код подтверждения и активировать доступ.");
+                registerSmsCodeInput.focus();
+                startResendTimer(60);
+            } else {
+                const data = await OperatorUI.request("/api/v1/auth/register/confirm", {
+                    method: "POST",
+                    json: true,
+                    body: {
+                        phone: payload.phone,
+                        sms_code: payload.sms_code,
+                        password: payload.password || null,
+                    },
+                });
+
+                OperatorUI.toast(data.message || "Регистрация завершена.", "success");
+                setRegistrationStep(3);
+                setRegisterStatus("Кабинет активирован", "Регистрация завершена. Перенаправляем на страницу входа, где можно сразу авторизоваться.");
+                window.setTimeout(() => {
+                    window.location.href = "/login";
+                }, 900);
+            }
+        } catch (error) {
+            OperatorUI.toast(error.message || "Не удалось завершить регистрацию.", "error");
+        } finally {
+            OperatorUI.setButtonLoading(registerSubmitBtn, false);
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,18 @@
+﻿{
+  "version": "2.0",
+  "routeKey": "$default",
+  "rawPath": "/health",
+  "rawQueryString": "",
+  "headers": {
+    "host": "d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net"
+  },
+  "requestContext": {
+    "http": {
+      "method": "GET",
+      "path": "/health",
+      "sourceIp": "127.0.0.1",
+      "userAgent": "yc-cli"
+    }
+  },
+  "isBase64Encoded": false
+}

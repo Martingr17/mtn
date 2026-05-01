@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}500 | MTN{% endblock %}
+{% block body_class %}page-public{% endblock %}
+
+{% block content %}
+<section class="page-section">
+    <section class="hero scene-section">
+        <div class="hero-grid hero-grid-single">
+            <div data-reveal>
+                <div class="eyebrow">
+                    <i class="fas fa-server"></i>
+                    Внутренняя ошибка
+                </div>
+                <h1 class="hero-title">Сервис временно недоступен</h1>
+                <p class="hero-subtitle">Что-то пошло не так на стороне платформы MTN. Мы уже получили сигнал и восстанавливаем работу.</p>
+                <div class="action-row">
+                    <a class="btn btn-primary" href="/">
+                        <i class="fas fa-rotate-right"></i>
+                        Обновить страницу
+                    </a>
+                    <a class="btn btn-secondary" href="/support">
+                        <i class="fas fa-headset"></i>
+                        Поддержка
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+</section>
+{% endblock %}

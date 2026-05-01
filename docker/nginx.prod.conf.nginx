@@ -1,0 +1,141 @@
+upstream app_backend {
+    least_conn;
+    server app:8000 max_fails=3 fail_timeout=30s;
+}
+
+# Production-demo catch-all config for one-domain deployments.
+# For a strict production host, replace "_" with the real domain, for example:
+# server_name example.com;
+server {
+    listen 80;
+    server_name _;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name _;
+    
+    # SSL configuration
+    ssl_certificate /etc/nginx/ssl/fullchain.pem;
+    ssl_certificate_key /etc/nginx/ssl/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+    ssl_prefer_server_ciphers on;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 10m;
+    
+    # Security headers
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    add_header X-Frame-Options "DENY" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    
+    client_max_body_size 10M;
+    client_body_timeout 60s;
+    send_timeout 60s;
+    
+    # Gzip
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 1024;
+    gzip_types text/plain text/css text/xml text/javascript application/javascript application/json application/xml+rss;
+    gzip_comp_level 6;
+    
+    # Static files
+    location /static/ {
+        alias /usr/share/nginx/html/static/;
+        expires 30d;
+        add_header Cache-Control "public, immutable";
+        access_log off;
+    }
+    
+    # Uploaded files
+    location /uploads/ {
+        alias /usr/share/nginx/html/uploads/;
+        expires 1d;
+        add_header Cache-Control "public";
+        access_log off;
+    }
+    
+    # Health check
+    location /health {
+        proxy_pass http://app_backend/health;
+        access_log off;
+    }
+
+    # API is same-origin under /api and /api/v1.
+    location = /api {
+        proxy_pass http://app_backend;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location /api/ {
+        proxy_pass http://app_backend;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+    
+    # Metrics (internal only)
+    location /metrics {
+        allow 10.0.0.0/8;
+        allow 172.16.0.0/12;
+        allow 192.168.0.0/16;
+        deny all;
+        proxy_pass http://app_backend/metrics;
+    }
+    
+    # WebSocket
+    location /ws {
+        proxy_pass http://app_backend;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 86400;
+        proxy_buffering off;
+    }
+    
+    # SPA/app deep links are handled by the FastAPI SPA fallback.
+    location / {
+        proxy_pass http://app_backend;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        proxy_buffering off;
+        proxy_cache off;
+        
+        proxy_connect_timeout 60s;
+        proxy_send_timeout 60s;
+        proxy_read_timeout 60s;
+        
+        # Error handling
+        proxy_next_upstream error timeout invalid_header http_500 http_502 http_503;
+        proxy_next_upstream_tries 2;
+    }
+    
+    # Error pages
+    error_page 404 /404.html;
+    error_page 500 502 503 504 /50x.html;
+    
+    location = /404.html {
+        root /usr/share/nginx/html;
+        internal;
+    }
+    
+    location = /50x.html {
+        root /usr/share/nginx/html;
+        internal;
+    }
+}

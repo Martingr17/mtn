@@ -1,0 +1,17 @@
+[Unit]
+Description=MTN Celery Beat
+After=network.target redis.service postgresql.service
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/mtn/app
+Environment="PYTHONPATH=/opt/mtn/app"
+EnvironmentFile=/opt/mtn/app/.env
+ExecStart=/opt/mtn/venv/bin/celery -A app.workers.celery_app.celery_app beat --loglevel=INFO
+Restart=always
+RestartSec=5
+TimeoutStopSec=60
+
+[Install]
+WantedBy=multi-user.target

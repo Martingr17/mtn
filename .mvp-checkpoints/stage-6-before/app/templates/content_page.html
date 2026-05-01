@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }} | Личный кабинет оператора{% endblock %}
+{% block body_class %}page-public{% endblock %}
+
+{% block content %}
+<section class="page-section">
+    <section class="hero scene-section" data-scene="content-page">
+        <div class="hero-grid hero-grid-single">
+            <div data-reveal>
+                <div class="eyebrow">
+                    <i class="fas fa-circle-info"></i>
+                    Информационный раздел
+                </div>
+                <h1 class="hero-title cinematic-title">{{ page_title }}</h1>
+                <p class="hero-subtitle">{{ page_lead }}</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="page-section story-grid">
+        {% for section in sections %}
+        <article class="story-card" data-reveal data-depth="{{ 0.9 + loop.index0 * 0.15 }}">
+            <div class="story-index">{{ "%02d"|format(loop.index) }}</div>
+            <h2 class="feature-title">{{ section.title }}</h2>
+            <p class="feature-copy">{{ section.body }}</p>
+        </article>
+        {% endfor %}
+    </section>
+</section>
+{% endblock %}

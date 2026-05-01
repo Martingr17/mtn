@@ -1,0 +1,59 @@
+openapi: 3.0.0
+info:
+  title: MTN Backend API
+  version: 1.0.0
+
+x-yc-apigateway:
+  variables:
+    function_id:
+      default: "replace-me"
+      description: "Cloud Function ID for the MTN backend."
+    service_account_id:
+      default: "replace-me"
+      description: "Service account used by API Gateway to invoke the function."
+
+paths:
+  /health:
+    get:
+      operationId: health
+      responses:
+        '200':
+          description: Health check response.
+          content:
+            'application/json':
+              schema:
+                type: object
+      x-yc-apigateway-integration:
+        type: cloud_functions
+        function_id: ${var.function_id}
+        service_account_id: ${var.service_account_id}
+        tag: "$latest"
+  /api:
+    x-yc-apigateway-any-method:
+      responses:
+        '200':
+          description: Proxied API response.
+      x-yc-apigateway-integration:
+        type: cloud_functions
+        function_id: ${var.function_id}
+        service_account_id: ${var.service_account_id}
+        tag: "$latest"
+  /api/{proxy+}:
+    x-yc-apigateway-any-method:
+      parameters:
+        - explode: false
+          in: path
+          name: proxy
+          required: false
+          schema:
+            default: "-"
+            type: string
+          style: simple
+      responses:
+        '200':
+          description: Proxied API response.
+      x-yc-apigateway-integration:
+        type: cloud_functions
+        function_id: ${var.function_id}
+        service_account_id: ${var.service_account_id}
+        tag: "$latest"

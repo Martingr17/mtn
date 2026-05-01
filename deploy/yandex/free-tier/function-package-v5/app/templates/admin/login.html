@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}Вход в админ-панель | MTN{% endblock %}
+{% block body_class %}admin-auth-page{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="/static/css/mtn-auth.css?v={{ asset_version }}">
+{% endblock %}
+
+{% block content %}
+<section class="mtn-auth-page" aria-labelledby="adminLoginPageTitle">
+    <div class="mtn-auth-shell mtn-auth-shell--admin">
+        <div class="mtn-auth-card">
+            <div class="mtn-auth-logo mtn-auth-logo--center">
+                <div class="mtn-auth-logo-mark">MTN</div>
+                <div class="mtn-auth-logo-subtitle">Martin Telecom Network • Admin</div>
+            </div>
+
+            <div class="mtn-auth-heading">
+                <h1 id="adminLoginPageTitle">Вход в административную панель</h1>
+                <p>Для сотрудников MTN. После авторизации откроется дашборд с учётом роли.</p>
+            </div>
+
+            <div id="adminLoginStatusBox" class="mtn-auth-status is-visible" aria-live="polite">
+                <div class="mtn-auth-status-head">
+                    <h2 id="adminLoginStatusTitle" class="mtn-auth-status-title">Доступ к рабочей панели</h2>
+                </div>
+                <p id="adminLoginStatusCopy" class="mtn-auth-status-copy">Введите email или телефон сотрудника и пароль. Для демо-режима можно использовать быстрые учётные данные ниже.</p>
+            </div>
+
+            <!-- Отдельная форма входа сотрудников -->
+            <form id="adminLoginForm" class="mtn-auth-form" novalidate>
+                <div class="mtn-auth-field">
+                    <label class="mtn-auth-label" for="adminLoginIdentifier">Email или телефон</label>
+                    <div class="mtn-auth-input-wrap">
+                        <i class="fas fa-user-shield mtn-auth-input-icon" aria-hidden="true"></i>
+                        <input
+                            id="adminLoginIdentifier"
+                            class="mtn-auth-input"
+                            type="text"
+                            autocomplete="username"
+                            placeholder="admin@mtn.ru"
+                            aria-describedby="adminIdentifierError"
+                            required
+                        >
+                    </div>
+                    <div id="adminIdentifierError" class="mtn-auth-error" hidden></div>
+                </div>
+
+                <div class="mtn-auth-field">
+                    <label class="mtn-auth-label" for="adminLoginPassword">Пароль</label>
+                    <div class="mtn-auth-input-wrap">
+                        <i class="fas fa-lock mtn-auth-input-icon" aria-hidden="true"></i>
+                        <input
+                            id="adminLoginPassword"
+                            class="mtn-auth-input"
+                            type="password"
+                            autocomplete="current-password"
+                            placeholder="Пароль"
+                            aria-describedby="adminPasswordError"
+                            required
+                        >
+                        <button id="adminTogglePassword" class="mtn-auth-input-action" type="button" aria-label="Показать пароль">
+                            <i class="fas fa-eye" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <div id="adminPasswordError" class="mtn-auth-error" hidden></div>
+                </div>
+
+                <div id="adminTotpGroup" class="mtn-auth-field mtn-auth-hidden">
+                    <label class="mtn-auth-label" for="adminTotpCode">Код 2FA</label>
+                    <div class="mtn-auth-input-wrap">
+                        <i class="fas fa-shield-halved mtn-auth-input-icon" aria-hidden="true"></i>
+                        <input
+                            id="adminTotpCode"
+                            class="mtn-auth-input"
+                            type="text"
+                            inputmode="numeric"
+                            maxlength="6"
+                            placeholder="Код из приложения"
+                            aria-describedby="adminTotpError"
+                        >
+                    </div>
+                    <div id="adminTotpError" class="mtn-auth-error" hidden></div>
+                </div>
+
+                <button id="adminLoginButton" class="mtn-auth-btn mtn-auth-btn--primary mtn-auth-btn--full" type="button">
+                    Войти в админ-панель
+                </button>
+
+                <div class="mtn-auth-links">
+                    <a class="mtn-auth-link" href="/login">Вернуться ко входу абонента</a>
+                </div>
+            </form>
+
+            <div class="mtn-auth-admin-block" {% if not demo_mode %}hidden{% endif %}>
+                <div class="mtn-auth-admin-head">
+                    <div class="mtn-auth-admin-copy-row">
+                        <h2 class="mtn-auth-admin-title">Демо-учётные данные</h2>
+                        <p class="mtn-auth-admin-copy">Эти алиасы автоматически преобразуются в внутренние демо-аккаунты MTN.</p>
+                    </div>
+                </div>
+
+                <div class="mtn-auth-alias-grid">
+                    {% for item in demo_staff_aliases %}
+                    <div class="mtn-auth-alias-item">
+                        <div class="mtn-auth-alias-text">
+                            <span>{{ item.label }}</span>
+                            <strong>{{ item.email }} / {{ item.password }}</strong>
+                        </div>
+                        <button
+                            class="mtn-auth-btn mtn-auth-btn--secondary mtn-auth-btn--sm"
+                            type="button"
+                            data-fill-admin-demo
+                            data-identifier="{{ item.email }}"
+                            data-password="{{ item.password }}"
+                        >
+                            Подставить
+                        </button>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <p class="mtn-auth-admin-demo-note">
+                    В демо-режиме email-алиасы нужны только для удобства. При входе они будут сопоставлены с внутренними тестовыми сотрудниками.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    window.MTN_ADMIN_AUTH_CONFIG = {
+        next: {{ request.query_params.get('next', '/admin/dashboard')|tojson }},
+        demoMode: {{ 'true' if demo_mode else 'false' }},
+        demoStaffAliases: {{ demo_staff_aliases|tojson }},
+    };
+</script>
+<script src="/static/js/admin-login.js?v={{ asset_version }}"></script>
+{% endblock %}

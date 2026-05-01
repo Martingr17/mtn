@@ -1,0 +1,87 @@
+services:
+  - type: web
+    name: mtn-demo
+    runtime: python
+    plan: free
+    buildCommand: cd frontend && npm ci && npm run build && cd .. && pip install -r requirements.txt
+    startCommand: alembic upgrade head && gunicorn app.main:app -c gunicorn.conf.py
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.10
+      - key: ENVIRONMENT
+        value: staging
+      - key: DEBUG
+        value: "false"
+      - key: DEMO_MODE
+        value: "true"
+      - key: DEMO_SHOW_SMS_CODE
+        value: "true"
+      - key: DEMO_SHOW_EMAIL_CODE
+        value: "true"
+      - key: AUTO_SCHEMA_SYNC
+        value: "false"
+      - key: CLOUD_FUNCTIONS_MODE
+        value: "false"
+      - key: DATABASE_BACKEND
+        value: postgres
+      - key: REDIS_HOST
+        value: memory
+      - key: ENABLE_WEBSOCKETS
+        value: "false"
+      - key: MONITORING_EMBED_SCHEDULER
+        value: "false"
+      - key: GUNICORN_WORKERS
+        value: "1"
+      - key: POSTGRES_POOL_SIZE
+        value: "2"
+      - key: POSTGRES_MAX_OVERFLOW
+        value: "1"
+      - key: POSTGRES_POOL_TIMEOUT
+        value: "30"
+      - key: PUBLIC_APP_URL
+        value: https://mtn-demo.onrender.com
+      - key: CORS_ORIGINS
+        value: '["https://mtn-demo.onrender.com"]'
+      - key: TRUSTED_HOSTS
+        value: '["mtn-demo.onrender.com","localhost","127.0.0.1"]'
+      - key: VITE_API_BASE_URL
+        value: /api/v1
+      - key: VITE_WITH_CREDENTIALS
+        value: "true"
+      - key: VITE_ENABLE_LEGACY_BUCKET_API_MAPPING
+        value: "false"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: BILLING_API_URL
+        value: https://operator.local/api/v2
+      - key: BILLING_API_KEY
+        value: production-demo-mock-billing-key
+      - key: SMS_PROVIDER
+        value: mock
+      - key: SMTP_HOST
+        value: localhost
+      - key: SMTP_PORT
+        value: "1025"
+      - key: SMTP_FROM
+        value: noreply@example.local
+      - key: TELEGRAM_ALERTS_ENABLED
+        value: "false"
+      - key: TELEGRAM_MOCK_MODE
+        value: "true"
+      - key: TELEGRAM_BOT_TOKEN
+        value: ""
+      - key: TELEGRAM_NOC_CHAT_ID
+        value: ""
+      - key: DATABASE_URL
+        fromDatabase:
+          name: mtn-oss-bss-db
+          property: connectionString
+
+databases:
+  - name: mtn-oss-bss-db
+    plan: free
+    databaseName: mtn_oss_bss
+    user: mtn_user

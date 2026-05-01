@@ -1,0 +1,2 @@
+import{n as e}from"./createLucideIcon-qlCADwNN.js";import{t}from"./cn-BpLujWe5.js";var n=e();function r({className:e}){return(0,n.jsx)(`div`,{className:t(`ui-skeleton`,e),"aria-hidden":`true`})}export{r as t};
+//# sourceMappingURL=Skeleton-DT_4g0Rx.js.map

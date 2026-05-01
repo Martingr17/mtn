@@ -1,0 +1,95 @@
+# Environment and secrets
+/.env
+/.env.*
+!/.env.example
+!/.env.production.example
+!/.env.production-demo.example
+/frontend/.env.local
+/frontend/.env.*.local
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+service-account*.json
+yc-*.json
+yandex-*.json
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.tox/
+.nox/
+.venv/
+venv/
+env/
+
+# Test and coverage output
+.coverage
+coverage.xml
+htmlcov/
+test-results/
+playwright-report/
+
+# Node / frontend
+node_modules/
+/frontend/node_modules/
+/frontend/dist/
+/frontend/dist-ssr/
+/frontend/*.log
+/frontend/*.png
+/frontend/.vite/
+/frontend/node_modules/.tmp/
+
+# Built SPA output. Render/Yandex build commands regenerate it.
+/app/static/spa/
+
+# Runtime data
+/logs/
+/uploads/
+/backups/
+/.local-postgres/
+celerybeat-schedule
+*.sqlite
+*.sqlite3
+*.db
+*.dump
+*.sql
+
+# Docker/local volumes
+docker/ssl/*.pem
+docker/ssl/*.key
+postgres_data/
+redis_data/
+*_data/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+*.swo
+
+# Generated reports and local artifacts
+*.tmp
+*.bak
+*.orig
+/*.png
+/*.docx
+/render_*/
+/final_*/
+/iter*/
+/layout-verification/
+/generated_replacement_*/
+/appendix_k_*/
+/playwright-*/

@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}Платежи | Админ-панель MTN{% endblock %}
+{% block body_class %}admin-page admin-suite-page{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="/static/css/admin-extra-sections.css?v={{ asset_version }}">
+{% endblock %}
+
+{% block content %}
+<section class="page-section admin-suite-shell" data-admin-page="payments" id="adminPaymentsPage">
+    {% include "admin/_subnav.html" %}
+
+    <section class="hero admin-suite-hero">
+        <div class="hero-grid hero-grid-single">
+            <div>
+                <div class="eyebrow">
+                    <i class="fas fa-money-bill-wave"></i>
+                    Финансовый контроль
+                </div>
+                <h1 class="hero-title">Платежи</h1>
+                <p class="hero-subtitle">Полная история операций, KPI по выбранному периоду, ручное зачисление и экспорт для бухгалтерии в одном рабочем экране.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="admin-suite-toolbar">
+        <div class="admin-suite-head">
+            <div>
+                <h2>История операций</h2>
+                <p>Фильтры, сохранённые отчёты, подозрительные транзакции и быстрый переход к платежам конкретного абонента.</p>
+            </div>
+            <div class="admin-suite-actions">
+                <button class="btn btn-secondary btn-sm" type="button" id="adminPaymentsSaveFilter">Сохранить фильтр</button>
+                <button class="btn btn-secondary btn-sm" type="button" id="adminPaymentsExportCsv">Экспорт CSV</button>
+                <button class="btn btn-secondary btn-sm" type="button" id="adminPaymentsExportExcel">Экспорт Excel</button>
+                <button class="btn btn-primary btn-sm" type="button" id="adminPaymentsCreate">Ручное зачисление</button>
+            </div>
+        </div>
+        <div class="admin-suite-actions" id="adminPaymentsQuickChips"></div>
+        <div class="admin-suite-filter-grid">
+            <label class="field"><span class="field-label">Поиск</span><input class="input" id="adminPaymentsSearch" type="search" placeholder="Лицевой счёт, ФИО, ID"></label>
+            <label class="field"><span class="field-label">Период</span><select class="select" id="adminPaymentsPeriod"><option value="all">За всё время</option><option value="today">Сегодня</option><option value="week">7 дней</option><option value="month">Месяц</option><option value="quarter">Квартал</option></select></label>
+            <label class="field"><span class="field-label">Тип</span><select class="select" id="adminPaymentsType"><option value="all">Все</option><option value="topup">Пополнение</option><option value="charge">Списание</option><option value="manual">Ручное</option><option value="adjustment">Корректировка</option></select></label>
+            <label class="field"><span class="field-label">Статус</span><select class="select" id="adminPaymentsStatus"><option value="all">Все</option><option value="success">Успешно</option><option value="processing">В обработке</option><option value="error">Ошибка</option><option value="canceled">Отменён</option></select></label>
+            <label class="field"><span class="field-label">Способ</span><select class="select" id="adminPaymentsMethod"><option value="all">Все</option><option value="card">Карта</option><option value="sbp">СБП</option><option value="auto">Авто</option><option value="manual">Ручное</option></select></label>
+            <label class="field"><span class="field-label">Сумма</span><select class="select" id="adminPaymentsAmount"><option value="all">Все</option><option value="up500">До 500 ₽</option><option value="500-1000">500-1000 ₽</option><option value="1000-3000">1000-3000 ₽</option><option value="3000+">От 3000 ₽</option></select></label>
+            <label class="field"><span class="field-label">Сохранённые фильтры</span><select class="select" id="adminPaymentsSavedFilters"><option value="">Выберите фильтр</option></select></label>
+            <div class="admin-suite-actions">
+                <button class="btn btn-secondary btn-sm" type="button" id="adminPaymentsReset">Сбросить</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="admin-suite-kpis">
+        <div class="admin-suite-kpi-grid">
+            <article class="admin-suite-kpi"><strong>Общая выручка</strong><span id="adminPaymentsRevenue">—</span><small id="adminPaymentsRevenueNote">За выбранный период</small></article>
+            <article class="admin-suite-kpi"><strong>Средний чек</strong><span id="adminPaymentsAverage">—</span><small id="adminPaymentsAverageNote">По успешным пополнениям</small></article>
+            <article class="admin-suite-kpi"><strong>Количество транзакций</strong><span id="adminPaymentsCount">—</span><small id="adminPaymentsCountNote">Успехи и ошибки</small></article>
+            <article class="admin-suite-kpi"><strong>Ручные зачисления</strong><span id="adminPaymentsManual">—</span><small id="adminPaymentsManualNote">Под контролем аудита</small></article>
+        </div>
+    </section>
+
+    <section class="admin-suite-table-shell">
+        <div class="admin-suite-head">
+            <div>
+                <h3>Операции</h3>
+                <p id="adminPaymentsSummary">Загрузка списка операций...</p>
+            </div>
+        </div>
+        <div class="admin-suite-table-wrap">
+            <table class="admin-suite-table">
+                <thead>
+                    <tr>
+                        <th data-sort="id">ID</th>
+                        <th data-sort="date">Дата</th>
+                        <th>Абонент</th>
+                        <th>Лицевой счёт</th>
+                        <th>Тип</th>
+                        <th data-sort="amount">Сумма</th>
+                        <th>Способ</th>
+                        <th>Статус</th>
+                        <th>Оператор</th>
+                        <th>Комментарий</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody id="adminPaymentsTableBody"></tbody>
+            </table>
+        </div>
+        <div class="admin-suite-pagination">
+            <div id="adminPaymentsPaginationInfo" class="admin-suite-meta">Страница 1</div>
+            <div class="admin-suite-actions">
+                <button class="btn btn-secondary btn-sm" type="button" id="adminPaymentsPrev">Назад</button>
+                <button class="btn btn-secondary btn-sm" type="button" id="adminPaymentsNext">Вперёд</button>
+            </div>
+        </div>
+    </section>
+</section>
+
+<div class="admin-suite-modal" id="adminPaymentsDetailModal" hidden>
+    <div class="admin-suite-modal-card">
+        <div class="admin-suite-head">
+            <div>
+                <h3>Детали платежа</h3>
+                <p>Подробности операции, чек и связка с абонентом.</p>
+            </div>
+            <button class="btn btn-secondary btn-sm" type="button" data-admin-modal-close="adminPaymentsDetailModal">Закрыть</button>
+        </div>
+        <div id="adminPaymentsDetailBody"></div>
+    </div>
+</div>
+
+<div class="admin-suite-modal" id="adminPaymentsManualModal" hidden>
+    <div class="admin-suite-modal-card">
+        <div class="admin-suite-head">
+            <div>
+                <h3>Ручное зачисление</h3>
+                <p>Операция попадёт в историю и журнал аудита без возможности удаления.</p>
+            </div>
+            <button class="btn btn-secondary btn-sm" type="button" data-admin-modal-close="adminPaymentsManualModal">Закрыть</button>
+        </div>
+        <form id="adminPaymentsManualForm" class="admin-suite-modal-grid">
+            <label class="field"><span class="field-label">Абонент</span><input class="input" id="adminPaymentsManualUser" placeholder="ФИО или лицевой счёт" required></label>
+            <label class="field"><span class="field-label">Сумма</span><input class="input" id="adminPaymentsManualAmount" type="number" min="1" max="100000" required></label>
+            <label class="field"><span class="field-label">Тип операции</span><select class="select" id="adminPaymentsManualType"><option value="manual">Ручное зачисление</option><option value="adjustment">Корректировка</option><option value="bonus">Бонус</option></select></label>
+            <label class="field"><span class="field-label">Комментарий</span><input class="input" id="adminPaymentsManualComment" placeholder="Причина зачисления"></label>
+            <div class="admin-suite-actions" style="grid-column:1/-1">
+                <button class="btn btn-secondary btn-sm" type="button" data-admin-modal-close="adminPaymentsManualModal">Отмена</button>
+                <button class="btn btn-primary btn-sm" type="submit">Зачислить</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="/static/js/admin-extra-sections.js?v={{ asset_version }}"></script>
+{% endblock %}

@@ -1,0 +1,110 @@
+{
+  "dashboard": {
+    "overflow": [
+      {
+        "tag": "g",
+        "className": "[object SVGAnimatedString]",
+        "text": "",
+        "delta": 9
+      },
+      {
+        "tag": "ellipse",
+        "className": "[object SVGAnimatedString]",
+        "text": "",
+        "delta": 9
+      },
+      {
+        "tag": "g",
+        "className": "[object SVGAnimatedString]",
+        "text": "",
+        "delta": 9
+      },
+      {
+        "tag": "ellipse",
+        "className": "[object SVGAnimatedString]",
+        "text": "",
+        "delta": 9
+      },
+      {
+        "tag": "g",
+        "className": "[object SVGAnimatedString]",
+        "text": "",
+        "delta": 9
+      },
+      {
+        "tag": "ellipse",
+        "className": "[object SVGAnimatedString]",
+        "text": "",
+        "delta": 9
+      }
+    ],
+    "headings": [
+      "Martin Telecom Network",
+      "????? ??????",
+      "Мартин, всё под контролем, ?????.",
+      "Платёжная динамика",
+      "15 420 ₽",
+      "1 542 ₽",
+      "3 000 ₽",
+      "10",
+      "Поддержка",
+      "2",
+      "7",
+      "1.6 ч",
+      "Последние платежи",
+      "1 290 ₽",
+      "1 290 ₽",
+      "Свежие заявки",
+      "???????????? ???????? ???????",
+      "????? ????? ??????? ?????? ???????"
+    ]
+  },
+  "tariffsPage": {
+    "overflow": [
+      {
+        "tag": "g",
+        "className": "[object SVGAnimatedString]",
+        "text": "",
+        "delta": 9
+      },
+      {
+        "tag": "ellipse",
+        "className": "[object SVGAnimatedString]",
+        "text": "",
+        "delta": 9
+      },
+      {
+        "tag": "g",
+        "className": "[object SVGAnimatedString]",
+        "text": "",
+        "delta": 9
+      },
+      {
+        "tag": "ellipse",
+        "className": "[object SVGAnimatedString]",
+        "text": "",
+        "delta": 9
+      },
+      {
+        "tag": "g",
+        "className": "[object SVGAnimatedString]",
+        "text": "",
+        "delta": 9
+      },
+      {
+        "tag": "ellipse",
+        "className": "[object SVGAnimatedString]",
+        "text": "",
+        "delta": 9
+      }
+    ],
+    "headings": [
+      "Martin Telecom Network",
+      "????? ??????",
+      "Тарифы MTN",
+      "??????? ???????? 100",
+      "???????? ??????? 300",
+      "??????? Gigabit Office & Home Ultra"
+    ]
+  }
+}

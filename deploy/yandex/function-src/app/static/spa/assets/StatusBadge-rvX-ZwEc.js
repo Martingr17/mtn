@@ -1,0 +1,2 @@
+import{r as e,t}from"./cn-Dxg1DMZx.js";var n=e();function r({tone:e=`neutral`,children:r}){return(0,n.jsx)(`span`,{className:t(`ui-badge`,`is-${e}`),role:`status`,"aria-live":`polite`,children:r})}export{r as t};
+//# sourceMappingURL=StatusBadge-rvX-ZwEc.js.map

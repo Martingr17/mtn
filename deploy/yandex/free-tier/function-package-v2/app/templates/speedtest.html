@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Speedtest | MTN{% endblock %}
+{% block body_class %}page-public mtn-speedtest-page{% endblock %}
+
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="/static/css/mtn-customer-pages.css?v={{ asset_version }}">
+{% endblock %}
+
+{% block content %}
+<section class="mtn-customer-shell mtn-speedtest-shell" data-customer-page="speedtest">
+    <header class="mtn-page-hero">
+        <div>
+            <p class="mtn-page-hero__eyebrow">Встроенный Speedtest MTN</p>
+            <h1 class="mtn-page-hero__title">Speedtest</h1>
+            <p class="mtn-page-hero__lead">Проверьте скорость вашего интернет-соединения. Результаты помогают нам контролировать качество связи.</p>
+        </div>
+        <div class="mtn-page-hero__actions">
+            <button id="mtnSpeedtestRun" class="btn btn-primary" type="button">Запустить тест</button>
+            <button id="mtnSpeedtestStability" class="btn btn-secondary" type="button">Тест стабильности</button>
+        </div>
+    </header>
+
+    <section class="mtn-speedtest-controls">
+        <label class="mtn-field">
+            <span>Сервер тестирования</span>
+            <select id="mtnSpeedtestServerSelect">
+                <option value="moscow">MTN (Москва)</option>
+                <option value="spb">Санкт-Петербург</option>
+                <option value="ams">Европа (Амстердам)</option>
+            </select>
+        </label>
+        <label class="mtn-checkbox-inline">
+            <input id="mtnSpeedtestPoorLink" type="checkbox">
+            <span>Имитировать плохое соединение</span>
+        </label>
+        <button id="mtnSpeedtestExport" class="btn btn-ghost btn-sm" type="button">Экспорт истории</button>
+    </section>
+
+    <section class="mtn-speedtest-stage-card">
+        <div class="mtn-speedtest-stage-card__visual">
+            <div id="mtnSpeedtestDialValue" class="mtn-speedtest-dial">0</div>
+            <div id="mtnSpeedtestStageLabel" class="mtn-speedtest-stage-label">Готово к запуску</div>
+            <div class="mtn-progress">
+                <span id="mtnSpeedtestProgressBar" class="mtn-progress__bar"></span>
+            </div>
+        </div>
+        <div class="mtn-speedtest-results">
+            <article class="mtn-result-card">
+                <span>Пинг</span>
+                <strong id="mtnSpeedtestPing">—</strong>
+                <small>Задержка до сервера</small>
+            </article>
+            <article class="mtn-result-card">
+                <span>Загрузка</span>
+                <strong id="mtnSpeedtestDownload">—</strong>
+                <small>Входящее соединение</small>
+            </article>
+            <article class="mtn-result-card">
+                <span>Отдача</span>
+                <strong id="mtnSpeedtestUpload">—</strong>
+                <small>Исходящее соединение</small>
+            </article>
+        </div>
+    </section>
+
+    <section class="mtn-speedtest-grid">
+        <article class="mtn-feature-card">
+            <div class="mtn-section-head">
+                <div>
+                    <h2 class="mtn-section-title">Сравнение с вашим тарифом</h2>
+                    <p class="mtn-section-copy">Скорость сопоставляется с тарифом «Город 300».</p>
+                </div>
+            </div>
+            <div id="mtnSpeedtestComparisonText" class="mtn-speedtest-comparison-copy">Запустите тест, чтобы сравнить результат с тарифной скоростью.</div>
+            <div class="mtn-progress mtn-progress--wide">
+                <span id="mtnSpeedtestComparisonBar" class="mtn-progress__bar"></span>
+            </div>
+            <a id="mtnSpeedtestSupportLink" class="btn btn-secondary btn-sm" href="/tickets">Перейти в поддержку</a>
+        </article>
+
+        <article class="mtn-feature-card">
+            <div class="mtn-section-head">
+                <div>
+                    <h2 class="mtn-section-title">Сравнение с районом</h2>
+                    <p class="mtn-section-copy">Анонимная средняя скорость по району.</p>
+                </div>
+            </div>
+            <div id="mtnSpeedtestNeighborText" class="mtn-speedtest-neighbor-copy">Средняя скорость по району: 210 Мбит/с.</div>
+        </article>
+    </section>
+
+    <section id="mtnSpeedtestDiagnosis" class="mtn-feature-card" hidden>
+        <div class="mtn-section-head">
+            <div>
+                <h2 class="mtn-section-title">Автоматическая диагностика</h2>
+                <p class="mtn-section-copy">Подсказки на основе последнего замера.</p>
+            </div>
+        </div>
+        <div id="mtnSpeedtestDiagnosisList" class="mtn-diagnostic-findings"></div>
+        <a class="btn btn-primary btn-sm" href="/tickets?topic=Снижена скорость соединения">Создать заявку</a>
+    </section>
+
+    <section class="mtn-feature-card">
+        <div class="mtn-section-head">
+            <div>
+                <h2 class="mtn-section-title">Динамика скорости за последние 30 дней</h2>
+                <p id="mtnSpeedtestTrendText" class="mtn-section-copy">Пока нет данных. Запустите первый тест, чтобы увидеть график.</p>
+            </div>
+        </div>
+        <canvas id="mtnSpeedtestHistoryChart" height="140"></canvas>
+    </section>
+
+    <section class="mtn-feature-card">
+        <div class="mtn-section-head">
+            <div>
+                <h2 class="mtn-section-title">Последние замеры</h2>
+                <p class="mtn-section-copy">История доступна локально и используется на других страницах кабинета.</p>
+            </div>
+        </div>
+        <div id="mtnSpeedtestHistoryEmpty" class="mtn-empty-state" hidden>
+            <div class="mtn-empty-state__icon"><i class="fas fa-chart-line"></i></div>
+            <strong>Пока нет данных</strong>
+            <p>Запустите первый тест, чтобы увидеть историю замеров.</p>
+        </div>
+        <div id="mtnSpeedtestHistoryList" class="mtn-history-list"></div>
+    </section>
+
+    <section id="mtnSpeedtestAdvice" class="mtn-feature-card" hidden>
+        <div class="mtn-section-head">
+            <div>
+                <h2 class="mtn-section-title">Как повысить скорость?</h2>
+                <p class="mtn-section-copy">Советы показываются, если скорость ниже ожидаемой.</p>
+            </div>
+        </div>
+        <ul id="mtnSpeedtestAdviceList" class="mtn-check-list"></ul>
+        <a class="btn btn-secondary btn-sm" href="/tickets?topic=Снижена скорость соединения">Не помогло? Создать заявку</a>
+    </section>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="/static/js/mtn-customer-pages.js?v={{ asset_version }}"></script>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}429 - Слишком много запросов{% endblock %}
+
+{% block content %}
+<div class="min-h-[60vh] flex items-center justify-center">
+    <div class="text-center">
+        <div class="text-9xl font-bold text-gray-200">429</div>
+        <h1 class="text-2xl font-bold text-gray-800 mt-4">Слишком много запросов</h1>
+        <p class="text-gray-600 mt-2">Вы превысили допустимое количество запросов.</p>
+        <p class="text-gray-500 text-sm mt-1">Пожалуйста, подождите несколько минут перед повторной попыткой.</p>
+        <a href="/" class="inline-block mt-6 bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition">
+            <i class="fas fa-home mr-2"></i>Вернуться на главную
+        </a>
+    </div>
+</div>
+{% endblock %}

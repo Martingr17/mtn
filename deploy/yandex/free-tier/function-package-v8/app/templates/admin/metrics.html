@@ -1,0 +1,311 @@
+{% extends "base.html" %}
+
+{% block title %}Метрики | Админ-панель{% endblock %}
+{% block body_class %}admin-page{% endblock %}
+
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<section class="page-section">
+    {% include "admin/_subnav.html" %}
+    <div class="toolbar">
+        <div>
+            <h1 class="toolbar-title">Метрики и здоровье системы</h1>
+            <p class="toolbar-copy">Сводка по нагрузке, ошибкам, активности и техническому состоянию приложения.</p>
+        </div>
+    </div>
+
+    <section class="stats-grid">
+        <article class="metric-card">
+            <div class="metric-meta">
+                <span class="metric-label">HTTP-запросы</span>
+                <span class="metric-icon"><i class="fas fa-wave-square"></i></span>
+            </div>
+            <div class="metric-value" id="metricsHttpTotal">—</div>
+            <div class="metric-foot">Общее количество запросов по счётчику Prometheus.</div>
+        </article>
+        <article class="metric-card">
+            <div class="metric-meta">
+                <span class="metric-label">Ошибки 500</span>
+                <span class="metric-icon"><i class="fas fa-triangle-exclamation"></i></span>
+            </div>
+            <div class="metric-value" id="metricsErrorsTotal">—</div>
+            <div class="metric-foot">Суммарное количество ответов со статусом 500.</div>
+        </article>
+        <article class="metric-card">
+            <div class="metric-meta">
+                <span class="metric-label">Активные пользователи</span>
+                <span class="metric-icon"><i class="fas fa-user-check"></i></span>
+            </div>
+            <div class="metric-value" id="metricsActiveUsers">—</div>
+            <div class="metric-foot">Уникальные пользователи за последние 24 часа.</div>
+        </article>
+        <article class="metric-card">
+            <div class="metric-meta">
+                <span class="metric-label">Время работы</span>
+                <span class="metric-icon"><i class="fas fa-server"></i></span>
+            </div>
+            <div class="metric-value" id="metricsUptime">—</div>
+            <div class="metric-foot">Текущее время жизни процесса приложения.</div>
+        </article>
+    </section>
+
+    <section class="payments-grid">
+        <article class="feed-card span-7">
+            <div class="section-title-wrap">
+                <div>
+                    <h2 class="section-title">HTTP и статусы</h2>
+                    <p class="section-subtitle">Снимок по Prometheus-метрикам и распределению кодов ответа.</p>
+                </div>
+            </div>
+            <canvas id="adminMetricsChart" height="140"></canvas>
+        </article>
+
+        <article class="profile-panel span-5">
+            <div class="section-title-wrap">
+                <div>
+                    <h2 class="section-title">Системная информация</h2>
+                    <p class="section-subtitle">Среда, ресурсы, пул соединений и состояние сервиса.</p>
+                </div>
+            </div>
+            <div class="list-stack u-mt-18" id="adminSystemInfo">
+                <div class="skeleton skeleton-card-210"></div>
+            </div>
+        </article>
+    </section>
+
+    <section class="table-shell">
+        <div class="section-title-wrap">
+            <div>
+                <h2 class="section-title">Пороги мониторинга качества связи</h2>
+                <p class="section-subtitle">Правила, по которым система создаёт предупреждения и критические алерты для абонентов.</p>
+            </div>
+            <button class="btn btn-primary btn-sm" id="adminThresholdsSaveBtn" type="button" onclick="saveMonitoringThresholds()">
+                <i class="fas fa-floppy-disk"></i>
+                Сохранить пороги
+            </button>
+        </div>
+        <div id="adminMonitoringThresholds" class="list-stack u-mt-18">
+            <div class="skeleton skeleton-card-200"></div>
+        </div>
+    </section>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    let adminMetricsChart = null;
+    let monitoringThresholdRows = [];
+    let monitoringThresholdsReadOnly = false;
+
+    function parseMetricValue(metrics, metricName) {
+        const regex = new RegExp(`${metricName}\\s+([\\d.]+)`);
+        const match = metrics.match(regex);
+        return match ? Number(match[1]) : 0;
+    }
+
+    function renderAdminMetricsChart(totalRequests, totalErrors) {
+        const canvas = document.getElementById("adminMetricsChart");
+        const ctx = canvas.getContext("2d");
+
+        if (adminMetricsChart) {
+            adminMetricsChart.destroy();
+        }
+
+        adminMetricsChart = new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: ["Все запросы", "Ошибки 500"],
+                datasets: [{
+                    label: "Счётчики",
+                    data: [totalRequests, totalErrors],
+                    backgroundColor: ["rgba(14, 165, 233, 0.55)", "rgba(239, 68, 68, 0.55)"],
+                    borderColor: ["#38bdf8", "#ef4444"],
+                    borderWidth: 1.5,
+                    borderRadius: 16,
+                }],
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { color: "rgba(125, 211, 252, 0.08)" } },
+                    y: { grid: { color: "rgba(125, 211, 252, 0.08)" }, beginAtZero: true },
+                },
+            },
+        });
+    }
+
+    function thresholdMetricLabel(metric) {
+        return {
+            ping_ms: "Ping, мс",
+            packet_loss_pct: "Packet loss, %",
+            download_ratio: "Скорость от тарифа",
+            jitter_ms: "Jitter, мс",
+            no_connection: "Нет ответа от линии",
+        }[metric] || metric;
+    }
+
+    function renderMonitoringThresholds(items) {
+        const container = document.getElementById("adminMonitoringThresholds");
+        monitoringThresholdRows = items;
+
+        container.innerHTML = items.map((item) => `
+            <article class="feature-card">
+                <div class="toolbar">
+                    <div>
+                        <div class="table-title">${OperatorUI.escapeHTML(thresholdMetricLabel(item.metric_name))}</div>
+                        <div class="table-copy">Условие ${OperatorUI.escapeHTML(item.condition)} · активность правила ${item.is_active ? "включена" : "выключена"}</div>
+                    </div>
+                    <label class="chip">
+                        <input type="checkbox" data-threshold-active="${item.metric_name}" ${item.is_active ? "checked" : ""} ${monitoringThresholdsReadOnly ? "disabled" : ""}>
+                        Активно
+                    </label>
+                </div>
+                <div class="monitoring-filter-grid u-grid-5 u-mt-16">
+                    <div class="field">
+                        <label class="field-label">Условие</label>
+                        <select class="select" data-threshold-condition="${item.metric_name}" ${monitoringThresholdsReadOnly ? "disabled" : ""}>
+                            <option value=">" ${item.condition === ">" ? "selected" : ""}>></option>
+                            <option value=">=" ${item.condition === ">=" ? "selected" : ""}>>=</option>
+                            <option value="<" ${item.condition === "<" ? "selected" : ""}><</option>
+                            <option value="<=" ${item.condition === "<=" ? "selected" : ""}><=</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label class="field-label">Warning</label>
+                        <input class="input" type="number" step="0.01" data-threshold-warning="${item.metric_name}" value="${item.warning_value ?? ""}" ${monitoringThresholdsReadOnly ? "disabled" : ""}>
+                    </div>
+                    <div class="field">
+                        <label class="field-label">Critical</label>
+                        <input class="input" type="number" step="0.01" data-threshold-critical="${item.metric_name}" value="${item.critical_value ?? ""}" ${monitoringThresholdsReadOnly ? "disabled" : ""}>
+                    </div>
+                    <div class="field">
+                        <label class="field-label">Warning, мин</label>
+                        <input class="input" type="number" min="1" step="1" data-threshold-warning-duration="${item.metric_name}" value="${item.warning_duration_minutes}" ${monitoringThresholdsReadOnly ? "disabled" : ""}>
+                    </div>
+                    <div class="field">
+                        <label class="field-label">Critical, мин</label>
+                        <input class="input" type="number" min="1" step="1" data-threshold-critical-duration="${item.metric_name}" value="${item.critical_duration_minutes}" ${monitoringThresholdsReadOnly ? "disabled" : ""}>
+                    </div>
+                </div>
+            </article>
+        `).join("");
+
+        document.getElementById("adminThresholdsSaveBtn").disabled = monitoringThresholdsReadOnly;
+    }
+
+    async function loadMonitoringThresholds(adminUser) {
+        try {
+            const rows = await OperatorUI.request("/api/v1/monitoring/admin/thresholds", { auth: true });
+            monitoringThresholdsReadOnly = !["admin", "super_admin"].includes(adminUser.role);
+            renderMonitoringThresholds(rows);
+        } catch (error) {
+            document.getElementById("adminMonitoringThresholds").innerHTML = OperatorUI.createEmptyState(
+                "fas fa-triangle-exclamation",
+                "Не удалось загрузить пороги",
+                error.message || "Проверьте доступ к модулю мониторинга."
+            );
+        }
+    }
+
+    async function saveMonitoringThresholds() {
+        if (monitoringThresholdsReadOnly) {
+            OperatorUI.toast("Изменять пороги может только администратор MTN.", "warning");
+            return;
+        }
+
+        const button = document.getElementById("adminThresholdsSaveBtn");
+        const payload = {
+            items: monitoringThresholdRows.map((item) => ({
+                metric_name: item.metric_name,
+                condition: document.querySelector(`[data-threshold-condition="${item.metric_name}"]`).value,
+                warning_value: document.querySelector(`[data-threshold-warning="${item.metric_name}"]`).value || null,
+                critical_value: document.querySelector(`[data-threshold-critical="${item.metric_name}"]`).value || null,
+                warning_duration_minutes: Number(document.querySelector(`[data-threshold-warning-duration="${item.metric_name}"]`).value || item.warning_duration_minutes),
+                critical_duration_minutes: Number(document.querySelector(`[data-threshold-critical-duration="${item.metric_name}"]`).value || item.critical_duration_minutes),
+                is_active: document.querySelector(`[data-threshold-active="${item.metric_name}"]`).checked,
+            })),
+        };
+
+        OperatorUI.setButtonLoading(button, true, "Сохранение...");
+        try {
+            const updated = await OperatorUI.request("/api/v1/monitoring/admin/thresholds", {
+                method: "PUT",
+                auth: true,
+                json: true,
+                body: payload,
+            });
+            renderMonitoringThresholds(updated);
+            OperatorUI.toast("Пороги мониторинга обновлены.", "success");
+        } catch (error) {
+            OperatorUI.toast(error.message || "Не удалось сохранить пороги мониторинга.", "error");
+        } finally {
+            OperatorUI.setButtonLoading(button, false);
+        }
+    }
+
+    async function loadAdminMetrics() {
+        const adminUser = await OperatorUI.ensureAdminAccess(document.querySelector(".site-main"), {
+            errorTitle: "Не удалось открыть раздел метрик",
+        });
+        if (!adminUser) {
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem("access_token");
+            const [metricsResponse, systemInfo] = await Promise.all([
+                fetch("/metrics", { headers: { Authorization: `Bearer ${token}` } }).then((res) => res.text()),
+                OperatorUI.request("/api/v1/admin/system/info", { auth: true }),
+            ]);
+
+            const totalRequests = parseMetricValue(metricsResponse, "http_requests_total");
+            const totalErrors = parseMetricValue(metricsResponse, "http_requests_total\\{status=\"500\"\\}");
+
+            document.getElementById("metricsHttpTotal").textContent = totalRequests.toLocaleString("ru-RU");
+            document.getElementById("metricsErrorsTotal").textContent = totalErrors.toLocaleString("ru-RU");
+            document.getElementById("metricsActiveUsers").textContent = String(systemInfo.active_users_24h || 0);
+            document.getElementById("metricsUptime").textContent = systemInfo.uptime || "—";
+
+            renderAdminMetricsChart(totalRequests, totalErrors);
+
+            document.getElementById("adminSystemInfo").innerHTML = `
+                <div class="feature-card">
+                    <div class="table-title">Версия приложения</div>
+                    <div class="table-copy">${OperatorUI.escapeHTML(systemInfo.app_version || "—")}</div>
+                </div>
+                <div class="feature-card">
+                    <div class="table-title">Окружение</div>
+                    <div class="table-copy">${OperatorUI.escapeHTML(systemInfo.environment || "—")}</div>
+                </div>
+                <div class="feature-card">
+                    <div class="table-title">Ресурсы</div>
+                    <div class="table-copy">CPU: ${systemInfo.cpu_percent}% · RAM: ${systemInfo.memory_percent}% · Диск: ${systemInfo.disk_percent}%</div>
+                </div>
+                <div class="feature-card">
+                    <div class="table-title">Соединения с БД</div>
+                    <div class="table-copy">${systemInfo.db_connections}</div>
+                </div>
+            `;
+            await loadMonitoringThresholds(adminUser);
+        } catch (error) {
+            document.getElementById("adminSystemInfo").innerHTML = OperatorUI.createEmptyState(
+                "fas fa-triangle-exclamation",
+                "Не удалось загрузить метрики",
+                error.message || "Проверьте доступность Prometheus-метрик и API."
+            );
+            document.getElementById("adminMonitoringThresholds").innerHTML = OperatorUI.createEmptyState(
+                "fas fa-triangle-exclamation",
+                "Не удалось загрузить пороги мониторинга",
+                error.message || "Проверьте доступность API модуля мониторинга."
+            );
+        }
+    }
+
+    loadAdminMetrics();
+    window.setInterval(loadAdminMetrics, 30000);
+</script>
+{% endblock %}

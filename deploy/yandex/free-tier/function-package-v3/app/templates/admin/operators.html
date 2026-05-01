@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}Операторы | Админ-панель MTN{% endblock %}
+{% block body_class %}admin-page admin-suite-page{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="/static/css/admin-extra-sections.css?v={{ asset_version }}">
+{% endblock %}
+
+{% block content %}
+<section class="page-section admin-suite-shell" data-admin-page="operators" id="adminOperatorsPage">
+    {% include "admin/_subnav.html" %}
+
+    <section class="hero admin-suite-hero">
+        <div class="hero-grid hero-grid-single">
+            <div>
+                <div class="eyebrow">
+                    <i class="fas fa-user-shield"></i>
+                    Управление сотрудниками
+                </div>
+                <h1 class="hero-title">Операторы</h1>
+                <p class="hero-subtitle">Управляйте ролями, блокировкой, временными паролями, загруженностью и журналом действий сотрудников в безопасном контуре MTN.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="admin-suite-toolbar">
+        <div class="admin-suite-head">
+            <div>
+                <h2>Команда админ-панели</h2>
+                <p>Только для admin. Поддерживаются добавление, редактирование, сброс пароля, журнал действий и защита от удаления последнего администратора.</p>
+            </div>
+            <div class="admin-suite-actions">
+                <button class="btn btn-secondary btn-sm" type="button" id="adminOperatorsExport">Экспорт CSV</button>
+                <button class="btn btn-primary btn-sm" type="button" id="adminOperatorsCreate">Добавить оператора</button>
+            </div>
+        </div>
+        <div class="admin-suite-filter-grid">
+            <label class="field"><span class="field-label">Поиск</span><input class="input" id="adminOperatorsSearch" type="search" placeholder="Имя, email, роль"></label>
+            <label class="field"><span class="field-label">Роль</span><select class="select" id="adminOperatorsRole"><option value="all">Все</option><option value="admin">Admin</option><option value="operator">Operator</option></select></label>
+            <label class="field"><span class="field-label">Статус</span><select class="select" id="adminOperatorsStatus"><option value="all">Все</option><option value="active">Активен</option><option value="blocked">Заблокирован</option></select></label>
+            <div class="admin-suite-actions">
+                <button class="btn btn-secondary btn-sm" type="button" id="adminOperatorsReset">Сбросить</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="admin-suite-table-shell">
+        <div class="admin-suite-head">
+            <div>
+                <h3>Список операторов</h3>
+                <p id="adminOperatorsSummary">Загрузка списка сотрудников...</p>
+            </div>
+        </div>
+        <div class="admin-suite-table-wrap">
+            <table class="admin-suite-table">
+                <thead>
+                    <tr>
+                        <th data-sort="id">ID</th>
+                        <th>Аватар</th>
+                        <th data-sort="name">Имя</th>
+                        <th>Email</th>
+                        <th data-sort="role">Роль</th>
+                        <th data-sort="status">Статус</th>
+                        <th data-sort="lastLogin">Последний вход</th>
+                        <th>Загруженность</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody id="adminOperatorsTableBody"></tbody>
+            </table>
+        </div>
+        <div class="admin-suite-pagination">
+            <div id="adminOperatorsPaginationInfo" class="admin-suite-meta">Страница 1</div>
+            <div class="admin-suite-actions">
+                <button class="btn btn-secondary btn-sm" type="button" id="adminOperatorsPrev">Назад</button>
+                <button class="btn btn-secondary btn-sm" type="button" id="adminOperatorsNext">Вперёд</button>
+            </div>
+        </div>
+    </section>
+</section>
+
+<div class="admin-suite-modal" id="adminOperatorsModal" hidden>
+    <div class="admin-suite-modal-card">
+        <div class="admin-suite-head">
+            <div>
+                <h3 id="adminOperatorsModalTitle">Добавить оператора</h3>
+                <p>Проверьте уникальность email, роль и пароль перед сохранением.</p>
+            </div>
+            <button class="btn btn-secondary btn-sm" type="button" data-admin-modal-close="adminOperatorsModal">Закрыть</button>
+        </div>
+        <form id="adminOperatorsForm" class="admin-suite-modal-grid">
+            <input type="hidden" id="adminOperatorsId">
+            <label class="field"><span class="field-label">Имя и фамилия</span><input class="input" id="adminOperatorsName" required></label>
+            <label class="field"><span class="field-label">Email</span><input class="input" id="adminOperatorsEmail" type="email" required></label>
+            <label class="field"><span class="field-label">Роль</span><select class="select" id="adminOperatorsRoleInput"><option value="operator">Operator</option><option value="admin">Admin</option></select></label>
+            <label class="field"><span class="field-label">Статус</span><select class="select" id="adminOperatorsStatusInput"><option value="active">Активен</option><option value="blocked">Заблокирован</option></select></label>
+            <label class="field"><span class="field-label">Пароль</span><input class="input" id="adminOperatorsPassword" type="text"></label>
+            <div class="admin-suite-actions" style="align-self:end">
+                <button class="btn btn-secondary btn-sm" type="button" id="adminOperatorsGeneratePassword">Сгенерировать пароль</button>
+            </div>
+            <div class="field" style="grid-column:1/-1">
+                <span id="adminOperatorsValidation" class="admin-suite-danger-copy"></span>
+            </div>
+            <div class="admin-suite-actions" style="grid-column:1/-1">
+                <button class="btn btn-danger btn-sm" type="button" id="adminOperatorsDelete">Удалить</button>
+                <button class="btn btn-secondary btn-sm" type="button" data-admin-modal-close="adminOperatorsModal">Отмена</button>
+                <button class="btn btn-primary btn-sm" type="submit">Сохранить</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="admin-suite-modal" id="adminOperatorsPasswordModal" hidden>
+    <div class="admin-suite-modal-card">
+        <div class="admin-suite-head">
+            <div>
+                <h3>Сброс пароля</h3>
+                <p>Новый временный пароль можно сразу скопировать или отправить сотруднику.</p>
+            </div>
+            <button class="btn btn-secondary btn-sm" type="button" data-admin-modal-close="adminOperatorsPasswordModal">Закрыть</button>
+        </div>
+        <div id="adminOperatorsPasswordBody"></div>
+    </div>
+</div>
+
+<div class="admin-suite-modal" id="adminOperatorsLogModal" hidden>
+    <div class="admin-suite-modal-card">
+        <div class="admin-suite-head">
+            <div>
+                <h3>Журнал действий оператора</h3>
+                <p>Включает входы, ответы в заявках, ручные операции и сбросы пароля.</p>
+            </div>
+            <button class="btn btn-secondary btn-sm" type="button" data-admin-modal-close="adminOperatorsLogModal">Закрыть</button>
+        </div>
+        <div id="adminOperatorsLogBody"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="/static/js/admin-extra-sections.js?v={{ asset_version }}"></script>
+{% endblock %}

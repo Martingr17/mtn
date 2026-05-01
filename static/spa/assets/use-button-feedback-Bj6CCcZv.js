@@ -1,0 +1,2 @@
+import{i as e,l as t}from"./cn-Dxg1DMZx.js";var n=t(e(),1);function r(e=550){let[t,r]=(0,n.useState)(`idle`),i=(0,n.useRef)(null),a=()=>{i.current&&=(window.clearTimeout(i.current),null)};return(0,n.useEffect)(()=>()=>{a()},[]),{feedbackState:t,flashFeedback:t=>{a(),r(t),i.current=window.setTimeout(()=>{r(`idle`),i.current=null},e)},setFeedbackState:r}}export{r as t};
+//# sourceMappingURL=use-button-feedback-Bj6CCcZv.js.map

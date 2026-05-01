@@ -1,0 +1,399 @@
+{% extends "base.html" %}
+
+{% block title %}Вход | Личный кабинет MTN{% endblock %}
+{% block body_class %}auth-entry-page{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="/static/css/mtn-auth.css?v={{ asset_version }}">
+{% endblock %}
+
+{% block content %}
+<section class="mtn-auth-page" aria-labelledby="loginPageTitle">
+    <div class="mtn-auth-shell">
+        <aside class="mtn-auth-side" aria-label="Преимущества входа MTN">
+            <div class="mtn-auth-logo">
+                <div class="mtn-auth-logo-mark">MTN</div>
+                <div class="mtn-auth-logo-subtitle">Martin Telecom Network</div>
+            </div>
+
+            <span class="mtn-auth-kicker">
+                <i class="fas fa-shield-heart" aria-hidden="true"></i>
+                Безопасный вход без лишних шагов
+            </span>
+
+            <div>
+                <h1 id="loginPageTitle" class="mtn-auth-title">Личный кабинет MTN в одном понятном сценарии.</h1>
+                <p class="mtn-auth-subtitle">
+                    Вход по SMS-коду для абонентов, вход по паролю для тех, кто его уже настроил, и отдельный переход
+                    в административную панель для сотрудников.
+                </p>
+            </div>
+
+            <div class="mtn-auth-feature-list">
+                <article class="mtn-auth-feature">
+                    <i class="fas fa-mobile-screen-button" aria-hidden="true"></i>
+                    <div>
+                        <strong>Вход по SMS по умолчанию</strong>
+                        <div class="mtn-auth-help">Получите код, подтвердите номер и сразу перейдите в кабинет.</div>
+                    </div>
+                </article>
+                <article class="mtn-auth-feature">
+                    <i class="fas fa-key" aria-hidden="true"></i>
+                    <div>
+                        <strong>Пароль как второй сценарий</strong>
+                        <div class="mtn-auth-help">Если пароль уже создан, можно войти без ожидания SMS.</div>
+                    </div>
+                </article>
+                <article class="mtn-auth-feature">
+                    <i class="fas fa-user-shield" aria-hidden="true"></i>
+                    <div>
+                        <strong>Вход сотрудников отдельно</strong>
+                        <div class="mtn-auth-help">Администраторы и операторы переходят в защищённый раздел с собственным экраном входа.</div>
+                    </div>
+                </article>
+            </div>
+
+            <div class="mtn-auth-demo-banner" {% if not demo_mode %}hidden{% endif %}>
+                <i class="fas fa-flask" aria-hidden="true"></i>
+                <div>
+                    <strong>Демо-режим активен</strong>
+                    На этой странице SMS-код выводится прямо в интерфейс, поэтому весь сценарий можно проверить без внешнего SMS-шлюза.
+                </div>
+            </div>
+        </aside>
+
+        <div class="mtn-auth-card">
+            <div class="mtn-auth-logo mtn-auth-logo--center">
+                <div class="mtn-auth-logo-mark">MTN</div>
+                <div class="mtn-auth-logo-subtitle">Martin Telecom Network</div>
+            </div>
+
+            <div class="mtn-auth-heading">
+                <h2>Личный кабинет</h2>
+                <p>Войдите, чтобы управлять услугами, балансом, тарифом и поддержкой.</p>
+            </div>
+
+            <div id="loginStatusBox" class="mtn-auth-status is-visible" aria-live="polite">
+                <div class="mtn-auth-status-head">
+                    <h3 id="loginStatusTitle" class="mtn-auth-status-title">Готово к входу</h3>
+                </div>
+                <p id="loginStatusCopy" class="mtn-auth-status-copy">Введите номер телефона и выберите удобный способ входа.</p>
+            </div>
+
+            <!-- Основная форма входа для абонентов -->
+            <form id="subscriberLoginForm" class="mtn-auth-form" novalidate>
+                <div class="mtn-auth-field">
+                    <label class="mtn-auth-label" for="loginPhone">Номер телефона</label>
+                    <div class="mtn-auth-input-wrap">
+                        <i class="fas fa-phone mtn-auth-input-icon" aria-hidden="true"></i>
+                        <input
+                            id="loginPhone"
+                            class="mtn-auth-input"
+                            type="tel"
+                            inputmode="tel"
+                            autocomplete="tel"
+                            placeholder="+7 (999) 123-45-67"
+                            aria-describedby="loginPhoneHelp loginPhoneError"
+                            required
+                        >
+                    </div>
+                    <div id="loginPhoneHelp" class="mtn-auth-help">Используйте номер, который привязан к договору MTN.</div>
+                    <div id="loginPhoneError" class="mtn-auth-error" hidden></div>
+                </div>
+
+                <label class="mtn-auth-checkbox" for="rememberPhone">
+                    <input id="rememberPhone" type="checkbox">
+                    <span>Запомнить номер на этом устройстве</span>
+                </label>
+
+                <div class="mtn-auth-row mtn-auth-row--stretch">
+                    <button id="sendCodeButton" class="mtn-auth-btn mtn-auth-btn--secondary" type="button">
+                        Отправить код
+                    </button>
+                    <div id="sendCodeTimer" class="mtn-auth-timer" aria-live="polite"></div>
+                </div>
+
+                <div id="smsCodeField" class="mtn-auth-field mtn-auth-hidden">
+                    <label class="mtn-auth-label" for="loginSmsCode">Код из SMS</label>
+                    <div class="mtn-auth-input-wrap">
+                        <i class="fas fa-envelope-open-text mtn-auth-input-icon" aria-hidden="true"></i>
+                        <input
+                            id="loginSmsCode"
+                            class="mtn-auth-input"
+                            type="text"
+                            inputmode="numeric"
+                            maxlength="6"
+                            placeholder="Код из SMS"
+                            aria-describedby="loginCodeError"
+                        >
+                    </div>
+                    <div id="loginCodeError" class="mtn-auth-error" hidden></div>
+                    <button id="loginByCodeButton" class="mtn-auth-btn mtn-auth-btn--primary mtn-auth-btn--full" type="button">
+                        Войти по коду
+                    </button>
+                </div>
+
+                <div id="loginDemoPanel" class="mtn-auth-demo" {% if not demo_mode %}hidden{% endif %}>
+                    <div class="mtn-auth-demo-head">
+                        <div>
+                            <h3 class="mtn-auth-demo-title">Демо-режим: код подтверждения</h3>
+                            <p class="mtn-auth-demo-copy">При изменении номера код обновляется. Кнопка ниже копирует код и сразу подставляет его в поле.</p>
+                        </div>
+                    </div>
+                    <div class="mtn-auth-demo-code">
+                        <div>
+                            <div class="mtn-auth-help">SMS-код для номера <span id="demoPhoneLabel" class="mtn-auth-mono">{{ demo_account_phone }}</span></div>
+                            <strong id="demoSmsCodeValue">123456</strong>
+                        </div>
+                        <button id="copyDemoCodeButton" class="mtn-auth-btn mtn-auth-btn--secondary mtn-auth-btn--sm" type="button">
+                            Скопировать код
+                        </button>
+                    </div>
+                    <div class="mtn-auth-demo-meta">
+                        <span>TTL: <strong id="demoSmsTtl">5 мин</strong></span>
+                        <span>Вход по коду работает сразу после отправки.</span>
+                    </div>
+                </div>
+
+                <div class="mtn-auth-divider">или</div>
+
+                <div class="mtn-auth-field">
+                    <label class="mtn-auth-label" for="loginPassword">Пароль</label>
+                    <div class="mtn-auth-input-wrap">
+                        <i class="fas fa-lock mtn-auth-input-icon" aria-hidden="true"></i>
+                        <input
+                            id="loginPassword"
+                            class="mtn-auth-input"
+                            type="password"
+                            autocomplete="current-password"
+                            placeholder="Пароль"
+                            aria-describedby="loginPasswordError"
+                        >
+                        <button id="togglePasswordButton" class="mtn-auth-input-action" type="button" aria-label="Показать пароль">
+                            <i class="fas fa-eye" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <div id="loginPasswordError" class="mtn-auth-error" hidden></div>
+                    <button id="loginByPasswordButton" class="mtn-auth-btn mtn-auth-btn--secondary mtn-auth-btn--full" type="button">
+                        Войти по паролю
+                    </button>
+                </div>
+
+                <div class="mtn-auth-links">
+                    <button class="mtn-auth-link" type="button" data-open-register>
+                        Зарегистрироваться
+                    </button>
+                    <button class="mtn-auth-link" type="button" data-open-recovery>
+                        Забыли пароль?
+                    </button>
+                </div>
+            </form>
+
+            <!-- Отдельный блок входа сотрудников -->
+            <div class="mtn-auth-admin-block" aria-labelledby="adminEntryTitle">
+                <div class="mtn-auth-admin-head">
+                    <div class="mtn-auth-admin-copy-row">
+                        <h3 id="adminEntryTitle" class="mtn-auth-admin-title">Вход для администратора</h3>
+                        <p class="mtn-auth-admin-copy">Сотрудникам MTN доступен отдельный экран авторизации для административной панели.</p>
+                    </div>
+                    <a class="mtn-auth-btn mtn-auth-btn--secondary mtn-auth-btn--sm mtn-auth-admin-link" href="/admin/login">
+                        <i class="fas fa-arrow-right-to-bracket" aria-hidden="true"></i>
+                        Перейти к входу
+                    </a>
+                </div>
+
+                <div class="mtn-auth-alias-grid" {% if not demo_mode %}hidden{% endif %}>
+                    {% for item in demo_staff_aliases %}
+                    <div class="mtn-auth-alias-item">
+                        <div class="mtn-auth-alias-text">
+                            <span>{{ item.label }}</span>
+                            <strong>{{ item.email }} / {{ item.password }}</strong>
+                        </div>
+                        <button
+                            class="mtn-auth-btn mtn-auth-btn--ghost mtn-auth-btn--sm"
+                            type="button"
+                            data-copy-admin-credentials
+                            data-credentials="{{ item.email }} / {{ item.password }}"
+                        >
+                            Скопировать
+                        </button>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="mtn-auth-login-footer">
+                Нет аккаунта? Зарегистрируйтесь по номеру телефона и войдите без установки пароля, если хотите пользоваться только SMS-кодом.
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Модальное окно регистрации -->
+<div id="registerModal" class="modal" aria-hidden="true">
+    <div class="dialog mtn-auth-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="registerModalTitle">
+        <div class="dialog-header">
+            <div>
+                <div class="table-title" id="registerModalTitle">Регистрация нового пользователя</div>
+                <div class="table-copy">Телефон → код из SMS → пароль по желанию.</div>
+            </div>
+            <button class="dialog-close" type="button" data-modal-close="registerModal" aria-label="Закрыть">
+                <i class="fas fa-xmark" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div class="dialog-body">
+            <div class="mtn-auth-steps" aria-label="Шаги регистрации">
+                <div class="mtn-auth-step is-active" data-register-step="1"><span class="mtn-auth-step-index">1</span><span>Телефон</span></div>
+                <div class="mtn-auth-step" data-register-step="2"><span class="mtn-auth-step-index">2</span><span>Код</span></div>
+                <div class="mtn-auth-step" data-register-step="3"><span class="mtn-auth-step-index">3</span><span>Пароль</span></div>
+            </div>
+
+            <div id="registerStatusBox" class="mtn-auth-status is-visible" aria-live="polite">
+                <div class="mtn-auth-status-head">
+                    <h3 id="registerStatusTitle" class="mtn-auth-status-title">Подготовка регистрации</h3>
+                </div>
+                <p id="registerStatusCopy" class="mtn-auth-status-copy">Введите номер телефона. Лицевой счёт в демо-режиме сформируется автоматически.</p>
+            </div>
+
+            <form id="registerForm" class="mtn-auth-form" novalidate>
+                <input id="registerBillingId" type="hidden">
+
+                <div class="mtn-auth-field">
+                    <label class="mtn-auth-label" for="registerPhone">Номер телефона</label>
+                    <div class="mtn-auth-input-wrap">
+                        <i class="fas fa-phone mtn-auth-input-icon" aria-hidden="true"></i>
+                        <input id="registerPhone" class="mtn-auth-input" type="tel" inputmode="tel" placeholder="+7 (999) 123-45-67" required>
+                    </div>
+                    <div id="registerPhoneError" class="mtn-auth-error" hidden></div>
+                </div>
+
+                <div id="registerCodeGroup" class="mtn-auth-field mtn-auth-hidden">
+                    <label class="mtn-auth-label" for="registerCode">Код из SMS</label>
+                    <div class="mtn-auth-input-wrap">
+                        <i class="fas fa-envelope-open-text mtn-auth-input-icon" aria-hidden="true"></i>
+                        <input id="registerCode" class="mtn-auth-input" type="text" inputmode="numeric" maxlength="6" placeholder="Код подтверждения">
+                    </div>
+                    <div id="registerCodeError" class="mtn-auth-error" hidden></div>
+                </div>
+
+                <div id="registerPasswordGroup" class="mtn-auth-field mtn-auth-hidden">
+                    <label class="mtn-auth-label" for="registerPassword">Придумайте пароль</label>
+                    <div class="mtn-auth-input-wrap">
+                        <i class="fas fa-lock mtn-auth-input-icon" aria-hidden="true"></i>
+                        <input id="registerPassword" class="mtn-auth-input" type="password" autocomplete="new-password" placeholder="Можно пропустить и входить только по SMS">
+                    </div>
+                    <div class="mtn-auth-help">Поле необязательное. Если не заполнить, вход останется по SMS-коду.</div>
+                </div>
+
+                <div id="registerDemoPanel" class="mtn-auth-demo mtn-auth-hidden" {% if not demo_mode %}hidden{% endif %}>
+                    <div class="mtn-auth-demo-code">
+                        <div>
+                            <div class="mtn-auth-help">Код для подтверждения номера</div>
+                            <strong id="registerDemoCode">123456</strong>
+                        </div>
+                        <button id="registerCopyCodeButton" class="mtn-auth-btn mtn-auth-btn--secondary mtn-auth-btn--sm" type="button">
+                            Скопировать код
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mtn-auth-inline-actions">
+                    <button id="registerActionButton" class="mtn-auth-btn mtn-auth-btn--primary" type="button">
+                        Отправить код
+                    </button>
+                    <button class="mtn-auth-btn mtn-auth-btn--ghost" type="button" data-modal-close="registerModal">
+                        Отмена
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно восстановления доступа -->
+<div id="recoveryModal" class="modal" aria-hidden="true">
+    <div class="dialog mtn-auth-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="recoveryModalTitle">
+        <div class="dialog-header">
+            <div>
+                <div class="table-title" id="recoveryModalTitle">Восстановление доступа</div>
+                <div class="table-copy">Подтвердите номер и задайте новый пароль.</div>
+            </div>
+            <button class="dialog-close" type="button" data-modal-close="recoveryModal" aria-label="Закрыть">
+                <i class="fas fa-xmark" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div class="dialog-body">
+            <div id="recoveryStatusBox" class="mtn-auth-status is-visible" aria-live="polite">
+                <div class="mtn-auth-status-head">
+                    <h3 id="recoveryStatusTitle" class="mtn-auth-status-title">Сброс пароля</h3>
+                </div>
+                <p id="recoveryStatusCopy" class="mtn-auth-status-copy">Введите телефон, чтобы отправить код для сброса пароля.</p>
+            </div>
+
+            <form id="recoveryForm" class="mtn-auth-form" novalidate>
+                <div class="mtn-auth-field">
+                    <label class="mtn-auth-label" for="recoveryPhone">Номер телефона</label>
+                    <div class="mtn-auth-input-wrap">
+                        <i class="fas fa-phone mtn-auth-input-icon" aria-hidden="true"></i>
+                        <input id="recoveryPhone" class="mtn-auth-input" type="tel" inputmode="tel" placeholder="+7 (999) 123-45-67" required>
+                    </div>
+                    <div id="recoveryPhoneError" class="mtn-auth-error" hidden></div>
+                </div>
+
+                <div id="recoveryCodeGroup" class="mtn-auth-field mtn-auth-hidden">
+                    <label class="mtn-auth-label" for="recoveryCode">Код из SMS</label>
+                    <div class="mtn-auth-input-wrap">
+                        <i class="fas fa-envelope-open-text mtn-auth-input-icon" aria-hidden="true"></i>
+                        <input id="recoveryCode" class="mtn-auth-input" type="text" inputmode="numeric" maxlength="6" placeholder="Код подтверждения">
+                    </div>
+                    <div id="recoveryCodeError" class="mtn-auth-error" hidden></div>
+                </div>
+
+                <div id="recoveryPasswordGroup" class="mtn-auth-field mtn-auth-hidden">
+                    <label class="mtn-auth-label" for="recoveryNewPassword">Новый пароль</label>
+                    <div class="mtn-auth-input-wrap">
+                        <i class="fas fa-lock mtn-auth-input-icon" aria-hidden="true"></i>
+                        <input id="recoveryNewPassword" class="mtn-auth-input" type="password" autocomplete="new-password" placeholder="Минимум 8 символов">
+                    </div>
+                    <div id="recoveryPasswordError" class="mtn-auth-error" hidden></div>
+                </div>
+
+                <div id="recoveryDemoPanel" class="mtn-auth-demo mtn-auth-hidden" {% if not demo_mode %}hidden{% endif %}>
+                    <div class="mtn-auth-demo-code">
+                        <div>
+                            <div class="mtn-auth-help">Код для сброса пароля</div>
+                            <strong id="recoveryDemoCode">123456</strong>
+                        </div>
+                        <button id="recoveryCopyCodeButton" class="mtn-auth-btn mtn-auth-btn--secondary mtn-auth-btn--sm" type="button">
+                            Скопировать код
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mtn-auth-inline-actions">
+                    <button id="recoveryActionButton" class="mtn-auth-btn mtn-auth-btn--primary" type="button">
+                        Отправить код для сброса
+                    </button>
+                    <button class="mtn-auth-btn mtn-auth-btn--ghost" type="button" data-modal-close="recoveryModal">
+                        Отмена
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    window.MTN_AUTH_CONFIG = {
+        demoMode: {{ 'true' if demo_mode else 'false' }},
+        demoPhone: {{ demo_account_phone|tojson }},
+        demoBillingId: {{ demo_account_billing_id|tojson }},
+        next: {{ request.query_params.get('next', '/dashboard')|tojson }},
+        adminLoginUrl: {{ '/admin/login'|tojson }},
+        demoStaffAliases: {{ demo_staff_aliases|tojson }},
+    };
+</script>
+<script src="/static/js/mtn-auth.js?v={{ asset_version }}"></script>
+{% endblock %}

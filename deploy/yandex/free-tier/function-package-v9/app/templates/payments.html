@@ -1,0 +1,350 @@
+{% extends "base.html" %}
+
+{% block title %}Пополнение баланса | MTN{% endblock %}
+{% block body_class %}page-public payments-page-v2{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="/static/css/mtn-customer-pages.css?v={{ asset_version }}">
+{% endblock %}
+
+{% block content %}
+<section class="payments-page-v2__shell" aria-labelledby="paymentsPageTitle">
+    <header class="payments-hero-v2" data-reveal>
+        <div class="payments-hero-v2__copy">
+            <p class="payments-hero-v2__eyebrow">Оплата MTN</p>
+            <h1 id="paymentsPageTitle" class="payments-hero-v2__title">Пополнение баланса</h1>
+            <p class="payments-hero-v2__lead">
+                Пополните счёт удобным способом. Средства поступают мгновенно после оплаты.
+            </p>
+        </div>
+
+        <aside id="paymentsBalanceCard" class="payments-balance-card-v2 is-loading" aria-live="polite">
+            <div class="payments-balance-card-v2__meta">
+                <div>
+                    <div class="payments-balance-card-v2__label">Текущий баланс</div>
+                    <div id="paymentsBalanceAmount" class="payments-balance-card-v2__value">—</div>
+                    <div id="paymentsBalanceAccount" class="payments-balance-card-v2__hint">Лицевой счёт: —</div>
+                </div>
+                <span class="payments-balance-card-v2__icon" aria-hidden="true">
+                    <i class="fas fa-wallet"></i>
+                </span>
+            </div>
+        </aside>
+    </header>
+
+    <section id="paymentsDebtAlert" class="payments-banner-v2 payments-banner-v2--danger" hidden data-reveal>
+        <div>
+            <strong>Есть задолженность</strong>
+            <p id="paymentsDebtText">Рекомендуем пополнить баланс на сумму не меньше текущей задолженности.</p>
+        </div>
+    </section>
+
+    <section id="paymentsLoadError" class="payments-banner-v2 payments-banner-v2--danger" hidden data-reveal>
+        <div>
+            <strong>Не удалось загрузить данные.</strong>
+            <p>Попробуйте ещё раз. Форма оплаты останется доступной, даже если история и баланс временно не обновились.</p>
+        </div>
+        <button id="paymentsRetryButton" class="btn btn-secondary" type="button">Повторить</button>
+    </section>
+
+    <div class="payments-layout-v2">
+        <div class="payments-primary-v2">
+            <section id="paymentsQuickPayCard" class="payments-card-v2 mtn-enhance-card" hidden data-reveal>
+                <div class="payments-card-v2__head">
+                    <div>
+                        <h2 class="payments-card-v2__title">Быстрая оплата</h2>
+                        <p class="payments-card-v2__subtitle">Сохранённая карта позволяет пополнить счёт одним кликом.</p>
+                    </div>
+                </div>
+                <div id="paymentsQuickPayContent" class="mtn-quickpay-card"></div>
+            </section>
+
+            <section class="payments-card-v2" aria-labelledby="paymentAmountTitle" data-reveal>
+                <div class="payments-card-v2__head">
+                    <div>
+                        <h2 id="paymentAmountTitle" class="payments-card-v2__title">Сумма пополнения</h2>
+                        <p class="payments-card-v2__subtitle">Выберите готовую сумму или введите свою.</p>
+                    </div>
+                </div>
+
+                <div id="paymentsRecommendationCard" class="mtn-inline-banner mtn-inline-banner--soft">
+                    <div>
+                        <strong id="paymentsRecommendationTitle">Рекомендуем пополнить на 1 000 ₽</strong>
+                        <p id="paymentsRecommendationText">Обычно вам хватает такой суммы на месяц с запасом.</p>
+                    </div>
+                    <div class="mtn-inline-banner__actions">
+                        <button id="paymentsRecommendationAction" class="btn btn-secondary btn-sm" type="button">Пополнить 1 000 ₽</button>
+                    </div>
+                </div>
+
+                <div id="paymentAmountPresets" class="payments-presets-v2" aria-label="Быстрый выбор суммы">
+                    <button class="payments-preset-v2" type="button" data-amount="100">100 ₽</button>
+                    <button class="payments-preset-v2" type="button" data-amount="300">300 ₽</button>
+                    <button class="payments-preset-v2" type="button" data-amount="500">500 ₽</button>
+                    <button class="payments-preset-v2" type="button" data-amount="1000">1 000 ₽</button>
+                    <button class="payments-preset-v2" type="button" data-amount="1500">1 500 ₽</button>
+                    <button class="payments-preset-v2" type="button" data-amount="2000">2 000 ₽</button>
+                </div>
+
+                <div class="payments-field-v2">
+                    <label class="payments-field-v2__label" for="paymentAmountInput">Или введите другую сумму</label>
+                    <input
+                        id="paymentAmountInput"
+                        class="payments-input-v2"
+                        type="number"
+                        min="10"
+                        max="15000"
+                        step="10"
+                        inputmode="numeric"
+                        placeholder="1000"
+                        aria-describedby="paymentAmountError"
+                    >
+                    <div id="paymentAmountError" class="payments-field-v2__error" hidden></div>
+                </div>
+
+                <div id="paymentsDaysHint" class="mtn-meta-note">1 000 ₽ хватит на 38 дней при вашем тарифе.</div>
+                <div id="paymentsDebtPresetWrap" class="mtn-chip-row"></div>
+                <div id="paymentsBonusHint" class="mtn-bonus-hint"></div>
+            </section>
+
+            <section class="payments-card-v2" aria-labelledby="paymentMethodTitle" data-reveal>
+                <div class="payments-card-v2__head">
+                    <div>
+                        <h2 id="paymentMethodTitle" class="payments-card-v2__title">Способ оплаты</h2>
+                        <p class="payments-card-v2__subtitle">Выберите карту или СБП. Комиссии со стороны MTN нет.</p>
+                    </div>
+                </div>
+
+                <div class="payments-methods-v2" role="radiogroup" aria-label="Способ оплаты">
+                    <button
+                        id="paymentMethodCard"
+                        class="payments-method-v2 is-active"
+                        type="button"
+                        role="radio"
+                        aria-checked="true"
+                        data-payment-method="bank_card"
+                    >
+                        <span class="payments-method-v2__top">
+                            <span class="payments-method-v2__title">Банковская карта</span>
+                            <span class="payments-method-v2__logos">Visa · Mastercard · Мир</span>
+                        </span>
+                        <span class="payments-method-v2__copy">Оплата картой с мгновенным зачислением.</span>
+                    </button>
+
+                    <button
+                        id="paymentMethodSbp"
+                        class="payments-method-v2"
+                        type="button"
+                        role="radio"
+                        aria-checked="false"
+                        data-payment-method="sbp"
+                    >
+                        <span class="payments-method-v2__top">
+                            <span class="payments-method-v2__title">СБП</span>
+                            <span class="payments-method-v2__logos">QR · Без комиссии</span>
+                        </span>
+                        <span class="payments-method-v2__copy">Оплата по QR-коду через приложение вашего банка.</span>
+                    </button>
+                </div>
+            </section>
+
+            <section class="payments-card-v2 payments-details-v2" aria-labelledby="paymentDetailsTitle" data-reveal>
+                <div class="payments-card-v2__head">
+                    <div>
+                        <h2 id="paymentDetailsTitle" class="payments-card-v2__title">Данные для оплаты</h2>
+                        <p class="payments-card-v2__subtitle">Форма меняется в зависимости от выбранного способа оплаты.</p>
+                    </div>
+                </div>
+
+                <div id="paymentCardPanel" class="payments-panel-v2 payments-panel-v2--card">
+                    <div class="payments-form-grid-v2">
+                        <div class="payments-field-v2 payments-field-v2--wide">
+                            <label class="payments-field-v2__label" for="paymentCardNumber">Номер карты</label>
+                            <div class="payments-input-wrap-v2">
+                                <input
+                                    id="paymentCardNumber"
+                                    class="payments-input-v2"
+                                    type="text"
+                                    inputmode="numeric"
+                                    autocomplete="cc-number"
+                                    placeholder="0000 0000 0000 0000"
+                                    aria-describedby="paymentCardNumberError"
+                                >
+                                <span id="paymentCardBrand" class="payments-input-brand-v2" aria-live="polite">Карта</span>
+                            </div>
+                            <div id="paymentCardNumberError" class="payments-field-v2__error" hidden></div>
+                        </div>
+
+                        <div class="payments-field-v2">
+                            <label class="payments-field-v2__label" for="paymentCardExpiry">Срок действия</label>
+                            <input
+                                id="paymentCardExpiry"
+                                class="payments-input-v2"
+                                type="text"
+                                inputmode="numeric"
+                                autocomplete="cc-exp"
+                                placeholder="ММ/ГГ"
+                                aria-describedby="paymentCardExpiryError"
+                            >
+                            <div id="paymentCardExpiryError" class="payments-field-v2__error" hidden></div>
+                        </div>
+
+                        <div class="payments-field-v2">
+                            <label class="payments-field-v2__label" for="paymentCardCvc">
+                                CVC/CVV
+                                <button id="paymentCvcHintButton" class="payments-help-v2" type="button" aria-expanded="false" aria-controls="paymentCvcHint">?</button>
+                            </label>
+                            <input
+                                id="paymentCardCvc"
+                                class="payments-input-v2"
+                                type="text"
+                                inputmode="numeric"
+                                autocomplete="cc-csc"
+                                placeholder="123"
+                                aria-describedby="paymentCardCvcError"
+                            >
+                            <div id="paymentCardCvcError" class="payments-field-v2__error" hidden></div>
+                            <div id="paymentCvcHint" class="payments-help-v2__popover" hidden>Три цифры на обратной стороне карты.</div>
+                        </div>
+
+                        <div class="payments-field-v2 payments-field-v2--wide">
+                            <label class="payments-field-v2__label" for="paymentCardHolder">Держатель карты</label>
+                            <input
+                                id="paymentCardHolder"
+                                class="payments-input-v2"
+                                type="text"
+                                autocomplete="cc-name"
+                                placeholder="IVAN IVANOV"
+                            >
+                        </div>
+                    </div>
+
+                    <label class="payments-checkbox-v2">
+                        <input id="paymentSaveCard" type="checkbox">
+                        <span>Сохранить карту для быстрой оплаты в следующий раз</span>
+                    </label>
+                </div>
+
+                <div id="paymentSbpPanel" class="payments-panel-v2 payments-panel-v2--sbp" hidden>
+                    <div class="payments-sbp-v2">
+                        <div id="paymentQrCode" class="payments-qr-v2" aria-hidden="true"></div>
+                        <div class="payments-sbp-v2__copy">
+                            <div class="payments-sbp-v2__title">Оплата по СБП</div>
+                            <p class="payments-sbp-v2__text">
+                                Наведите камеру телефона на QR-код. Откроется приложение вашего банка.
+                            </p>
+                            <div id="paymentSbpAmountText" class="payments-sbp-v2__amount">Сумма: —</div>
+                            <button id="paymentSbpAction" class="btn btn-secondary" type="button">Оплатить через СБП</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <aside class="payments-secondary-v2">
+            <section class="payments-summary-v2" aria-labelledby="paymentsSummaryTitle" data-reveal>
+                <div class="payments-card-v2__head">
+                    <div>
+                        <h2 id="paymentsSummaryTitle" class="payments-card-v2__title">Итоговая информация</h2>
+                        <p class="payments-card-v2__subtitle">Проверьте сумму и способ оплаты перед подтверждением.</p>
+                    </div>
+                </div>
+
+                <dl class="payments-summary-v2__list">
+                    <div class="payments-summary-v2__row">
+                        <dt>Сумма пополнения</dt>
+                        <dd id="paymentSummaryAmount">1 000 ₽</dd>
+                    </div>
+                    <div class="payments-summary-v2__row">
+                        <dt>Комиссия</dt>
+                        <dd id="paymentSummaryFee">0 ₽</dd>
+                    </div>
+                    <div class="payments-summary-v2__row payments-summary-v2__row--total">
+                        <dt>Итого к оплате</dt>
+                        <dd id="paymentSummaryTotal">1 000 ₽</dd>
+                    </div>
+                </dl>
+
+                <button id="paymentSubmitButton" class="btn btn-primary payments-summary-v2__submit" type="button">
+                    Оплатить 1 000 ₽
+                </button>
+
+                <div class="payments-security-v2">
+                    <div class="payments-security-v2__headline">
+                        <i class="fas fa-lock"></i>
+                        <span>Платежи защищены</span>
+                    </div>
+                    <p class="payments-security-v2__text">
+                        Данные карты передаются в зашифрованном виде. <a href="/privacy">Политика безопасности</a>
+                    </p>
+                    <div class="payments-security-v2__brands">Visa Secure · Mastercard SecureCode · Мир</div>
+                </div>
+
+                <button id="paymentsResetDemoData" class="btn btn-ghost btn-sm mtn-reset-button" type="button">Сбросить все сохранённые данные</button>
+            </section>
+
+            <section class="payments-card-v2 mtn-enhance-card" aria-labelledby="paymentsAutopayTitle" data-reveal>
+                <div class="payments-card-v2__head">
+                    <div>
+                        <h2 id="paymentsAutopayTitle" class="payments-card-v2__title">Настроить автопополнение</h2>
+                        <p class="payments-card-v2__subtitle">Демо-настройка хранится локально и помогает не уйти в минус.</p>
+                    </div>
+                </div>
+                <div id="paymentsAutopayStatus" class="mtn-meta-note">Автопополнение пока отключено.</div>
+                <label class="mtn-checkbox-inline">
+                    <input id="paymentsAutopayEnabled" type="checkbox">
+                    <span>Включить автопополнение</span>
+                </label>
+                <div class="mtn-form-grid mtn-form-grid--2">
+                    <label class="mtn-field">
+                        <span>Порог остатка</span>
+                        <select id="paymentsAutopayThreshold">
+                            <option value="100">100 ₽</option>
+                            <option value="200" selected>200 ₽</option>
+                            <option value="500">500 ₽</option>
+                        </select>
+                    </label>
+                    <label class="mtn-field">
+                        <span>Сумма пополнения</span>
+                        <select id="paymentsAutopayAmount">
+                            <option value="300">300 ₽</option>
+                            <option value="500" selected>500 ₽</option>
+                            <option value="1000">1 000 ₽</option>
+                        </select>
+                    </label>
+                </div>
+                <div class="mtn-form-actions">
+                    <button id="paymentsAutopaySave" class="btn btn-secondary btn-sm" type="button">Сохранить настройки</button>
+                </div>
+            </section>
+
+            <section id="paymentsHistorySection" class="payments-history-v2" aria-labelledby="paymentsHistoryTitle" data-reveal>
+                <div class="payments-card-v2__head">
+                    <div>
+                        <h2 id="paymentsHistoryTitle" class="payments-card-v2__title">Последние операции</h2>
+                        <p class="payments-card-v2__subtitle">История последних зачислений и списаний по счёту.</p>
+                    </div>
+                    <a class="payments-link-v2" href="/payments#paymentsHistorySection">Вся история платежей →</a>
+                </div>
+
+                <div class="payments-history-v2__head" aria-hidden="true">
+                    <span>Дата</span>
+                    <span>Сумма</span>
+                    <span>Способ</span>
+                    <span>Статус</span>
+                </div>
+                <div id="paymentsHistoryList" class="payments-history-v2__list" aria-live="polite">
+                    <div class="payments-history-v2__skeleton skeleton"></div>
+                    <div class="payments-history-v2__skeleton skeleton"></div>
+                    <div class="payments-history-v2__skeleton skeleton"></div>
+                </div>
+            </section>
+        </aside>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="/static/js/payments-page.js?v={{ asset_version }}"></script>
+<script src="/static/js/mtn-customer-pages.js?v={{ asset_version }}"></script>
+{% endblock %}

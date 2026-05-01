@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="MTN">
+  <defs>
+    <linearGradient id="mtnGradient" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1aa3ff" />
+      <stop offset="1" stop-color="#23d18b" />
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="56" height="56" rx="16" fill="#07111f" />
+  <path d="M16 45V19h6l10 13.2L42 19h6v26h-6V28.8l-9.4 12h-1.2L22 28.8V45z" fill="url(#mtnGradient)" />
+</svg>

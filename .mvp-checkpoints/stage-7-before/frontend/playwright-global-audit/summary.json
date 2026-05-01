@@ -1,0 +1,308 @@
+{
+  "public": [
+    {
+      "route": "/",
+      "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/",
+      "title": "MTN — личный кабинет и сервис",
+      "h1": "Один кабинет для клиента, поддержки и команды MTN",
+      "hasHorizontalScroll": false,
+      "textSample": "MTN ID\n\nОдин кабинет для клиента, поддержки и команды MTN\n\nПлатежи, обращения, уведомления и мониторинг сети собраны в одном интерфейсе.\n\nВойти в личный кабинет\nСоздать аккаунт\nВосстановить доступ\n99.98%\nuptime\n2M+\nабонентов\n24/7\nподдержка\n"
+    },
+    {
+      "route": "/login",
+      "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/login",
+      "title": "MTN — личный кабинет и сервис",
+      "h1": "Надёжный вход",
+      "hasHorizontalScroll": false,
+      "textSample": "MTN\n\nMTN ID\n\nНадёжный вход\n\nMTN ID объединяет вход в личный кабинет и внутренние сервисы для абонентов, операторов и администраторов.\n\nЕдиный вход\nЛичный кабинет и внутренние сервисы MTN работают в одном защищённом контуре.\nПодтверждение до"
+    },
+    {
+      "route": "/register",
+      "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/register",
+      "title": "MTN — личный кабинет и сервис",
+      "h1": "Надёжный вход",
+      "hasHorizontalScroll": false,
+      "textSample": "MTN\n\nMTN ID\n\nНадёжный вход\n\nMTN ID объединяет вход в личный кабинет и внутренние сервисы для абонентов, операторов и администраторов.\n\nЕдиный вход\nЛичный кабинет и внутренние сервисы MTN работают в одном защищённом контуре.\nПодтверждение до"
+    },
+    {
+      "route": "/recover",
+      "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/recover",
+      "title": "MTN — личный кабинет и сервис",
+      "h1": "Надёжный вход",
+      "hasHorizontalScroll": false,
+      "textSample": "MTN\n\nMTN ID\n\nНадёжный вход\n\nMTN ID объединяет вход в личный кабинет и внутренние сервисы для абонентов, операторов и администраторов.\n\nЕдиный вход\nЛичный кабинет и внутренние сервисы MTN работают в одном защищённом контуре.\nПодтверждение до"
+    }
+  ],
+  "subscriber": [
+    {
+      "route": "/dashboard",
+      "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/login",
+      "title": "MTN — личный кабинет и сервис",
+      "h1": "Надёжный вход",
+      "hasHorizontalScroll": false,
+      "textSample": "MTN\n\nMTN ID\n\nНадёжный вход\n\nMTN ID объединяет вход в личный кабинет и внутренние сервисы для абонентов, операторов и администраторов.\n\nЕдиный вход\nЛичный кабинет и внутренние сервисы MTN работают в одном защищённом контуре.\nПодтверждение до"
+    },
+    {
+      "route": "/tariffs",
+      "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/login",
+      "title": "MTN — личный кабинет и сервис",
+      "h1": "Надёжный вход",
+      "hasHorizontalScroll": false,
+      "textSample": "MTN\n\nMTN ID\n\nНадёжный вход\n\nMTN ID объединяет вход в личный кабинет и внутренние сервисы для абонентов, операторов и администраторов.\n\nЕдиный вход\nЛичный кабинет и внутренние сервисы MTN работают в одном защищённом контуре.\nПодтверждение до"
+    },
+    {
+      "route": "/payments",
+      "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/login",
+      "title": "MTN — личный кабинет и сервис",
+      "h1": "Надёжный вход",
+      "hasHorizontalScroll": false,
+      "textSample": "MTN\n\nMTN ID\n\nНадёжный вход\n\nMTN ID объединяет вход в личный кабинет и внутренние сервисы для абонентов, операторов и администраторов.\n\nЕдиный вход\nЛичный кабинет и внутренние сервисы MTN работают в одном защищённом контуре.\nПодтверждение до"
+    },
+    {
+      "route": "/support",
+      "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/login",
+      "title": "MTN — личный кабинет и сервис",
+      "h1": "Надёжный вход",
+      "hasHorizontalScroll": false,
+      "textSample": "MTN\n\nMTN ID\n\nНадёжный вход\n\nMTN ID объединяет вход в личный кабинет и внутренние сервисы для абонентов, операторов и администраторов.\n\nЕдиный вход\nЛичный кабинет и внутренние сервисы MTN работают в одном защищённом контуре.\nПодтверждение до"
+    },
+    {
+      "route": "/support/42",
+      "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/login",
+      "title": "MTN — личный кабинет и сервис",
+      "h1": "Надёжный вход",
+      "hasHorizontalScroll": false,
+      "textSample": "MTN\n\nMTN ID\n\nНадёжный вход\n\nMTN ID объединяет вход в личный кабинет и внутренние сервисы для абонентов, операторов и администраторов.\n\nЕдиный вход\nЛичный кабинет и внутренние сервисы MTN работают в одном защищённом контуре.\nПодтверждение до"
+    },
+    {
+      "route": "/notifications",
+      "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/login",
+      "title": "MTN — личный кабинет и сервис",
+      "h1": "Надёжный вход",
+      "hasHorizontalScroll": false,
+      "textSample": "MTN\n\nMTN ID\n\nНадёжный вход\n\nMTN ID объединяет вход в личный кабинет и внутренние сервисы для абонентов, операторов и администраторов.\n\nЕдиный вход\nЛичный кабинет и внутренние сервисы MTN работают в одном защищённом контуре.\nПодтверждение до"
+    },
+    {
+      "route": "/statistics",
+      "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/login",
+      "title": "MTN — личный кабинет и сервис",
+      "h1": "Надёжный вход",
+      "hasHorizontalScroll": false,
+      "textSample": "MTN\n\nMTN ID\n\nНадёжный вход\n\nMTN ID объединяет вход в личный кабинет и внутренние сервисы для абонентов, операторов и администраторов.\n\nЕдиный вход\nЛичный кабинет и внутренние сервисы MTN работают в одном защищённом контуре.\nПодтверждение до"
+    },
+    {
+      "route": "/speedtest",
+      "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/login",
+      "title": "MTN — личный кабинет и сервис",
+      "h1": "Надёжный вход",
+      "hasHorizontalScroll": false,
+      "textSample": "MTN\n\nMTN ID\n\nНадёжный вход\n\nMTN ID объединяет вход в личный кабинет и внутренние сервисы для абонентов, операторов и администраторов.\n\nЕдиный вход\nЛичный кабинет и внутренние сервисы MTN работают в одном защищённом контуре.\nПодтверждение до"
+    },
+    {
+      "route": "/monitoring",
+      "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/login",
+      "title": "MTN — личный кабинет и сервис",
+      "h1": "Надёжный вход",
+      "hasHorizontalScroll": false,
+      "textSample": "MTN\n\nMTN ID\n\nНадёжный вход\n\nMTN ID объединяет вход в личный кабинет и внутренние сервисы для абонентов, операторов и администраторов.\n\nЕдиный вход\nЛичный кабинет и внутренние сервисы MTN работают в одном защищённом контуре.\nПодтверждение до"
+    },
+    {
+      "route": "/profile",
+      "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/login",
+      "title": "MTN — личный кабинет и сервис",
+      "h1": "Надёжный вход",
+      "hasHorizontalScroll": false,
+      "textSample": "MTN\n\nMTN ID\n\nНадёжный вход\n\nMTN ID объединяет вход в личный кабинет и внутренние сервисы для абонентов, операторов и администраторов.\n\nЕдиный вход\nЛичный кабинет и внутренние сервисы MTN работают в одном защищённом контуре.\nПодтверждение до"
+    },
+    {
+      "route": "/settings",
+      "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/login",
+      "title": "MTN — личный кабинет и сервис",
+      "h1": "Надёжный вход",
+      "hasHorizontalScroll": false,
+      "textSample": "MTN\n\nMTN ID\n\nНадёжный вход\n\nMTN ID объединяет вход в личный кабинет и внутренние сервисы для абонентов, операторов и администраторов.\n\nЕдиный вход\nЛичный кабинет и внутренние сервисы MTN работают в одном защищённом контуре.\nПодтверждение до"
+    }
+  ],
+  "operator": [
+    {
+      "route": "/admin/dashboard",
+      "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/admin/dashboard",
+      "title": "MTN — личный кабинет и сервис",
+      "h1": "Операционный обзор MTN",
+      "hasHorizontalScroll": false,
+      "textSample": "MTN\nMartin Telecom Network\n\nЛичный кабинет и сервис MTN\n\nПанель управления\nG D\nАбоненты\nG U\nЗаявки\nG T\nGradient\nBlack & Beige\nМ\nМарина Лебедева\nОператор\nВыйти\n\nАДМИН-ПАНЕЛЬ\n\nОперационный обзор MTN\n\nОдна панель для абонентской базы, финансов"
+    },
+    {
+      "route": "/admin/users",
+      "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/admin/users",
+      "title": "MTN — личный кабинет и сервис",
+      "h1": "Абонентская база",
+      "hasHorizontalScroll": false,
+      "textSample": "MTN\nMartin Telecom Network\n\nЛичный кабинет и сервис MTN\n\nПанель управления\nG D\nАбоненты\nG U\nЗаявки\nG T\nGradient\nBlack & Beige\nМ\nМарина Лебедева\nОператор\nВыйти\n\nАДМИН-ПАНЕЛЬ / АБОНЕНТЫ\n\nАбонентская база\n\nПоиск, статусы аккаунтов, баланс и бы"
+    },
+    {
+      "route": "/admin/users/1",
+      "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/admin/users/1",
+      "title": "MTN — личный кабинет и сервис",
+      "h1": "Пользователь #1",
+      "hasHorizontalScroll": false,
+      "textSample": "MTN\nMartin Telecom Network\n\nЛичный кабинет и сервис MTN\n\nПанель управления\nG D\nАбоненты\nG U\nЗаявки\nG T\nGradient\nBlack & Beige\nМ\nМарина Лебедева\nОператор\nВыйти\nНазад к списку абонентов\n\nАДМИН-ПАНЕЛЬ / АБОНЕНТ\n\nПользователь #1\n\nКарточка клиен"
+    },
+    {
+      "route": "/admin/tickets",
+      "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/admin/tickets",
+      "title": "MTN — личный кабинет и сервис",
+      "h1": "Очередь обращений",
+      "hasHorizontalScroll": false,
+      "textSample": "MTN\nMartin Telecom Network\n\nЛичный кабинет и сервис MTN\n\nПанель управления\nG D\nАбоненты\nG U\nЗаявки\nG T\nGradient\nBlack & Beige\nМ\nМарина Лебедева\nОператор\nВыйти\n\nАДМИН-ПАНЕЛЬ / ЗАЯВКИ\n\nОчередь обращений\n\nРаспределяйте заявки между операторами"
+    }
+  ],
+  "admin": [
+    {
+      "route": "/admin/dashboard",
+      "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/admin/dashboard",
+      "title": "MTN — личный кабинет и сервис",
+      "h1": "Операционный обзор MTN",
+      "hasHorizontalScroll": false,
+      "textSample": "MTN\nMartin Telecom Network\n\nЛичный кабинет и сервис MTN\n\nПанель управления\nG D\nАбоненты\nG U\nЗаявки\nG T\nПлатежи\nG P\nТарифы\nG R\nОператоры\nG O\nНастройки\nG S\nGradient\nBlack & Beige\nЕ\nЕлена Орлова\nАдминистратор\nВыйти\n\nАДМИН-ПАНЕЛЬ\n\nОперационный "
+    },
+    {
+      "route": "/admin/users",
+      "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/admin/users",
+      "title": "MTN — личный кабинет и сервис",
+      "h1": "Абонентская база",
+      "hasHorizontalScroll": false,
+      "textSample": "MTN\nMartin Telecom Network\n\nЛичный кабинет и сервис MTN\n\nПанель управления\nG D\nАбоненты\nG U\nЗаявки\nG T\nПлатежи\nG P\nТарифы\nG R\nОператоры\nG O\nНастройки\nG S\nGradient\nBlack & Beige\nЕ\nЕлена Орлова\nАдминистратор\nВыйти\n\nАДМИН-ПАНЕЛЬ / АБОНЕНТЫ\n\nАб"
+    },
+    {
+      "route": "/admin/users/1",
+      "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/admin/users/1",
+      "title": "MTN — личный кабинет и сервис",
+      "h1": "Пользователь #1",
+      "hasHorizontalScroll": false,
+      "textSample": "MTN\nMartin Telecom Network\n\nЛичный кабинет и сервис MTN\n\nПанель управления\nG D\nАбоненты\nG U\nЗаявки\nG T\nПлатежи\nG P\nТарифы\nG R\nОператоры\nG O\nНастройки\nG S\nGradient\nBlack & Beige\nЕ\nЕлена Орлова\nАдминистратор\nВыйти\nНазад к списку абонентов\n\nАД"
+    },
+    {
+      "route": "/admin/tickets",
+      "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/admin/tickets",
+      "title": "MTN — личный кабинет и сервис",
+      "h1": "Очередь обращений",
+      "hasHorizontalScroll": false,
+      "textSample": "MTN\nMartin Telecom Network\n\nЛичный кабинет и сервис MTN\n\nПанель управления\nG D\nАбоненты\nG U\nЗаявки\nG T\nПлатежи\nG P\nТарифы\nG R\nОператоры\nG O\nНастройки\nG S\nGradient\nBlack & Beige\nЕ\nЕлена Орлова\nАдминистратор\nВыйти\n\nАДМИН-ПАНЕЛЬ / ЗАЯВКИ\n\nОчер"
+    },
+    {
+      "route": "/admin/payments",
+      "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/admin/payments",
+      "title": "MTN — личный кабинет и сервис",
+      "h1": "Платежи и ручные операции",
+      "hasHorizontalScroll": false,
+      "textSample": "MTN\nMartin Telecom Network\n\nЛичный кабинет и сервис MTN\n\nПанель управления\nG D\nАбоненты\nG U\nЗаявки\nG T\nПлатежи\nG P\nТарифы\nG R\nОператоры\nG O\nНастройки\nG S\nGradient\nBlack & Beige\nЕ\nЕлена Орлова\nАдминистратор\nВыйти\n\nАДМИН-ПАНЕЛЬ / ПЛАТЕЖИ\n\nПла"
+    },
+    {
+      "route": "/admin/tariffs",
+      "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/admin/tariffs",
+      "title": "MTN — личный кабинет и сервис",
+      "h1": "Управление тарифной линейкой",
+      "hasHorizontalScroll": false,
+      "textSample": "MTN\nMartin Telecom Network\n\nЛичный кабинет и сервис MTN\n\nПанель управления\nG D\nАбоненты\nG U\nЗаявки\nG T\nПлатежи\nG P\nТарифы\nG R\nОператоры\nG O\nНастройки\nG S\nGradient\nBlack & Beige\nЕ\nЕлена Орлова\nАдминистратор\nВыйти\n\nАДМИН-ПАНЕЛЬ / ТАРИФЫ\n\nУпра"
+    },
+    {
+      "route": "/admin/operators",
+      "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/admin/operators",
+      "title": "MTN — личный кабинет и сервис",
+      "h1": "Команда поддержки и операций",
+      "hasHorizontalScroll": false,
+      "textSample": "MTN\nMartin Telecom Network\n\nЛичный кабинет и сервис MTN\n\nПанель управления\nG D\nАбоненты\nG U\nЗаявки\nG T\nПлатежи\nG P\nТарифы\nG R\nОператоры\nG O\nНастройки\nG S\nGradient\nBlack & Beige\nЕ\nЕлена Орлова\nАдминистратор\nВыйти\n\nАДМИН-ПАНЕЛЬ / ОПЕРАТОРЫ\n\nК"
+    },
+    {
+      "route": "/admin/settings",
+      "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/admin/settings",
+      "title": "MTN — личный кабинет и сервис",
+      "h1": "Системная конфигурация MTN",
+      "hasHorizontalScroll": false,
+      "textSample": "MTN\nMartin Telecom Network\n\nЛичный кабинет и сервис MTN\n\nПанель управления\nG D\nАбоненты\nG U\nЗаявки\nG T\nПлатежи\nG P\nТарифы\nG R\nОператоры\nG O\nНастройки\nG S\nGradient\nBlack & Beige\nЕ\nЕлена Орлова\nАдминистратор\nВыйти\n\nАДМИН-ПАНЕЛЬ / НАСТРОЙКИ\n\nС"
+    }
+  ],
+  "consoleErrors": [
+    {
+      "url": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/admin/dashboard",
+      "text": "Failed to load resource: the server responded with a status of 500 ()"
+    },
+    {
+      "url": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/admin/dashboard",
+      "text": "Failed to load resource: the server responded with a status of 500 ()"
+    },
+    {
+      "url": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/admin/users/1",
+      "text": "Failed to load resource: the server responded with a status of 404 ()"
+    },
+    {
+      "url": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/admin/dashboard",
+      "text": "Failed to load resource: the server responded with a status of 500 ()"
+    },
+    {
+      "url": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/admin/dashboard",
+      "text": "Failed to load resource: the server responded with a status of 500 ()"
+    },
+    {
+      "url": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/admin/users/1",
+      "text": "Failed to load resource: the server responded with a status of 404 ()"
+    },
+    {
+      "url": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/admin/payments",
+      "text": "Failed to load resource: the server responded with a status of 500 ()"
+    },
+    {
+      "url": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/admin/payments",
+      "text": "Failed to load resource: the server responded with a status of 500 ()"
+    }
+  ],
+  "pageErrors": [],
+  "failedResponses": [
+    {
+      "url": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/api/v1/admin/stats",
+      "status": 500,
+      "route": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/admin/dashboard"
+    },
+    {
+      "url": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/api/v1/admin/stats",
+      "status": 500,
+      "route": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/admin/dashboard"
+    },
+    {
+      "url": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/api/v1/admin/users/1",
+      "status": 404,
+      "route": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/admin/users/1"
+    },
+    {
+      "url": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/api/v1/admin/stats",
+      "status": 500,
+      "route": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/admin/dashboard"
+    },
+    {
+      "url": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/api/v1/admin/stats",
+      "status": 500,
+      "route": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/admin/dashboard"
+    },
+    {
+      "url": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/api/v1/admin/users/1",
+      "status": 404,
+      "route": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/admin/users/1"
+    },
+    {
+      "url": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/api/v1/admin/stats",
+      "status": 500,
+      "route": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/admin/payments"
+    },
+    {
+      "url": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/api/v1/admin/stats",
+      "status": 500,
+      "route": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/admin/payments"
+    }
+  ],
+  "snippets": {
+    "subscriberNav": "MTN\n\nMTN ID\n\nНадёжный вход\n\nMTN ID объединяет вход в личный кабинет и внутренние сервисы для абонентов, операторов и администраторов.\n\nЕдиный вход\nЛичный кабинет и внутренние сервисы MTN работают в одном защищённом контуре.\nПодтверждение доступа\nКоды подтверждения и двухфакторная защита включаются только там, где они действительно нужны.\nКонтроль ролей\nСценарии для абонентов, операторов и администраторов изолированы и не мешают друг другу.\nPROTECTED ACCESS\nProduction-ready sign-in\n\nМинимум лишних шагов, явная логика сценариев и аккуратная работа на desktop и mobile.\n\nКто входит\n\nРоль выбирается один раз и определяет доступные способы входа.\n\nЗаполнить тестовые данные\nАбонент\nЛичный кабинет и сервисы для клиента.\nОператор\nРабочее место с обязательным 2FA.\nАдминистратор\nПовышенный уровень доступа и защищённый вход.\nКак войти\n\nПоказываем только те сценарии, которые доступны для выбранной роли.\n\nКод из письма\nОдноразовый код придёт на email, привязанный к аккаунту.\nПароль\nДля абонента с уже созданным паролем.\nEmail\nНа этот email мы отправим одноразовый код для входа в личный кабинет.\nПолучить код\nНет доступа к email?\nРегистрация",
+    "operatorNav": "MTN\nMartin Telecom Network\n\nЛичный кабинет и сервис MTN\n\nПанель управления\nG D\nАбоненты\nG U\nЗаявки\nG T\nGradient\nBlack & Beige\nМ\nМарина Лебедева\nОператор\nВыйти\n\nАДМИН-ПАНЕЛЬ / ЗАЯВКИ\n\nОчередь обращений\n\nРаспределяйте заявки между операторами, отвечайте пользователям и фиксируйте резолюцию в одном рабочем пространстве.\n\nВсе статусы\nОткрыта\nВ работе\nРешена\nЗакрыта\nЗаявка\tАбонент\tСтатус\tПриоритет\tОператор\n\nнизкая скорость сейчас\n18 апр. 2026, 20:34\n\t+79005553311\tnew\tmedium\tНе назначен\n\nПадает скорость вечером после 21:00\n17 апр. 2026, 17:15\n\t+79005553311\tin_progress\thigh\tЛебедева Марина\n\nНужна расшифровка последнего списания\n13 апр. 2026, 21:15\n\t+79005553311\tresolved\tmedium\tЛебедева Марина\nВыберите заявку\nДетали появятся справа\n\nВыберите обращение в таблице, чтобы назначить исполнителя, ответить клиенту или закрыть кейс.\n\nСтраница 1\nНазад\nДалее",
+    "adminNav": "MTN\nMartin Telecom Network\n\nЛичный кабинет и сервис MTN\n\nПанель управления\nG D\nАбоненты\nG U\nЗаявки\nG T\nПлатежи\nG P\nТарифы\nG R\nОператоры\nG O\nНастройки\nG S\nGradient\nBlack & Beige\nЕ\nЕлена Орлова\nАдминистратор\nВыйти\n\nАДМИН-ПАНЕЛЬ / НАСТРОЙКИ\n\nСистемная конфигурация MTN\n\nОперационные настройки, сервисные переключатели и журнал последних событий собраны в едином административном слое.\n\nСостояние системы\nВерсия\n2.0.0\nСреда\ndevelopment\nCPU\n0%\nПамять\n36%\nСоединения с БД\n0\nОчистить кэш\nСистемные параметры\nОнлайн\nРегистрация разрешена\nПлатежи активны\nТикет-система активна\nМинимальный платёж\nМаксимальный платёж\nАвтозакрытие тикета, дней\nСообщение режима обслуживания\nСохранить настройки\nВключить режим обслуживания\nПоследние системные события\n\nЛоги пока не загружены."
+  }
+}

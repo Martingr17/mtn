@@ -1,0 +1,571 @@
+{% extends "base.html" %}
+
+{% block title %}Карточка абонента | MTN{% endblock %}
+{% block body_class %}admin-page{% endblock %}
+
+{% block content %}
+<section class="page-section">
+    {% include "admin/_subnav.html" %}
+
+    <div class="toolbar">
+        <div>
+            <a class="chip" href="/admin/abonents">
+                <i class="fas fa-arrow-left"></i>
+                К списку абонентов
+            </a>
+            <h1 class="toolbar-title u-mt-16">Карточка абонента</h1>
+            <p class="toolbar-copy">Полный профиль клиента: контакты, биллинг, текущий тариф, последние платежи, заявки и действия операторов.</p>
+        </div>
+        <div class="chip-row">
+            <span class="chip" id="abonentStatusChip">Статус</span>
+            <span class="chip" id="abonentBillingChip">Лицевой счёт</span>
+        </div>
+    </div>
+
+    <section class="stats-grid">
+        <article class="metric-card">
+            <div class="metric-meta">
+                <span class="metric-label">Баланс</span>
+                <span class="metric-icon"><i class="fas fa-wallet"></i></span>
+            </div>
+            <div class="metric-value" id="abonentMetricBalance">—</div>
+            <div class="metric-foot">Актуальное значение из биллинга MTN.</div>
+        </article>
+        <article class="metric-card">
+            <div class="metric-meta">
+                <span class="metric-label">Текущий тариф</span>
+                <span class="metric-icon"><i class="fas fa-layer-group"></i></span>
+            </div>
+            <div class="metric-value" id="abonentMetricTariff">—</div>
+            <div class="metric-foot">Активный тариф и скорость подключения.</div>
+        </article>
+        <article class="metric-card">
+            <div class="metric-meta">
+                <span class="metric-label">Платежи</span>
+                <span class="metric-icon"><i class="fas fa-credit-card"></i></span>
+            </div>
+            <div class="metric-value" id="abonentMetricPayments">—</div>
+            <div class="metric-foot">Сумма успешных зачислений в локальной системе.</div>
+        </article>
+        <article class="metric-card">
+            <div class="metric-meta">
+                <span class="metric-label">Заявки</span>
+                <span class="metric-icon"><i class="fas fa-headset"></i></span>
+            </div>
+            <div class="metric-value" id="abonentMetricTickets">—</div>
+            <div class="metric-foot">Все обращения абонента в поддержку MTN.</div>
+        </article>
+    </section>
+
+    <section class="profile-grid">
+        <article class="profile-panel span-8">
+            <div class="section-title-wrap">
+                <div>
+                    <h2 class="section-title">Профиль и биллинг</h2>
+                    <p class="section-subtitle">Сводка по клиенту, данным договора и текущему состоянию сервисов.</p>
+                </div>
+            </div>
+            <div id="abonentSummary" class="page-section">
+                <div class="skeleton skeleton-panel-lg"></div>
+            </div>
+        </article>
+
+        <article class="profile-panel span-4">
+            <div class="section-title-wrap">
+                <div>
+                    <h2 class="section-title">Операции</h2>
+                    <p class="section-subtitle">Блокировка доступа, смена тарифа и быстрые переходы по связанным разделам.</p>
+                </div>
+            </div>
+            <div class="list-stack u-mt-18" id="abonentActions">
+                <div class="skeleton skeleton-card-220"></div>
+            </div>
+        </article>
+
+        <article class="table-shell span-6">
+            <div class="section-title-wrap">
+                <div>
+                    <h2 class="section-title">Последние платежи</h2>
+                    <p class="section-subtitle">Последние операции пополнения и их текущие статусы.</p>
+                </div>
+            </div>
+            <div id="abonentPayments" class="list-stack u-mt-18">
+                <div class="skeleton skeleton-card-md"></div>
+            </div>
+        </article>
+
+        <article class="table-shell span-6">
+            <div class="section-title-wrap">
+                <div>
+                    <h2 class="section-title">Последние заявки</h2>
+                    <p class="section-subtitle">Открытые и завершённые обращения с быстрым переходом в чат заявки.</p>
+                </div>
+            </div>
+            <div id="abonentTickets" class="list-stack u-mt-18">
+                <div class="skeleton skeleton-card-md"></div>
+            </div>
+        </article>
+
+        <article class="table-shell span-6">
+            <div class="section-title-wrap">
+                <div>
+                    <h2 class="section-title">Мониторинг линии</h2>
+                    <p class="section-subtitle">Текущее качество связи, последние замеры и статус фонового мониторинга.</p>
+                </div>
+            </div>
+            <div id="abonentMonitoringSummary" class="list-stack u-mt-18">
+                <div class="skeleton skeleton-card-180"></div>
+            </div>
+        </article>
+
+        <article class="table-shell span-6">
+            <div class="section-title-wrap">
+                <div>
+                    <h2 class="section-title">Последние алерты линии</h2>
+                    <p class="section-subtitle">Свежие инциденты качества связи и история их разрешения.</p>
+                </div>
+            </div>
+            <div id="abonentMonitoringAlerts" class="list-stack u-mt-18">
+                <div class="skeleton skeleton-card-180"></div>
+            </div>
+        </article>
+
+        <article class="table-shell span-12">
+            <div class="section-title-wrap">
+                <div>
+                    <h2 class="section-title">Журнал действий по абоненту</h2>
+                    <p class="section-subtitle">История просмотров карточки, блокировок, изменений тарифа и других служебных действий.</p>
+                </div>
+                <a class="btn btn-secondary btn-sm" id="abonentActivityLink" href="/admin/activity-log">
+                    <i class="fas fa-scroll"></i>
+                    Открыть полный журнал
+                </a>
+            </div>
+            <div id="abonentActivity" class="admin-activity-list u-mt-18">
+                <div class="skeleton skeleton-card-md"></div>
+            </div>
+        </article>
+    </section>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const abonentId = {{ user_id }};
+    let abonentDetail = null;
+
+    function paymentStatusBadge(status) {
+        const map = {
+            succeeded: "badge-success",
+            pending: "badge-warning",
+            failed: "badge-danger",
+            canceled: "badge-neutral",
+        };
+        return map[status] || "badge-info";
+    }
+
+    function ticketStatusText(status) {
+        const map = {
+            new: "Новая",
+            in_progress: "В работе",
+            waiting_customer: "Ожидает клиента",
+            resolved: "Решена",
+            closed: "Закрыта",
+            escalated: "Эскалация",
+        };
+        return map[status] || status || "—";
+    }
+
+    function ticketStatusClass(status) {
+        const map = {
+            new: "status-new",
+            in_progress: "status-in-progress",
+            waiting_customer: "status-waiting-customer",
+            resolved: "status-resolved",
+            closed: "status-closed",
+            escalated: "status-critical",
+        };
+        return map[status] || "status-new";
+    }
+
+    function renderSummary(data) {
+        const accountStatus = data.account_info?.account_status || "active";
+        const tariffName = data.tariff?.name || "Не назначен";
+        const tariffSpeed = data.tariff?.speed_mbps || data.tariff?.speed || "—";
+        const uploadSpeed = data.tariff?.upload_speed_mbps || "—";
+
+        document.getElementById("abonentMetricBalance").textContent = OperatorUI.formatCurrency(data.balance || 0);
+        document.getElementById("abonentMetricTariff").textContent = tariffName;
+        document.getElementById("abonentMetricPayments").textContent = OperatorUI.formatCurrency(data.total_payments || 0);
+        document.getElementById("abonentMetricTickets").textContent = String(data.total_tickets || 0);
+
+        document.getElementById("abonentStatusChip").className = `chip ${data.user.is_active && !data.user.is_blocked ? "is-accent" : ""}`;
+        document.getElementById("abonentStatusChip").textContent = data.user.status_label || "Статус";
+        document.getElementById("abonentBillingChip").textContent = data.user.billing_id || "Лицевой счёт";
+        document.getElementById("abonentActivityLink").href = `/admin/activity-log?user_id=${data.user.id}`;
+
+        document.getElementById("abonentSummary").innerHTML = `
+            <div class="feature-card">
+                <div class="toolbar">
+                    <div>
+                        <div class="table-title">${OperatorUI.escapeHTML(data.user.full_name || data.user.phone)}</div>
+                        <div class="table-copy">${OperatorUI.escapeHTML(data.user.phone)} · ${OperatorUI.escapeHTML(data.user.email || "Без email")}</div>
+                    </div>
+                    <div class="chip-row">
+                        <span class="badge ${data.user.is_active && !data.user.is_blocked ? "badge-success" : "badge-danger"}">${OperatorUI.escapeHTML(data.user.status_label || "Статус")}</span>
+                        <span class="badge badge-info">${OperatorUI.escapeHTML(accountStatus)}</span>
+                    </div>
+                </div>
+                <div class="tariff-specs">
+                    <div class="tariff-spec">
+                        <span class="tariff-spec-label">Лицевой счёт</span>
+                        <strong>${OperatorUI.escapeHTML(data.user.billing_id || "—")}</strong>
+                    </div>
+                    <div class="tariff-spec">
+                        <span class="tariff-spec-label">Дата регистрации</span>
+                        <strong>${data.user.created_at ? OperatorUI.formatDate(data.user.created_at, { includeTime: true }) : "—"}</strong>
+                    </div>
+                    <div class="tariff-spec">
+                        <span class="tariff-spec-label">Последний вход</span>
+                        <strong>${data.user.last_login_at ? OperatorUI.formatDate(data.user.last_login_at, { includeTime: true }) : "Нет входов"}</strong>
+                    </div>
+                    <div class="tariff-spec">
+                        <span class="tariff-spec-label">Состояние договора</span>
+                        <strong>${OperatorUI.escapeHTML(accountStatus)}</strong>
+                    </div>
+                    <div class="tariff-spec">
+                        <span class="tariff-spec-label">Текущий тариф</span>
+                        <strong>${OperatorUI.escapeHTML(tariffName)}</strong>
+                    </div>
+                    <div class="tariff-spec">
+                        <span class="tariff-spec-label">Скорость</span>
+                        <strong>${OperatorUI.escapeHTML(String(tariffSpeed))} / ${OperatorUI.escapeHTML(String(uploadSpeed))} Мбит/с</strong>
+                    </div>
+                </div>
+                ${data.user.block_reason ? `<div class="content-note">Причина блокировки: ${OperatorUI.escapeHTML(data.user.block_reason)}</div>` : ""}
+            </div>
+        `;
+    }
+
+    function renderActions(data) {
+        const options = (data.available_tariffs || []).map((tariff) => `
+            <option value="${tariff.id}" ${String(tariff.billing_tariff_id) === String(data.current_billing_tariff_id || "") ? "selected" : ""}>
+                ${OperatorUI.escapeHTML(tariff.name)} · ${OperatorUI.escapeHTML(String(tariff.speed_mbps))} Мбит/с · ${OperatorUI.formatCurrency(tariff.price || 0)}
+            </option>
+        `).join("");
+        const monitoringEnabled = Boolean(data.monitoring?.monitoring_enabled);
+
+        document.getElementById("abonentActions").innerHTML = `
+            <div class="feature-card">
+                <div class="field">
+                    <label class="field-label" for="abonentTariffSelect">Назначить тариф</label>
+                    <select class="select" id="abonentTariffSelect">
+                        <option value="">Выберите тариф</option>
+                        ${options}
+                    </select>
+                </div>
+                <div class="action-row u-action-row-reset">
+                    <button class="btn btn-primary btn-sm" type="button" onclick="forceTariffChange()">
+                        <i class="fas fa-layer-group"></i>
+                        Сменить тариф
+                    </button>
+                    <button class="btn btn-${data.user.is_active && !data.user.is_blocked ? "danger" : "secondary"} btn-sm" type="button" onclick="toggleAbonentState()">
+                        <i class="fas fa-${data.user.is_active && !data.user.is_blocked ? "ban" : "rotate-left"}"></i>
+                        ${data.user.is_active && !data.user.is_blocked ? "Заблокировать" : "Разблокировать"}
+                    </button>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="table-title">Мониторинг качества линии</div>
+                <div class="table-copy">${monitoringEnabled ? "Фоновый сбор метрик и алертов активен." : "Мониторинг отключён для этого клиента и не создаёт новых событий."}</div>
+                <div class="action-row u-mt-16">
+                    <span class="badge ${monitoringEnabled ? "badge-success" : "badge-warning"}">${monitoringEnabled ? "Включён" : "Отключён"}</span>
+                    <button class="btn btn-secondary btn-sm" type="button" onclick="toggleMonitoringForAbonent()">
+                        <i class="fas fa-${monitoringEnabled ? "pause" : "play"}"></i>
+                        ${monitoringEnabled ? "Отключить мониторинг" : "Включить мониторинг"}
+                    </button>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="table-title">Быстрые переходы</div>
+                <div class="action-row u-action-row-reset">
+                    <a class="btn btn-secondary btn-sm" href="/admin/activity-log?user_id=${data.user.id}">
+                        <i class="fas fa-scroll"></i>
+                        Журнал
+                    </a>
+                    <button class="btn btn-ghost btn-sm" type="button" onclick="loadAbonentDetail()">
+                        <i class="fas fa-rotate"></i>
+                        Обновить
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderPayments(payments) {
+        const container = document.getElementById("abonentPayments");
+        if (!payments?.length) {
+            container.innerHTML = OperatorUI.createEmptyState("fas fa-credit-card", "Операций пока нет", "История платежей появится после первой успешной оплаты.");
+            return;
+        }
+
+        container.innerHTML = payments.map((payment) => `
+            <article class="feature-card">
+                <div class="toolbar">
+                    <div>
+                        <div class="table-title">${OperatorUI.formatCurrency(payment.amount || 0)}</div>
+                        <div class="table-copy">${payment.created_at ? OperatorUI.formatDate(payment.created_at, { includeTime: true }) : "Без времени"}</div>
+                    </div>
+                    <span class="badge ${paymentStatusBadge(payment.status)}">${OperatorUI.escapeHTML(payment.status || "pending")}</span>
+                </div>
+                <div class="table-copy">${OperatorUI.escapeHTML(payment.payment_method || "method not set")} · ${OperatorUI.escapeHTML(payment.description || "Пополнение баланса")}</div>
+            </article>
+        `).join("");
+    }
+
+    function renderTickets(tickets) {
+        const container = document.getElementById("abonentTickets");
+        if (!tickets?.length) {
+            container.innerHTML = OperatorUI.createEmptyState("fas fa-headset", "Заявок пока нет", "Когда абонент обратится в поддержку, обращения появятся в этой ленте.");
+            return;
+        }
+
+        container.innerHTML = tickets.map((ticket) => `
+            <article class="feature-card">
+                <div class="toolbar">
+                    <div>
+                        <div class="table-title">${OperatorUI.escapeHTML(ticket.subject)}</div>
+                        <div class="table-copy">${ticket.created_at ? OperatorUI.formatDate(ticket.created_at, { includeTime: true }) : "Без времени"} · ${OperatorUI.escapeHTML(ticket.assigned_to_name || "Не назначен")}</div>
+                    </div>
+                    <span class="status-badge ${ticketStatusClass(ticket.status)}">${ticketStatusText(ticket.status)}</span>
+                </div>
+                <div class="action-row u-action-row-reset">
+                    <span class="badge badge-info">${OperatorUI.escapeHTML(ticket.priority || "medium")}</span>
+                    <a class="btn btn-secondary btn-sm" href="/admin/tickets/${ticket.id}">
+                        <i class="fas fa-arrow-right"></i>
+                        Открыть заявку
+                    </a>
+                </div>
+            </article>
+        `).join("");
+    }
+
+    function monitoringBadgeClass(summary) {
+        if (!summary?.monitoring_enabled) return "badge-neutral";
+        return {
+            good: "badge-success",
+            warning: "badge-warning",
+            critical: "badge-danger",
+            no_data: "badge-neutral",
+        }[summary?.quality_state] || "badge-neutral";
+    }
+
+    function monitoringStateText(summary) {
+        if (!summary?.monitoring_enabled) return "Мониторинг отключён";
+        return {
+            good: "Линия стабильна",
+            warning: "Есть отклонения",
+            critical: "Требует немедленного внимания",
+            no_data: "Нет данных",
+        }[summary?.quality_state] || "Нет данных";
+    }
+
+    function monitoringAlertBadgeClass(severity) {
+        return {
+            critical: "badge-danger",
+            warning: "badge-warning",
+            info: "badge-info",
+        }[severity] || "badge-info";
+    }
+
+    function renderMonitoringSummary(summary) {
+        const container = document.getElementById("abonentMonitoringSummary");
+        if (!summary || (!summary.last_collected_at && summary.monitoring_enabled !== false)) {
+            container.innerHTML = OperatorUI.createEmptyState(
+                "fas fa-heart-pulse",
+                "Нет свежих данных мониторинга",
+                "Как только по линии будет собрана новая серия метрик, она появится здесь."
+            );
+            return;
+        }
+
+        container.innerHTML = `
+            <article class="feature-card">
+                <div class="toolbar">
+                    <div>
+                        <div class="table-title">${monitoringStateText(summary)}</div>
+                        <div class="table-copy">${summary.last_collected_at ? `Последний замер: ${OperatorUI.formatDate(summary.last_collected_at, { includeTime: true })}` : "Фоновые замеры пока не поступали"}</div>
+                    </div>
+                    <div class="chip-row">
+                        <span class="badge ${monitoringBadgeClass(summary)}">${summary.monitoring_enabled ? `${summary.quality_score || 0}/100` : "Выключен"}</span>
+                        <span class="badge ${summary.active_alerts ? "badge-danger" : "badge-success"}">${summary.active_alerts ? `Алертов: ${summary.active_alerts}` : "Без инцидентов"}</span>
+                    </div>
+                </div>
+                <div class="tariff-specs">
+                    <div class="tariff-spec">
+                        <span class="tariff-spec-label">Ping</span>
+                        <strong>${summary.ping_ms ?? "—"} мс</strong>
+                    </div>
+                    <div class="tariff-spec">
+                        <span class="tariff-spec-label">Потери</span>
+                        <strong>${summary.packet_loss_pct ?? "—"}%</strong>
+                    </div>
+                    <div class="tariff-spec">
+                        <span class="tariff-spec-label">Джиттер</span>
+                        <strong>${summary.jitter_ms ?? "—"} мс</strong>
+                    </div>
+                    <div class="tariff-spec">
+                        <span class="tariff-spec-label">Скачивание</span>
+                        <strong>${summary.download_mbps ?? "—"} Мбит/с</strong>
+                    </div>
+                    <div class="tariff-spec">
+                        <span class="tariff-spec-label">Отдача</span>
+                        <strong>${summary.upload_mbps ?? "—"} Мбит/с</strong>
+                    </div>
+                    <div class="tariff-spec">
+                        <span class="tariff-spec-label">Непрочитанных</span>
+                        <strong>${summary.unread_alerts ?? 0}</strong>
+                    </div>
+                </div>
+            </article>
+        `;
+    }
+
+    function renderMonitoringAlerts(alerts) {
+        const container = document.getElementById("abonentMonitoringAlerts");
+        if (!alerts?.length) {
+            container.innerHTML = OperatorUI.createEmptyState(
+                "fas fa-bell-slash",
+                "Алертов пока нет",
+                "Журнал сетевых событий по этой линии пока пуст."
+            );
+            return;
+        }
+
+        container.innerHTML = alerts.map((alert) => `
+            <article class="feature-card">
+                <div class="toolbar">
+                    <div>
+                        <div class="table-title">${OperatorUI.escapeHTML(alert.message || "Сетевое событие")}</div>
+                        <div class="table-copy">${alert.start_time ? OperatorUI.formatDate(alert.start_time, { includeTime: true }) : "Без времени"}${alert.end_time ? ` · закрыт ${OperatorUI.formatDate(alert.end_time, { includeTime: true })}` : ""}</div>
+                    </div>
+                    <div class="chip-row">
+                        <span class="badge ${monitoringAlertBadgeClass(alert.severity)}">${OperatorUI.escapeHTML(alert.severity || "info")}</span>
+                        <span class="badge ${alert.status === "resolved" ? "badge-success" : "badge-warning"}">${OperatorUI.escapeHTML(alert.status || "active")}</span>
+                    </div>
+                </div>
+                <div class="table-copy">Порог: ${alert.threshold_value ?? "—"} · значение: ${alert.current_value ?? "—"}</div>
+            </article>
+        `).join("");
+    }
+
+    function renderActivity(activities) {
+        const container = document.getElementById("abonentActivity");
+        if (!activities?.length) {
+            container.innerHTML = OperatorUI.createEmptyState("fas fa-clock-rotate-left", "Журнал пуст", "По абоненту пока нет записей активности в административном журнале.");
+            return;
+        }
+
+        container.innerHTML = activities.map((item) => `
+            <article class="admin-activity-item">
+                <div class="toolbar">
+                    <div>
+                        <div class="table-title">${OperatorUI.escapeHTML(item.action)}</div>
+                        <div class="table-copy">${item.created_at ? OperatorUI.formatDate(item.created_at, { includeTime: true }) : "Без времени"}</div>
+                    </div>
+                    <span class="badge ${item.status === "success" ? "badge-success" : "badge-info"}">${OperatorUI.escapeHTML(item.status || "info")}</span>
+                </div>
+                <div class="table-copy">${OperatorUI.escapeHTML(item.ip || "IP не зафиксирован")}</div>
+            </article>
+        `).join("");
+    }
+
+    async function loadAbonentDetail() {
+        const adminUser = await OperatorUI.ensureAdminAccess(document.querySelector(".site-main"), {
+            errorTitle: "Не удалось открыть карточку абонента",
+        });
+        if (!adminUser) {
+            return;
+        }
+
+        try {
+            const [data, monitoringSettings] = await Promise.all([
+                OperatorUI.request(`/api/v1/admin/abonents/${abonentId}`, { auth: true }),
+                OperatorUI.request(`/api/v1/monitoring/admin/users/${abonentId}`, { auth: true }).catch(() => null),
+            ]);
+            data.monitoring = monitoringSettings;
+            abonentDetail = data;
+            renderSummary(data);
+            renderActions(data);
+            renderPayments(data.recent_payments || []);
+            renderTickets(data.recent_tickets || []);
+            renderMonitoringSummary({
+                ...(data.monitoring_summary || {}),
+                monitoring_enabled: data.monitoring?.monitoring_enabled ?? data.monitoring_summary?.monitoring_enabled ?? true,
+            });
+            renderMonitoringAlerts(data.monitoring_recent_alerts || []);
+            renderActivity(data.activities || []);
+        } catch (error) {
+            OperatorUI.toast(error.message || "Не удалось открыть карточку абонента.", "error");
+        }
+    }
+
+    async function toggleAbonentState() {
+        if (!abonentDetail) return;
+        const action = abonentDetail.user.is_active && !abonentDetail.user.is_blocked ? "block" : "unblock";
+        try {
+            await OperatorUI.request(`/api/v1/admin/users/${abonentId}/${action}`, { method: "POST", auth: true });
+            OperatorUI.toast(action === "block" ? "Доступ абонента заблокирован." : "Доступ абонента восстановлен.", "success");
+            loadAbonentDetail();
+        } catch (error) {
+            OperatorUI.toast(error.message || "Не удалось изменить статус абонента.", "error");
+        }
+    }
+
+    async function forceTariffChange() {
+        if (!abonentDetail) return;
+        const tariffId = document.getElementById("abonentTariffSelect")?.value;
+        if (!tariffId) {
+            OperatorUI.toast("Выберите тариф для назначения.", "error");
+            return;
+        }
+
+        const selectedTariff = (abonentDetail.available_tariffs || []).find((item) => String(item.id) === String(tariffId));
+        if (String(selectedTariff?.billing_tariff_id || "") === String(abonentDetail.current_billing_tariff_id || "")) {
+            OperatorUI.toast("Этот тариф уже назначен абоненту.", "info");
+            return;
+        }
+
+        try {
+            const result = await OperatorUI.request(`/api/v1/admin/force-tariff-change?user_id=${abonentId}&tariff_id=${encodeURIComponent(tariffId)}`, {
+                method: "POST",
+                auth: true,
+            });
+            OperatorUI.toast(result.message || "Тариф изменён.", "success");
+            loadAbonentDetail();
+        } catch (error) {
+            OperatorUI.toast(error.message || "Не удалось сменить тариф.", "error");
+        }
+    }
+
+    async function toggleMonitoringForAbonent() {
+        if (!abonentDetail) return;
+
+        const nextState = !Boolean(abonentDetail.monitoring?.monitoring_enabled);
+        try {
+            const result = await OperatorUI.request(`/api/v1/monitoring/admin/users/${abonentId}/toggle`, {
+                method: "POST",
+                auth: true,
+                json: true,
+                body: { monitoring_enabled: nextState },
+            });
+            OperatorUI.toast(result.message || "Настройка мониторинга обновлена.", "success");
+            loadAbonentDetail();
+        } catch (error) {
+            OperatorUI.toast(error.message || "Не удалось изменить статус мониторинга.", "error");
+        }
+    }
+
+    loadAbonentDetail();
+</script>
+{% endblock %}

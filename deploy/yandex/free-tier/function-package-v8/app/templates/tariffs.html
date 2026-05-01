@@ -1,0 +1,267 @@
+{% extends "base.html" %}
+
+{% block title %}Тарифы | MTN{% endblock %}
+{% block body_class %}page-public tariffs-page-v3{% endblock %}
+
+{% block content %}
+<section class="tariffs-page-v3" aria-labelledby="tariffsPageTitle">
+    <section class="tariffs-hero-v3" data-animate="fade">
+        <div class="tariffs-hero-v3__copy">
+            <p class="tariffs-hero-v3__eyebrow">Линейка MTN</p>
+            <h1 id="tariffsPageTitle" class="tariffs-hero-v3__title">Тарифы MTN</h1>
+            <p class="tariffs-hero-v3__lead">
+                Сравните тарифы по скорости, цене и сценарию использования. Выберите подходящий
+                для ваших задач.
+            </p>
+        </div>
+
+        <aside id="currentTariffPanel" class="tariffs-current-v3 is-loading" aria-live="polite">
+            <div class="tariffs-current-v3__eyebrow">
+                <i class="fas fa-flag"></i>
+                Ваш текущий тариф
+            </div>
+            <div id="currentTariffName" class="tariffs-current-v3__name">Загружаем тариф...</div>
+            <div id="currentTariffMeta" class="tariffs-current-v3__meta">
+                Проверяем скорость и параметры текущего плана.
+            </div>
+            <div id="currentTariffPrice" class="tariffs-current-v3__price">—</div>
+            <button id="currentTariffAction" class="btn btn-secondary btn-sm" type="button" disabled>
+                Оставить тариф
+            </button>
+        </aside>
+    </section>
+
+    <section id="tariffsRecommendation" class="tariffs-recommendation-v3" data-animate="fade" aria-labelledby="tariffsRecommendationTitle">
+        <div class="tariffs-recommendation-v3__copy">
+            <p class="tariffs-recommendation-v3__eyebrow">Оптимальный тариф</p>
+            <h2 id="tariffsRecommendationTitle" class="tariffs-recommendation-v3__title">Подбираем тариф по вашей статистике...</h2>
+            <p id="tariffsRecommendationText" class="tariffs-recommendation-v3__text">
+                Анализируем скорость и сценарии использования за последние 30 дней.
+            </p>
+            <div class="tariffs-recommendation-v3__stats" aria-label="Параметры рекомендации">
+                <div class="tariffs-recommendation-v3__stat">
+                    <span>Средняя скорость</span>
+                    <strong id="tariffsRecommendationAverage">—</strong>
+                </div>
+                <div class="tariffs-recommendation-v3__stat">
+                    <span>Пиковая нагрузка</span>
+                    <strong id="tariffsRecommendationPeak">—</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="tariffs-recommendation-v3__actions">
+            <button id="tariffsRecommendationAction" class="btn btn-primary" type="button">Выбрать этот тариф</button>
+            <button id="tariffsAdvisorOpen" class="btn btn-secondary" type="button">Помогите выбрать тариф</button>
+        </div>
+    </section>
+
+    <section class="tariffs-toolbar-v3" data-animate="fade">
+        <div class="tariffs-view-switch-v3" role="tablist" aria-label="Способ отображения">
+            <button
+                id="tariffsViewCards"
+                class="tariffs-view-switch-v3__button is-active"
+                type="button"
+                data-view="cards"
+                aria-pressed="true"
+            >
+                Плитки
+            </button>
+            <button
+                id="tariffsViewTable"
+                class="tariffs-view-switch-v3__button"
+                type="button"
+                data-view="table"
+                aria-pressed="false"
+            >
+                Таблица
+            </button>
+        </div>
+
+        <div id="tariffFilters" class="tariffs-filters-v3" aria-label="Фильтры тарифов">
+            <button class="tariffs-filter-v3 is-active" type="button" data-filter="all" aria-pressed="true">Все</button>
+            <button class="tariffs-filter-v3" type="button" data-filter="home" aria-pressed="false">Для дома</button>
+            <button class="tariffs-filter-v3" type="button" data-filter="work" aria-pressed="false">Для работы</button>
+            <button class="tariffs-filter-v3" type="button" data-filter="business" aria-pressed="false">Для бизнеса</button>
+        </div>
+    </section>
+
+    <section id="tariffsStatusError" class="tariffs-state-v3 tariffs-state-v3--error" hidden aria-live="polite">
+        <div>
+            <strong>Не удалось загрузить тарифы.</strong>
+            <p>Попробуйте позже или повторите загрузку страницы.</p>
+        </div>
+        <button id="tariffsRetryButton" class="btn btn-secondary" type="button">Повторить</button>
+    </section>
+
+    <section id="tariffsCardsView" class="tariffs-section-v3" aria-labelledby="tariffsCardsTitle">
+        <h2 id="tariffsCardsTitle" class="sr-only">Карточки тарифов</h2>
+        <div id="tariffsCardsGrid" class="tariffs-grid-v3">
+            <article class="tariff-card-v3 skeleton-card-v3" aria-hidden="true"></article>
+            <article class="tariff-card-v3 skeleton-card-v3" aria-hidden="true"></article>
+            <article class="tariff-card-v3 skeleton-card-v3" aria-hidden="true"></article>
+            <article class="tariff-card-v3 skeleton-card-v3" aria-hidden="true"></article>
+            <article class="tariff-card-v3 skeleton-card-v3" aria-hidden="true"></article>
+            <article class="tariff-card-v3 skeleton-card-v3" aria-hidden="true"></article>
+        </div>
+    </section>
+
+    <section id="tariffsTableView" class="tariffs-section-v3" aria-labelledby="tariffsTableTitle" hidden>
+        <h2 id="tariffsTableTitle" class="sr-only">Сравнительная таблица тарифов</h2>
+        <div class="tariffs-table-shell-v3">
+            <table class="tariffs-table-v3">
+                <thead>
+                    <tr>
+                        <th scope="col">Тариф</th>
+                        <th scope="col">Скорость</th>
+                        <th scope="col">Цена</th>
+                        <th scope="col">Трафик</th>
+                        <th scope="col">Роутер</th>
+                        <th scope="col">ТВ</th>
+                        <th scope="col">Поддержка</th>
+                        <th scope="col">Действие</th>
+                    </tr>
+                </thead>
+                <tbody id="tariffsTableBody"></tbody>
+            </table>
+        </div>
+    </section>
+
+    <section id="tariffsEmptyState" class="tariffs-state-v3 tariffs-state-v3--empty" hidden aria-live="polite">
+        <div class="tariffs-state-v3__icon"><i class="fas fa-box-open"></i></div>
+        <strong>Под выбранный фильтр тарифов пока нет.</strong>
+        <p>Смените фильтр или вернитесь позже — мы покажем доступные планы сразу после обновления каталога.</p>
+    </section>
+</section>
+
+<div id="tariffChangeModal" class="modal" hidden>
+    <div class="modal-content tariffs-modal-v3" role="dialog" aria-modal="true" aria-labelledby="tariffChangeTitle">
+        <div class="modal-header tariffs-modal-v3__header">
+            <div>
+                <h3 id="tariffChangeTitle" class="modal-title">Сменить тариф?</h3>
+                <p class="table-copy">
+                    Новый тариф начнёт действовать с 1 числа следующего месяца.
+                </p>
+            </div>
+            <button class="icon-btn" type="button" data-tariff-modal-close aria-label="Закрыть окно">
+                <i class="fas fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="tariffs-modal-v3__summary">
+            <div id="tariffModalCategory" class="tariffs-modal-v3__badge">Для дома</div>
+            <div id="tariffModalName" class="tariffs-modal-v3__name">Город 300</div>
+            <div id="tariffModalPrice" class="tariffs-modal-v3__price">790 ₽ / мес</div>
+            <div id="tariffModalSpeed" class="tariffs-modal-v3__meta">До 300 Мбит/с</div>
+            <ul id="tariffModalFeatures" class="tariffs-modal-v3__features"></ul>
+        </div>
+
+        <div class="tariffs-modal-v3__timing" aria-label="Когда активировать тариф">
+            <div class="tariffs-modal-v3__timing-title">Когда подключить тариф</div>
+            <label class="tariffs-schedule-v3">
+                <input type="radio" name="tariffEffectiveFrom" value="next_month" checked>
+                <span>
+                    <strong>С 1 числа следующего месяца</strong>
+                    <small>Бесплатно</small>
+                </span>
+            </label>
+            <label class="tariffs-schedule-v3">
+                <input type="radio" name="tariffEffectiveFrom" value="today">
+                <span>
+                    <strong>С сегодняшнего дня</strong>
+                    <small id="tariffModalTodayFee">Доплата —</small>
+                </span>
+            </label>
+            <p id="tariffModalEffectiveHint" class="tariffs-modal-v3__timing-note">
+                Новый тариф начнёт действовать с 1 числа следующего месяца без доплаты.
+            </p>
+        </div>
+
+        <div id="tariffModalDebtNotice" class="tariffs-modal-v3__notice tariffs-modal-v3__notice--danger" hidden>
+            <strong>Есть задолженность</strong>
+            <p id="tariffModalDebtText">Пожалуйста, пополните баланс перед сменой тарифа.</p>
+        </div>
+
+        <div id="tariffModalReadyNotice" class="tariffs-modal-v3__notice tariffs-modal-v3__notice--success" hidden>
+            <strong>Смена тарифа доступна</strong>
+            <p>Задолженности нет. Можно отправить заявку на смену тарифа.</p>
+        </div>
+
+        <div class="tariffs-modal-v3__actions">
+            <button class="btn btn-secondary" type="button" data-tariff-modal-close>Отмена</button>
+            <a id="tariffModalPayButton" class="btn btn-secondary" href="/payments" hidden>Пополнить</a>
+            <button id="tariffModalConfirm" class="btn btn-primary" type="button">Подтвердить смену</button>
+        </div>
+    </div>
+</div>
+
+<div id="tariffAdvisorModal" class="modal" hidden>
+    <div class="modal-content tariffs-modal-v3 tariffs-modal-v3--advisor" role="dialog" aria-modal="true" aria-labelledby="tariffAdvisorTitle">
+        <div class="modal-header tariffs-modal-v3__header">
+            <div>
+                <h3 id="tariffAdvisorTitle" class="modal-title">Подобрать тариф под ваши задачи</h3>
+                <p class="table-copy">Ответьте на несколько коротких вопросов, и мы подсветим подходящий тариф.</p>
+            </div>
+            <button class="icon-btn" type="button" data-tariff-advisor-close aria-label="Закрыть окно">
+                <i class="fas fa-xmark"></i>
+            </button>
+        </div>
+
+        <form id="tariffAdvisorForm" class="tariffs-advisor-v3">
+            <fieldset class="tariffs-advisor-v3__group">
+                <legend>Сколько устройств обычно подключено дома?</legend>
+                <label><input type="radio" name="devices" value="light" checked> До 5 устройств</label>
+                <label><input type="radio" name="devices" value="medium"> 6–12 устройств</label>
+                <label><input type="radio" name="devices" value="heavy"> Более 12 устройств</label>
+            </fieldset>
+
+            <fieldset class="tariffs-advisor-v3__group">
+                <legend>Какой сценарий ближе всего?</legend>
+                <label><input type="radio" name="usage" value="home" checked> Дом и стриминг</label>
+                <label><input type="radio" name="usage" value="work"> Удалённая работа и видеозвонки</label>
+                <label><input type="radio" name="usage" value="business"> Бизнес и критичные сервисы</label>
+            </fieldset>
+
+            <fieldset class="tariffs-advisor-v3__group">
+                <legend>Что для вас важнее?</legend>
+                <label><input type="radio" name="priority" value="price" checked> Экономия</label>
+                <label><input type="radio" name="priority" value="balance"> Баланс цены и скорости</label>
+                <label><input type="radio" name="priority" value="speed"> Максимальная скорость</label>
+            </fieldset>
+
+            <fieldset class="tariffs-advisor-v3__group">
+                <legend>Нужен ли ТВ-пакет?</legend>
+                <label><input type="radio" name="tv" value="no" checked> Нет, только интернет</label>
+                <label><input type="radio" name="tv" value="yes"> Да, нужен пакет каналов</label>
+            </fieldset>
+        </form>
+
+        <div class="tariffs-modal-v3__actions">
+            <button class="btn btn-secondary" type="button" data-tariff-advisor-close>Отмена</button>
+            <button id="tariffAdvisorSubmit" class="btn btn-primary" type="button">Показать результат</button>
+        </div>
+    </div>
+</div>
+
+<div id="tariffCompareBar" class="tariffs-compare-bar-v3" hidden aria-live="polite">
+    <div class="tariffs-compare-bar-v3__inner">
+        <div class="tariffs-compare-bar-v3__copy">
+            <strong>Сравнение тарифов</strong>
+            <span id="tariffCompareCount">Выбрано 0 из 3</span>
+        </div>
+        <div id="tariffCompareList" class="tariffs-compare-bar-v3__list"></div>
+        <div class="tariffs-compare-bar-v3__actions">
+            <button id="tariffCompareClear" class="btn btn-secondary btn-sm" type="button">Убрать сравнение</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    window.MTNTariffsPageConfig = {
+        authenticated: document.body.dataset.authenticated === "true"
+    };
+</script>
+<script src="/static/js/tariffs-page.js?v={{ asset_version }}"></script>
+{% endblock %}

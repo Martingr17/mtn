@@ -1,0 +1,2 @@
+import{n as e}from"./createLucideIcon-qlCADwNN.js";import{t}from"./cn-BpLujWe5.js";var n=e();function r({tone:e=`neutral`,children:r}){return(0,n.jsx)(`span`,{className:t(`ui-badge`,`is-${e}`),role:`status`,"aria-live":`polite`,children:r})}export{r as t};
+//# sourceMappingURL=StatusBadge-DHcvckka.js.map

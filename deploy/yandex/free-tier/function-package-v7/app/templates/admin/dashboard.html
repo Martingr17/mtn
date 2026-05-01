@@ -1,0 +1,331 @@
+{% extends "base.html" %}
+
+{% block title %}Дашборд | Админ-панель MTN{% endblock %}
+{% block body_class %}admin-page admin-dashboard-shell{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="/static/css/admin-dashboard-v2.css?v={{ asset_version }}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<section class="page-section admin-dashboard-page" id="adminDashboardPage">
+    {% include "admin/_subnav.html" %}
+
+    <section class="hero admin-dashboard-hero">
+        <div class="hero-grid">
+            <div>
+                <div class="eyebrow">
+                    <i class="fas fa-gauge-high"></i>
+                    Центр управления MTN
+                </div>
+                <h1 class="hero-title">Дашборд административной панели</h1>
+                <p class="hero-subtitle">
+                    Ключевые KPI, графики, проблемные зоны, последние действия и быстрые операции в одном экране.
+                    Данные обновляются автоматически каждые 30 секунд, а порядок виджетов можно настроить под себя.
+                </p>
+            </div>
+
+            <div class="admin-dashboard-topbar">
+                <label class="field admin-dashboard-compact-field">
+                    <span class="field-label">Роль в демо</span>
+                    <select class="select" id="adminDashboardRoleSwitch" aria-label="Переключение роли дашборда">
+                        <option value="admin">admin</option>
+                        <option value="operator">operator</option>
+                    </select>
+                </label>
+
+                <div class="admin-dashboard-toolbar-actions">
+                    <button class="btn btn-secondary btn-sm" type="button" id="adminDashboardThemeToggle">
+                        <i class="fas fa-moon"></i>
+                        Тёмная тема
+                    </button>
+                    <button class="btn btn-secondary btn-sm" type="button" id="adminDashboardRefresh">
+                        <i class="fas fa-rotate"></i>
+                        Обновить
+                    </button>
+                    <button class="btn btn-primary btn-sm" type="button" id="adminDashboardExportPdf">
+                        <i class="fas fa-file-arrow-down"></i>
+                        Скачать отчёт
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="admin-dashboard-kpis" id="adminDashboardKpis" aria-label="Ключевые показатели"></section>
+
+    <section class="admin-dashboard-widget-grid" id="adminDashboardWidgetGrid" aria-label="Виджеты дашборда">
+        <article class="admin-widget admin-widget--wide" data-widget-id="connections">
+            <div class="admin-widget-head">
+                <div>
+                    <h2>Динамика подключений за 30 дней</h2>
+                    <p id="adminDashboardConnectionsNote">Новые подключения за последнюю неделю</p>
+                </div>
+                <div class="admin-widget-meta">
+                    <span class="admin-widget-handle" aria-hidden="true">
+                        <i class="fas fa-grip-vertical"></i>
+                    </span>
+                    <a class="btn btn-secondary btn-sm" href="/admin/abonents">Подробнее</a>
+                </div>
+            </div>
+            <div class="admin-widget-chart">
+                <canvas id="adminDashboardConnectionsChart" aria-label="График новых подключений"></canvas>
+            </div>
+        </article>
+
+        <article class="admin-widget" data-widget-id="ticket-status">
+            <div class="admin-widget-head">
+                <div>
+                    <h2>Распределение заявок</h2>
+                    <p>Новые, в работе, решены и закрыты</p>
+                </div>
+                <span class="admin-widget-handle" aria-hidden="true">
+                    <i class="fas fa-grip-vertical"></i>
+                </span>
+            </div>
+            <div class="admin-widget-chart admin-widget-chart--compact">
+                <canvas id="adminDashboardTicketsChart" aria-label="Статусы заявок"></canvas>
+            </div>
+            <a class="btn btn-secondary btn-sm admin-widget-footer-link" href="/admin/tickets">Перейти к заявкам</a>
+        </article>
+
+        <article class="admin-widget" data-widget-id="high-priority">
+            <div class="admin-widget-head">
+                <div>
+                    <h2>Требуют внимания</h2>
+                    <p>Заявки с высоким приоритетом</p>
+                </div>
+                <span class="admin-widget-handle" aria-hidden="true">
+                    <i class="fas fa-grip-vertical"></i>
+                </span>
+            </div>
+            <div id="adminDashboardHighPriority" class="admin-widget-list"></div>
+            <a class="btn btn-secondary btn-sm admin-widget-footer-link" href="/admin/tickets">Перейти ко всем</a>
+        </article>
+
+        <article class="admin-widget" data-widget-id="debts">
+            <div class="admin-widget-head">
+                <div>
+                    <h2>Абоненты с задолженностью</h2>
+                    <p>С отрицательным балансом и долгом</p>
+                </div>
+                <span class="admin-widget-handle" aria-hidden="true">
+                    <i class="fas fa-grip-vertical"></i>
+                </span>
+            </div>
+            <div id="adminDashboardDebts" class="admin-widget-list"></div>
+            <a class="btn btn-secondary btn-sm admin-widget-footer-link" href="/admin/abonents">Открыть абонентов</a>
+        </article>
+
+        <article class="admin-widget" data-widget-id="low-speed" data-role-scope="admin">
+            <div class="admin-widget-head">
+                <div>
+                    <h2>Низкая скорость</h2>
+                    <p>Линии ниже 70% от тарифа</p>
+                </div>
+                <span class="admin-widget-handle" aria-hidden="true">
+                    <i class="fas fa-grip-vertical"></i>
+                </span>
+            </div>
+            <div id="adminDashboardLowSpeed" class="admin-widget-list"></div>
+            <a class="btn btn-secondary btn-sm admin-widget-footer-link" href="/admin/tickets">Перейти в поддержку</a>
+        </article>
+
+        <article class="admin-widget admin-widget--wide" data-widget-id="activity">
+            <div class="admin-widget-head">
+                <div>
+                    <h2>Последние действия</h2>
+                    <p>Живая лента событий по системе</p>
+                </div>
+                <div class="admin-widget-meta">
+                    <span class="admin-widget-handle" aria-hidden="true">
+                        <i class="fas fa-grip-vertical"></i>
+                    </span>
+                    <a class="btn btn-secondary btn-sm" href="/admin/activity-log">Весь журнал</a>
+                </div>
+            </div>
+
+            <div class="admin-dashboard-activity-filters" role="tablist" aria-label="Фильтр событий">
+                <button class="chip is-accent" type="button" data-activity-filter="all">Все события</button>
+                <button class="chip" type="button" data-activity-filter="ticket">Заявки</button>
+                <button class="chip" type="button" data-activity-filter="payment">Платежи</button>
+                <button class="chip" type="button" data-activity-filter="user">Абоненты</button>
+                <button class="chip" type="button" data-activity-filter="system">Система</button>
+            </div>
+
+            <div id="adminDashboardActivity" class="admin-activity-feed"></div>
+        </article>
+
+        <article class="admin-widget admin-widget--wide" data-widget-id="quick-actions">
+            <div class="admin-widget-head">
+                <div>
+                    <h2>Быстрые действия</h2>
+                    <p>Самые частые операции без перехода в другие разделы</p>
+                </div>
+                <span class="admin-widget-handle" aria-hidden="true">
+                    <i class="fas fa-grip-vertical"></i>
+                </span>
+            </div>
+
+            <div class="admin-dashboard-actions-grid">
+                <button class="admin-action-button" type="button" data-dashboard-action="new-user" data-role-scope="admin">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Новый абонент</span>
+                </button>
+                <button class="admin-action-button" type="button" data-dashboard-action="new-ticket">
+                    <i class="fas fa-life-ring"></i>
+                    <span>Новая заявка</span>
+                </button>
+                <button class="admin-action-button" type="button" data-dashboard-action="manual-payment" data-role-scope="admin">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>Ручное зачисление</span>
+                </button>
+                <button class="admin-action-button" type="button" data-dashboard-action="export">
+                    <i class="fas fa-file-export"></i>
+                    <span>Экспорт отчёта</span>
+                </button>
+            </div>
+        </article>
+
+        <article class="admin-widget" data-widget-id="search">
+            <div class="admin-widget-head">
+                <div>
+                    <h2>Быстрый поиск</h2>
+                    <p>По лицевому счёту, телефону или имени</p>
+                </div>
+                <span class="admin-widget-handle" aria-hidden="true">
+                    <i class="fas fa-grip-vertical"></i>
+                </span>
+            </div>
+
+            <div class="admin-dashboard-search">
+                <label class="field">
+                    <span class="field-label">Поисковый запрос</span>
+                    <input class="input" id="adminDashboardSearch" type="search" placeholder="Например, +7 999, DEMO77777 или Мартин">
+                </label>
+                <button class="btn btn-primary btn-sm" type="button" id="adminDashboardSearchBtn">
+                    <i class="fas fa-search"></i>
+                    Найти
+                </button>
+            </div>
+            <div id="adminDashboardSearchResults" class="admin-widget-list admin-widget-list--spacious"></div>
+        </article>
+    </section>
+</section>
+
+<div class="admin-dashboard-modal" id="adminDashboardUserModal" hidden>
+    <div class="admin-dashboard-modal-card">
+        <div class="admin-widget-head">
+            <div>
+                <h3>Новый абонент</h3>
+                <p>Быстрое добавление абонента прямо из дашборда</p>
+            </div>
+            <button class="btn btn-secondary btn-sm" type="button" data-dashboard-close="adminDashboardUserModal">Закрыть</button>
+        </div>
+        <form id="adminDashboardUserForm" class="admin-dashboard-form-grid">
+            <label class="field">
+                <span class="field-label">ФИО</span>
+                <input class="input" id="adminDashboardUserName" required>
+            </label>
+            <label class="field">
+                <span class="field-label">Телефон</span>
+                <input class="input" id="adminDashboardUserPhone" type="tel" placeholder="+7 999 123-45-67" required>
+            </label>
+            <label class="field">
+                <span class="field-label">Email</span>
+                <input class="input" id="adminDashboardUserEmail" type="email" placeholder="client@mtn.ru">
+            </label>
+            <label class="field">
+                <span class="field-label">Тариф</span>
+                <select class="select" id="adminDashboardUserTariff"></select>
+            </label>
+            <label class="field">
+                <span class="field-label">Стартовый баланс</span>
+                <input class="input" id="adminDashboardUserBalance" type="number" value="0">
+            </label>
+            <div class="admin-dashboard-form-actions">
+                <button class="btn btn-secondary btn-sm" type="button" data-dashboard-close="adminDashboardUserModal">Отмена</button>
+                <button class="btn btn-primary btn-sm" type="submit">Создать абонента</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="admin-dashboard-modal" id="adminDashboardTicketModal" hidden>
+    <div class="admin-dashboard-modal-card">
+        <div class="admin-widget-head">
+            <div>
+                <h3>Новая заявка</h3>
+                <p>Создание обращения от имени абонента</p>
+            </div>
+            <button class="btn btn-secondary btn-sm" type="button" data-dashboard-close="adminDashboardTicketModal">Закрыть</button>
+        </div>
+        <form id="adminDashboardTicketForm" class="admin-dashboard-form-grid">
+            <label class="field">
+                <span class="field-label">Абонент</span>
+                <input class="input" id="adminDashboardTicketUser" placeholder="ФИО абонента" required>
+            </label>
+            <label class="field">
+                <span class="field-label">Телефон</span>
+                <input class="input" id="adminDashboardTicketPhone" type="tel" placeholder="+7 999 123-45-67" required>
+            </label>
+            <label class="field">
+                <span class="field-label">Тема</span>
+                <input class="input" id="adminDashboardTicketSubject" placeholder="Нет интернета" required>
+            </label>
+            <label class="field">
+                <span class="field-label">Приоритет</span>
+                <select class="select" id="adminDashboardTicketPriority">
+                    <option value="high">Высокий</option>
+                    <option value="medium" selected>Средний</option>
+                    <option value="low">Низкий</option>
+                </select>
+            </label>
+            <label class="field field-span-all">
+                <span class="field-label">Описание</span>
+                <textarea class="input" id="adminDashboardTicketDescription" rows="4" placeholder="Опишите проблему" required></textarea>
+            </label>
+            <div class="admin-dashboard-form-actions">
+                <button class="btn btn-secondary btn-sm" type="button" data-dashboard-close="adminDashboardTicketModal">Отмена</button>
+                <button class="btn btn-primary btn-sm" type="submit">Создать заявку</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="admin-dashboard-modal" id="adminDashboardPaymentModal" hidden>
+    <div class="admin-dashboard-modal-card">
+        <div class="admin-widget-head">
+            <div>
+                <h3>Ручное зачисление</h3>
+                <p>Операция попадёт в историю платежей и журнал событий</p>
+            </div>
+            <button class="btn btn-secondary btn-sm" type="button" data-dashboard-close="adminDashboardPaymentModal">Закрыть</button>
+        </div>
+        <form id="adminDashboardPaymentForm" class="admin-dashboard-form-grid">
+            <label class="field">
+                <span class="field-label">Абонент</span>
+                <input class="input" id="adminDashboardPaymentUser" placeholder="ФИО абонента" required>
+            </label>
+            <label class="field">
+                <span class="field-label">Сумма</span>
+                <input class="input" id="adminDashboardPaymentAmount" type="number" min="1" max="100000" required>
+            </label>
+            <label class="field field-span-all">
+                <span class="field-label">Комментарий</span>
+                <textarea class="input" id="adminDashboardPaymentComment" rows="3" placeholder="Причина зачисления"></textarea>
+            </label>
+            <div class="admin-dashboard-form-actions">
+                <button class="btn btn-secondary btn-sm" type="button" data-dashboard-close="adminDashboardPaymentModal">Отмена</button>
+                <button class="btn btn-primary btn-sm" type="submit">Зачислить</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="/static/js/admin-dashboard-v2.js?v={{ asset_version }}"></script>
+{% endblock %}

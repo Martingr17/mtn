@@ -1,0 +1,2 @@
+import{r as e}from"./cn-Dxg1DMZx.js";var t=e();function n({eyebrow:e,title:n,description:r,actions:i}){return(0,t.jsxs)(`header`,{className:`section-heading`,children:[(0,t.jsxs)(`div`,{className:`section-heading-copy`,children:[e?(0,t.jsx)(`p`,{className:`section-eyebrow`,children:e}):null,(0,t.jsx)(`h1`,{className:`section-title`,children:n}),r?(0,t.jsx)(`p`,{className:`section-description`,children:r}):null]}),i?(0,t.jsx)(`div`,{className:`section-actions`,children:i}):null]})}export{n as t};
+//# sourceMappingURL=SectionHeading-1nKbHQfE.js.map

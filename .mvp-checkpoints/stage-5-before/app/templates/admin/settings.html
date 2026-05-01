@@ -1,0 +1,333 @@
+{% extends "base.html" %}
+
+{% block title %}Настройки системы | MTN{% endblock %}
+{% block body_class %}admin-page admin-suite-page{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="/static/css/admin-extra-sections.css?v={{ asset_version }}">
+<link rel="stylesheet" href="/static/css/admin-settings.css?v={{ asset_version }}">
+{% endblock %}
+
+{% block content %}
+<section class="page-section admin-settings-page" id="adminSettingsPage">
+    {% include "admin/_subnav.html" %}
+
+    <section class="hero admin-suite-hero">
+        <div class="hero-grid hero-grid-single">
+            <div class="admin-settings-hero-row">
+                <div>
+                    <div class="eyebrow"><i class="fas fa-sliders"></i> Системные параметры MTN</div>
+                    <h1 class="hero-title">Настройки платформы</h1>
+                    <p class="hero-subtitle">Управляйте брендингом, интеграциями, уведомлениями и правилами безопасности из одного экрана. Все demo-настройки сохраняются локально и готовы к дальнейшей интеграции с backend API.</p>
+                </div>
+                <div class="admin-suite-actions">
+                    <button class="btn btn-secondary btn-sm" type="button" id="adminSettingsAuditButton"><i class="fas fa-scroll"></i> Журнал изменений</button>
+                    <button class="btn btn-secondary btn-sm" type="button" id="adminSettingsResetAllButton"><i class="fas fa-rotate-left"></i> Сбросить всё</button>
+                    <button class="btn btn-primary btn-sm" type="button" id="adminSettingsSaveAllButton"><i class="fas fa-floppy-disk"></i> Сохранить всё</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="admin-settings-shell">
+        <aside class="admin-settings-tabs" aria-label="Разделы настроек">
+            <button class="admin-settings-tab is-active" type="button" data-settings-tab="general"><i class="fas fa-building"></i><span>Общие</span></button>
+            <button class="admin-settings-tab" type="button" data-settings-tab="notifications"><i class="fas fa-bell"></i><span>Уведомления</span></button>
+            <button class="admin-settings-tab" type="button" data-settings-tab="integrations"><i class="fas fa-plug"></i><span>Интеграции</span></button>
+            <button class="admin-settings-tab" type="button" data-settings-tab="security"><i class="fas fa-shield-halved"></i><span>Безопасность</span></button>
+            <button class="admin-settings-tab" type="button" data-settings-tab="advanced"><i class="fas fa-database"></i><span>Дополнительно</span></button>
+        </aside>
+
+        <div class="admin-settings-content">
+            <section class="admin-settings-panel is-active" data-settings-panel="general">
+                <article class="admin-settings-card">
+                    <div class="admin-suite-head"><div><h2>Информация о компании</h2><p>Эти данные отображаются в шапке, подвале и на публичных страницах поддержки.</p></div></div>
+                    <div class="admin-settings-grid">
+                        <label class="field"><span class="field-label">Название компании</span><input class="input" id="settingsCompanyName" type="text" maxlength="120"></label>
+                        <label class="field"><span class="field-label">Слоган</span><input class="input" id="settingsCompanySlogan" type="text" maxlength="160"></label>
+                        <label class="field"><span class="field-label">Контактный телефон</span><input class="input" id="settingsSupportPhone" type="text" maxlength="40"></label>
+                        <label class="field"><span class="field-label">Email поддержки</span><input class="input" id="settingsSupportEmail" type="email" maxlength="255"></label>
+                        <label class="field admin-settings-grid-wide"><span class="field-label">Адрес офиса</span><input class="input" id="settingsOfficeAddress" type="text" maxlength="255"></label>
+                    </div>
+                </article>
+
+                <article class="admin-settings-card">
+                    <div class="admin-suite-head"><div><h2>Тарифы и услуги</h2><p>Базовые правила для новых абонентов, платежей и блокировок по задолженности.</p></div></div>
+                    <div class="admin-settings-grid">
+                        <label class="field"><span class="field-label">Тариф по умолчанию</span><select class="select" id="settingsDefaultTariff"><option value="Старт 100">Старт 100</option><option value="Город 300">Город 300</option><option value="Смена 500">Смена 500</option><option value="Семья 700 + ТВ">Семья 700 + ТВ</option><option value="Бизнес 1000">Бизнес 1000</option></select></label>
+                        <label class="field"><span class="field-label">Комиссия за пополнение, %</span><input class="input" id="settingsPaymentFee" type="number" min="0" max="100" step="0.1"></label>
+                        <label class="field"><span class="field-label">Минимальная сумма пополнения</span><input class="input" id="settingsMinPayment" type="number" min="1" max="100000"></label>
+                        <label class="field"><span class="field-label">Максимальная сумма пополнения</span><input class="input" id="settingsMaxPayment" type="number" min="10" max="1000000"></label>
+                        <label class="field"><span class="field-label">Порог задолженности для блокировки</span><input class="input" id="settingsDebtThreshold" type="number" min="0" max="100000"></label>
+                    </div>
+                </article>
+
+                <article class="admin-settings-card">
+                    <div class="admin-suite-head"><div><h2>Дизайн и брендинг</h2><p>Изменения сразу отражаются в preview справа, но применяются только после сохранения.</p></div></div>
+                    <div class="admin-settings-branding-layout">
+                        <div class="admin-settings-grid">
+                            <label class="field"><span class="field-label">Основной цвет бренда</span><input class="input admin-settings-color" id="settingsBrandPrimary" type="color"></label>
+                            <label class="field"><span class="field-label">Цвет фона страницы</span><input class="input admin-settings-color" id="settingsPageBackground" type="color"></label>
+                            <label class="field"><span class="field-label">Логотип</span><input class="input" id="settingsLogoFile" type="file" accept="image/*"><span class="field-hint" id="settingsLogoFileName">Файл не выбран</span></label>
+                            <label class="field"><span class="field-label">Фавикон</span><input class="input" id="settingsFaviconFile" type="file" accept="image/*,.ico"><span class="field-hint" id="settingsFaviconFileName">Файл не выбран</span></label>
+                        </div>
+                        <aside class="admin-settings-preview-card" id="adminSettingsPreviewCard">
+                            <div class="admin-settings-preview-top">
+                                <div class="admin-settings-preview-logo" id="adminSettingsPreviewLogo">MTN</div>
+                                <div>
+                                    <div class="admin-settings-preview-company" id="adminSettingsPreviewCompany">MTN</div>
+                                    <div class="admin-settings-preview-slogan" id="adminSettingsPreviewSlogan">Martin Telecom Network</div>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary btn-sm admin-settings-preview-button" type="button" id="adminSettingsPreviewButton">Кнопка бренда</button>
+                            <div class="admin-settings-preview-footer"><span id="adminSettingsPreviewPhone">+7 (999) 123-45-67</span><span id="adminSettingsPreviewEmail">support@mtn.ru</span></div>
+                        </aside>
+                    </div>
+                    <div class="admin-settings-panel-actions">
+                        <button class="btn btn-secondary btn-sm" type="button" data-settings-reset-tab="general">Сбросить вкладку</button>
+                        <button class="btn btn-primary btn-sm" type="button" data-settings-save-tab="general">Сохранить вкладку</button>
+                    </div>
+                </article>
+            </section>
+
+            <section class="admin-settings-panel" data-settings-panel="notifications" hidden>
+                <article class="admin-settings-card">
+                    <div class="admin-suite-head">
+                        <div><h2>Email-уведомления</h2><p>Глобальная настройка канала и SMTP-параметров для системных писем.</p></div>
+                        <div class="admin-suite-actions">
+                            <button class="btn btn-secondary btn-sm" type="button" data-test-channel="email">Отправить тест</button>
+                            <button class="btn btn-secondary btn-sm" type="button" data-open-template-editor>Редактировать шаблоны</button>
+                        </div>
+                    </div>
+                    <div class="admin-settings-grid">
+                        <label class="field admin-settings-toggle"><span class="field-label">Отправлять email</span><input id="settingsEmailEnabled" type="checkbox"></label>
+                        <label class="field"><span class="field-label">SMTP сервер</span><input class="input" id="settingsSmtpServer" type="text"></label>
+                        <label class="field"><span class="field-label">SMTP порт</span><input class="input" id="settingsSmtpPort" type="number" min="1" max="65535"></label>
+                        <label class="field"><span class="field-label">SMTP логин</span><input class="input" id="settingsSmtpLogin" type="text"></label>
+                        <label class="field"><span class="field-label">SMTP пароль</span><input class="input" id="settingsSmtpPassword" type="password"></label>
+                        <label class="field"><span class="field-label">Email отправителя</span><input class="input" id="settingsSenderEmail" type="email"></label>
+                    </div>
+                </article>
+
+                <article class="admin-settings-card">
+                    <div class="admin-suite-head">
+                        <div><h2>SMS и Push</h2><p>Конфигурация шлюзов и браузерных уведомлений для клиентских и сервисных событий.</p></div>
+                        <div class="admin-suite-actions">
+                            <button class="btn btn-secondary btn-sm" type="button" data-test-channel="sms">Тест SMS</button>
+                            <button class="btn btn-secondary btn-sm" type="button" data-test-channel="push">Тест push</button>
+                        </div>
+                    </div>
+                    <div class="admin-settings-grid">
+                        <label class="field admin-settings-toggle"><span class="field-label">Отправлять SMS</span><input id="settingsSmsEnabled" type="checkbox"></label>
+                        <label class="field"><span class="field-label">SMS-шлюз API</span><input class="input" id="settingsSmsGateway" type="text"></label>
+                        <label class="field"><span class="field-label">API ключ</span><input class="input" id="settingsSmsApiKey" type="password"></label>
+                        <label class="field"><span class="field-label">Подпись SMS</span><input class="input" id="settingsSmsSignature" type="text"></label>
+                        <label class="field admin-settings-toggle"><span class="field-label">Включить push</span><input id="settingsPushEnabled" type="checkbox"></label>
+                        <label class="field"><span class="field-label">VAPID публичный ключ</span><input class="input" id="settingsVapidPublic" type="text"></label>
+                        <label class="field admin-settings-grid-wide"><span class="field-label">VAPID приватный ключ</span><input class="input" id="settingsVapidPrivate" type="password"></label>
+                    </div>
+                </article>
+
+                <article class="admin-settings-card">
+                    <div class="admin-suite-head"><div><h2>Какие события отслеживать</h2><p>Матрица каналов доставки для самых важных сценариев клиентского кабинета.</p></div></div>
+                    <div class="admin-settings-event-table-wrap">
+                        <table class="admin-settings-event-table">
+                            <thead><tr><th>Событие</th><th>Email</th><th>SMS</th><th>Push</th></tr></thead>
+                            <tbody>
+                                <tr><td>Новый ответ в заявке</td><td><input type="checkbox" id="settingsEventTicketReplyEmail"></td><td><input type="checkbox" id="settingsEventTicketReplySms"></td><td><input type="checkbox" id="settingsEventTicketReplyPush"></td></tr>
+                                <tr><td>Списание абонентской платы</td><td><input type="checkbox" id="settingsEventChargeEmail"></td><td><input type="checkbox" id="settingsEventChargeSms"></td><td><input type="checkbox" id="settingsEventChargePush"></td></tr>
+                                <tr><td>Пополнение баланса</td><td><input type="checkbox" id="settingsEventTopupEmail"></td><td><input type="checkbox" id="settingsEventTopupSms"></td><td><input type="checkbox" id="settingsEventTopupPush"></td></tr>
+                                <tr><td>Технические работы</td><td><input type="checkbox" id="settingsEventMaintenanceEmail"></td><td><input type="checkbox" id="settingsEventMaintenanceSms"></td><td><input type="checkbox" id="settingsEventMaintenancePush"></td></tr>
+                                <tr><td>Акции и новости</td><td><input type="checkbox" id="settingsEventPromoEmail"></td><td><input type="checkbox" id="settingsEventPromoSms"></td><td><input type="checkbox" id="settingsEventPromoPush"></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="admin-settings-panel-actions">
+                        <button class="btn btn-secondary btn-sm" type="button" data-settings-reset-tab="notifications">Сбросить вкладку</button>
+                        <button class="btn btn-primary btn-sm" type="button" data-settings-save-tab="notifications">Сохранить вкладку</button>
+                    </div>
+                </article>
+            </section>
+
+            <section class="admin-settings-panel" data-settings-panel="integrations" hidden>
+                <article class="admin-settings-card">
+                    <div class="admin-suite-head">
+                        <div><h2>Платёжные системы</h2><p>Настройка витрины способов оплаты и параметров подключения к провайдеру.</p></div>
+                        <div class="admin-suite-actions">
+                            <button class="btn btn-secondary btn-sm" type="button" data-check-target="payment">Проверить соединение</button>
+                            <span class="admin-settings-check-status" id="settingsPaymentCheckStatus">Проверка не запускалась</span>
+                        </div>
+                    </div>
+                    <div class="admin-settings-grid">
+                        <label class="field"><span class="field-label">Платёжный шлюз</span><select class="select" id="settingsPaymentGateway"><option value="ЮKassa">ЮKassa</option><option value="CloudPayments">CloudPayments</option><option value="T-Банк">T-Банк</option></select></label>
+                        <label class="field"><span class="field-label">Shop ID</span><input class="input" id="settingsPaymentShopId" type="text"></label>
+                        <label class="field"><span class="field-label">Секретный ключ</span><input class="input" id="settingsPaymentSecret" type="password"></label>
+                        <label class="field admin-settings-toggle"><span class="field-label">Тестовый режим</span><input id="settingsPaymentTestMode" type="checkbox"></label>
+                        <fieldset class="field admin-settings-grid-wide">
+                            <span class="field-label">Способы оплаты</span>
+                            <div class="admin-settings-checkbox-group">
+                                <label><input type="checkbox" id="settingsPaymentMethodCard"> Банковская карта</label>
+                                <label><input type="checkbox" id="settingsPaymentMethodSbp"> СБП</label>
+                                <label><input type="checkbox" id="settingsPaymentMethodCash"> Наличные</label>
+                            </div>
+                        </fieldset>
+                    </div>
+                </article>
+
+                <article class="admin-settings-card">
+                    <div class="admin-suite-head">
+                        <div><h2>Биллинговая система и внешние сервисы</h2><p>API MTN, speedtest и аналитика. Все проверки здесь выполняются в demo-режиме.</p></div>
+                        <div class="admin-suite-actions">
+                            <button class="btn btn-secondary btn-sm" type="button" data-check-target="billing">Проверить billing</button>
+                            <button class="btn btn-secondary btn-sm" type="button" data-check-target="external">Проверить сервисы</button>
+                        </div>
+                    </div>
+                    <div class="admin-settings-grid">
+                        <label class="field admin-settings-grid-wide"><span class="field-label">Billing API URL</span><input class="input" id="settingsBillingUrl" type="text"></label>
+                        <label class="field"><span class="field-label">Billing API ключ</span><input class="input" id="settingsBillingKey" type="password"></label>
+                        <label class="field"><span class="field-label">Таймаут запроса, сек</span><input class="input" id="settingsBillingTimeout" type="number" min="1" max="300"></label>
+                        <label class="field"><span class="field-label">Количество повторов</span><input class="input" id="settingsBillingRetries" type="number" min="0" max="10"></label>
+                        <label class="field"><span class="field-label">Speedtest сервер</span><input class="input" id="settingsSpeedtestServer" type="text"></label>
+                        <label class="field"><span class="field-label">CDN для статики</span><input class="input" id="settingsCdn" type="text"></label>
+                        <label class="field"><span class="field-label">Google Analytics ID</span><input class="input" id="settingsGaId" type="text"></label>
+                        <label class="field"><span class="field-label">Яндекс.Метрика ID</span><input class="input" id="settingsYmId" type="text"></label>
+                    </div>
+                    <div class="admin-settings-panel-actions">
+                        <button class="btn btn-secondary btn-sm" type="button" id="adminSettingsExportConfigButton">Экспорт конфигурации</button>
+                        <button class="btn btn-secondary btn-sm" type="button" id="adminSettingsImportConfigButton">Импорт конфигурации</button>
+                        <button class="btn btn-primary btn-sm" type="button" data-settings-save-tab="integrations">Сохранить вкладку</button>
+                        <input id="adminSettingsImportConfigInput" type="file" accept="application/json" hidden>
+                    </div>
+                </article>
+            </section>
+
+            <section class="admin-settings-panel" data-settings-panel="security" hidden>
+                <article class="admin-settings-card">
+                    <div class="admin-suite-head"><div><h2>Политика паролей</h2><p>Требования для абонентов и сотрудников, срок действия и минимальная сложность.</p></div></div>
+                    <div class="admin-settings-grid">
+                        <label class="field"><span class="field-label">Минимальная длина пароля</span><input class="input" id="settingsMinPassword" type="number" min="6" max="64"></label>
+                        <label class="field admin-settings-toggle"><span class="field-label">Требовать цифры</span><input id="settingsRequireDigits" type="checkbox"></label>
+                        <label class="field admin-settings-toggle"><span class="field-label">Требовать заглавные буквы</span><input id="settingsRequireUppercase" type="checkbox"></label>
+                        <label class="field admin-settings-toggle"><span class="field-label">Требовать спецсимволы</span><input id="settingsRequireSymbols" type="checkbox"></label>
+                        <label class="field"><span class="field-label">Срок действия пароля, дней</span><input class="input" id="settingsPasswordExpireDays" type="number" min="0" max="365"></label>
+                    </div>
+                </article>
+
+                <article class="admin-settings-card">
+                    <div class="admin-suite-head"><div><h2>Сессии и доступ</h2><p>Ограничения на вход, принудительная 2FA для администраторов и лимиты на устройства.</p></div></div>
+                    <div class="admin-settings-grid">
+                        <label class="field"><span class="field-label">Время жизни сессии, часов</span><input class="input" id="settingsSessionHours" type="number" min="1" max="720"></label>
+                        <label class="field"><span class="field-label">Максимум одновременных сессий</span><input class="input" id="settingsMaxSessions" type="number" min="1" max="20"></label>
+                        <label class="field admin-settings-toggle"><span class="field-label">Обязательная 2FA для admin</span><input id="settingsRequireAdmin2fa" type="checkbox" data-critical-setting="requireAdmin2fa"></label>
+                        <label class="field"><span class="field-label">Блокировка после неудачных входов</span><input class="input" id="settingsFailedAttempts" type="number" min="1" max="20"></label>
+                        <label class="field"><span class="field-label">Время блокировки, минут</span><input class="input" id="settingsLockMinutes" type="number" min="1" max="120"></label>
+                    </div>
+                </article>
+
+                <article class="admin-settings-card">
+                    <div class="admin-suite-head"><div><h2>Защита данных</h2><p>Критичные параметры инфраструктуры. Для некоторых изменений потребуется подтверждение паролем.</p></div></div>
+                    <div class="admin-settings-grid">
+                        <label class="field admin-settings-toggle"><span class="field-label">Шифрование данных в БД</span><input id="settingsEncryptDb" type="checkbox" data-critical-setting="encryptDb"></label>
+                        <label class="field admin-settings-toggle"><span class="field-label">Режим обслуживания</span><input id="settingsMaintenanceMode" type="checkbox" data-critical-setting="maintenanceMode"></label>
+                        <label class="field admin-settings-grid-wide"><span class="field-label">IP-белый список для админ-панели</span><textarea class="textarea" id="settingsIpWhitelist" rows="5" data-critical-setting="ipWhitelist"></textarea></label>
+                    </div>
+                    <div class="admin-settings-panel-actions">
+                        <button class="btn btn-secondary btn-sm" type="button" data-settings-reset-tab="security">Сбросить вкладку</button>
+                        <button class="btn btn-primary btn-sm" type="button" data-settings-save-tab="security">Сохранить вкладку</button>
+                    </div>
+                </article>
+            </section>
+
+            <section class="admin-settings-panel" data-settings-panel="advanced" hidden>
+                <article class="admin-settings-card">
+                    <div class="admin-suite-head">
+                        <div><h2>Резервное копирование</h2><p>Настройки автокопий, список snapshot-версий и быстрое восстановление demo-конфигурации.</p></div>
+                        <div class="admin-suite-actions"><button class="btn btn-primary btn-sm" type="button" id="adminSettingsCreateBackupButton">Создать резервную копию сейчас</button></div>
+                    </div>
+                    <div class="admin-settings-grid">
+                        <label class="field admin-settings-toggle"><span class="field-label">Автоматическое резервное копирование</span><input id="settingsAutoBackup" type="checkbox"></label>
+                        <label class="field"><span class="field-label">Хранить копий</span><input class="input" id="settingsBackupRetention" type="number" min="1" max="365"></label>
+                        <label class="field admin-settings-grid-wide"><span class="field-label">Внешнее хранилище</span><input class="input" id="settingsBackupStorage" type="text"></label>
+                    </div>
+                    <div class="admin-settings-backups" id="adminSettingsBackupsList"></div>
+                </article>
+
+                <article class="admin-settings-card">
+                    <div class="admin-suite-head"><div><h2>Логи и отладка</h2><p>Управляйте уровнем логирования, хранением и уведомлениями о критичных ошибках.</p></div></div>
+                    <div class="admin-settings-grid">
+                        <label class="field"><span class="field-label">Уровень логирования</span><select class="select" id="settingsLogLevel"><option value="debug">Debug</option><option value="info">Info</option><option value="warning">Warning</option><option value="error">Error</option></select></label>
+                        <label class="field"><span class="field-label">Хранить логи, дней</span><input class="input" id="settingsKeepLogsDays" type="number" min="1" max="365"></label>
+                        <label class="field admin-settings-toggle"><span class="field-label">Отправлять ошибки на email</span><input id="settingsErrorMail" type="checkbox"></label>
+                        <label class="field"><span class="field-label">Email для ошибок</span><input class="input" id="settingsErrorEmail" type="email"></label>
+                    </div>
+                </article>
+
+                <article class="admin-settings-card">
+                    <div class="admin-suite-head"><div><h2>О системе</h2><p>Служебная справка по текущей demo-среде и вспомогательные действия для обслуживания.</p></div></div>
+                    <div class="admin-settings-system-grid">
+                        <div><span>Версия приложения</span><strong id="settingsSystemVersion">v2.1.0</strong></div>
+                        <div><span>Последнее обновление</span><strong id="settingsSystemLastUpdate">15.03.2026</strong></div>
+                        <div><span>Последняя резервная копия</span><strong id="settingsSystemLastBackup">15.03.2026 03:00</strong></div>
+                        <div><span>Количество абонентов</span><strong id="settingsSystemSubscribers">5 234</strong></div>
+                        <div><span>Количество операторов</span><strong id="settingsSystemOperators">5</strong></div>
+                        <div><span>Свободно места на сервере</span><strong id="settingsSystemDisk">42 ГБ</strong></div>
+                    </div>
+                    <div class="admin-settings-panel-actions">
+                        <button class="btn btn-secondary btn-sm" type="button" id="adminSettingsClearCacheButton">Очистить кеш приложения</button>
+                        <button class="btn btn-secondary btn-sm" type="button" data-settings-reset-tab="advanced">Сбросить вкладку</button>
+                        <button class="btn btn-primary btn-sm" type="button" data-settings-save-tab="advanced">Сохранить вкладку</button>
+                    </div>
+                </article>
+            </section>
+        </div>
+    </section>
+</section>
+<div class="admin-suite-modal" id="adminSettingsTemplateModal" hidden>
+    <div class="admin-suite-modal-card admin-settings-modal-card">
+        <div class="admin-suite-head">
+            <div><h3>Шаблоны уведомлений</h3><p>Используйте переменные `&#123;&#123;name&#125;&#125;`, `&#123;&#123;ticket_id&#125;&#125;`, `&#123;&#123;balance&#125;&#125;`, `&#123;&#123;tariff&#125;&#125;`.</p></div>
+            <button class="btn btn-secondary btn-sm" type="button" data-admin-modal-close="adminSettingsTemplateModal">Закрыть</button>
+        </div>
+        <div class="admin-settings-grid">
+            <label class="field"><span class="field-label">Шаблон</span><select class="select" id="adminSettingsTemplateSelect"><option value="ticket_reply">Ответ в заявке</option><option value="monthly_charge">Списание абонентской платы</option><option value="maintenance">Технические работы</option><option value="promo">Акция</option></select></label>
+            <label class="field admin-settings-grid-wide"><span class="field-label">Текст шаблона</span><textarea class="textarea" id="adminSettingsTemplateText" rows="8"></textarea></label>
+            <div class="admin-settings-template-preview admin-settings-grid-wide" id="adminSettingsTemplatePreview"></div>
+        </div>
+        <div class="admin-settings-panel-actions">
+            <button class="btn btn-secondary btn-sm" type="button" data-admin-modal-close="adminSettingsTemplateModal">Отмена</button>
+            <button class="btn btn-primary btn-sm" type="button" id="adminSettingsTemplateSaveButton">Сохранить шаблон</button>
+        </div>
+    </div>
+</div>
+
+<div class="admin-suite-modal" id="adminSettingsConfirmModal" hidden>
+    <div class="admin-suite-modal-card admin-settings-modal-card admin-settings-modal-small">
+        <div class="admin-suite-head">
+            <div><h3>Подтверждение критичных изменений</h3><p>Введите пароль администратора, чтобы применить чувствительные параметры безопасности.</p></div>
+            <button class="btn btn-secondary btn-sm" type="button" data-admin-modal-close="adminSettingsConfirmModal">Закрыть</button>
+        </div>
+        <label class="field"><span class="field-label">Пароль администратора</span><input class="input" id="adminSettingsConfirmPassword" type="password" placeholder="admin123"></label>
+        <div class="admin-settings-panel-actions">
+            <button class="btn btn-secondary btn-sm" type="button" data-admin-modal-close="adminSettingsConfirmModal">Отмена</button>
+            <button class="btn btn-primary btn-sm" type="button" id="adminSettingsConfirmApplyButton">Подтвердить</button>
+        </div>
+    </div>
+</div>
+
+<div class="admin-suite-modal" id="adminSettingsAuditModal" hidden>
+    <div class="admin-suite-modal-card admin-settings-modal-card">
+        <div class="admin-suite-head">
+            <div><h3>Журнал изменений настроек</h3><p>История действий по категориям, импорту конфигурации, backup и критичным изменениям.</p></div>
+            <button class="btn btn-secondary btn-sm" type="button" data-admin-modal-close="adminSettingsAuditModal">Закрыть</button>
+        </div>
+        <div class="admin-settings-audit-toolbar">
+            <label class="field"><span class="field-label">Категория</span><select class="select" id="adminSettingsAuditFilter"><option value="all">Все</option><option value="general">Общие</option><option value="notifications">Уведомления</option><option value="integrations">Интеграции</option><option value="security">Безопасность</option><option value="advanced">Дополнительно</option></select></label>
+        </div>
+        <div class="admin-settings-audit-list" id="adminSettingsAuditList"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="/static/js/admin-settings.js?v={{ asset_version }}"></script>
+{% endblock %}

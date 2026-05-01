@@ -1,0 +1,2 @@
+var e=/^[?\uFFFD\s._-]+$/,t=/[?\uFFFD]/,n=/(user|test|testov|smoke|prod|demo|check|qa|example|local)/i;function r(r,i,a){let o=r?.trim();if(!o||e.test(o)||t.test(o))return i;let s=(a??``).trim().toLowerCase(),c=s.endsWith(`@example.com`)||s.endsWith(`@operator.local`);return!/[А-Яа-яЁё]/.test(o)&&c&&n.test(o)?i:o}export{r as t};
+//# sourceMappingURL=display-name-CA_v0anL.js.map

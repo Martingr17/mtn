@@ -1,0 +1,215 @@
+{
+  "public": {
+    "label": "public",
+    "results": [
+      {
+        "route": "/",
+        "status": 200,
+        "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/",
+        "title": "MTN — личный кабинет и сервис",
+        "h1": "Один кабинет для клиента, поддержки и команды MTN",
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "route": "/login",
+        "status": 200,
+        "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/login",
+        "title": "MTN — личный кабинет и сервис",
+        "h1": "Надёжный вход",
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "route": "/register",
+        "status": 200,
+        "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/register",
+        "title": "MTN — личный кабинет и сервис",
+        "h1": "Надёжный вход",
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "route": "/recover",
+        "status": 200,
+        "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/recover",
+        "title": "MTN — личный кабинет и сервис",
+        "h1": "Надёжный вход",
+        "consoleErrors": [],
+        "pageErrors": []
+      }
+    ]
+  },
+  "subscriber": {
+    "label": "subscriber",
+    "results": [
+      {
+        "route": "/dashboard",
+        "status": 200,
+        "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/dashboard",
+        "title": "MTN — личный кабинет и сервис",
+        "h1": "Алина, всё под контролем.",
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "route": "/tariffs",
+        "status": 200,
+        "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/tariffs",
+        "title": "MTN — личный кабинет и сервис",
+        "h1": "Тарифы MTN",
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "route": "/payments",
+        "status": 200,
+        "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/payments",
+        "title": "MTN — личный кабинет и сервис",
+        "h1": "Пополнение баланса и история платежей",
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "route": "/support",
+        "status": 200,
+        "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/support",
+        "title": "MTN — личный кабинет и сервис",
+        "h1": "Поддержка MTN без фрагментации по страницам и модалкам.",
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "route": "/notifications",
+        "status": 200,
+        "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/notifications",
+        "title": "MTN — личный кабинет и сервис",
+        "h1": "Центр уведомлений MTN",
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "route": "/statistics",
+        "status": 200,
+        "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/statistics",
+        "title": "MTN — личный кабинет и сервис",
+        "h1": "Единая аналитика по трафику, платежам и сервисным обращениям",
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "route": "/speedtest",
+        "status": 200,
+        "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/speedtest",
+        "title": "MTN — личный кабинет и сервис",
+        "h1": "Проверка скорости без внешних вкладок и лишнего шума",
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "route": "/monitoring",
+        "status": 200,
+        "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/monitoring",
+        "title": "MTN — личный кабинет и сервис",
+        "h1": "Качество сети и контроль инцидентов",
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "route": "/profile",
+        "status": 200,
+        "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/profile",
+        "title": "MTN — личный кабинет и сервис",
+        "h1": "Личные данные и безопасность аккаунта",
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "route": "/settings",
+        "status": 200,
+        "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/settings",
+        "title": "MTN — личный кабинет и сервис",
+        "h1": "Настройки интерфейса, уведомлений и приватности",
+        "consoleErrors": [],
+        "pageErrors": []
+      }
+    ]
+  },
+  "admin": {
+    "label": "admin",
+    "results": [
+      {
+        "route": "/admin/dashboard",
+        "status": 200,
+        "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/admin/dashboard",
+        "title": "MTN — личный кабинет и сервис",
+        "h1": "Операционный обзор MTN",
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "route": "/admin/users",
+        "status": 200,
+        "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/admin/users",
+        "title": "MTN — личный кабинет и сервис",
+        "h1": "Абонентская база",
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "route": "/admin/users/304364434243485696",
+        "status": 200,
+        "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/admin/users/304364434243485696",
+        "title": "MTN — личный кабинет и сервис",
+        "h1": "Check Alina",
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "route": "/admin/tickets",
+        "status": 200,
+        "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/admin/tickets",
+        "title": "MTN — личный кабинет и сервис",
+        "h1": "Очередь обращений",
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "route": "/admin/payments",
+        "status": 200,
+        "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/admin/payments",
+        "title": "MTN — личный кабинет и сервис",
+        "h1": "Платежи и ручные операции",
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "route": "/admin/tariffs",
+        "status": 200,
+        "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/admin/tariffs",
+        "title": "MTN — личный кабинет и сервис",
+        "h1": "Управление тарифной линейкой",
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "route": "/admin/operators",
+        "status": 200,
+        "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/admin/operators",
+        "title": "MTN — личный кабинет и сервис",
+        "h1": "Команда поддержки и операций",
+        "consoleErrors": [],
+        "pageErrors": []
+      },
+      {
+        "route": "/admin/settings",
+        "status": 200,
+        "finalUrl": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/admin/settings",
+        "title": "MTN — личный кабинет и сервис",
+        "h1": "Системная конфигурация MTN",
+        "consoleErrors": [],
+        "pageErrors": []
+      }
+    ]
+  }
+}

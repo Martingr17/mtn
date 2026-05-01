@@ -1,0 +1,307 @@
+{% extends "base.html" %}
+
+{% block title %}Заявка #{{ ticket_id }} | Личный кабинет MTN{% endblock %}
+
+{% block content %}
+<section class="page-section">
+    <section class="hero">
+        <div class="hero-grid hero-grid-single">
+            <div>
+                <div class="eyebrow">
+                    <i class="fas fa-message"></i>
+                    Детали обращения и история переписки
+                </div>
+                <h1 class="hero-title" id="ticketSubject">Загрузка заявки...</h1>
+                <p class="hero-subtitle">
+                    <span class="text-mono">#{{ ticket_id }}</span>
+                    <span id="ticketMetaText">Сейчас подгрузим статус, приоритет и полную цепочку сообщений по обращению.</span>
+                </p>
+                <div class="chip-row">
+                    <span id="ticketStatusBadge" class="status-badge status-new">Статус</span>
+                    <span id="ticketPriorityBadge" class="priority-badge priority-medium">Приоритет</span>
+                    <span id="ticketSlaBadge" class="chip">SLA</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="ticket-grid">
+        <article class="feed-card span-8">
+            <div class="section-title-wrap">
+                <div>
+                    <h2 class="section-title">Переписка по заявке</h2>
+                    <p class="section-subtitle">Все сообщения, вложения и обновления статуса в одном потоке. Если заявка уже решена, её можно оценить и закрыть отсюда же.</p>
+                </div>
+            </div>
+
+            <div class="stats-grid u-mt-18">
+                <article class="metric-card">
+                    <div class="metric-label">Назначено</div>
+                    <div class="metric-value" id="ticketAssigneeMetric">Ожидает</div>
+                </article>
+                <article class="metric-card">
+                    <div class="metric-label">Первая реакция</div>
+                    <div class="metric-value" id="ticketResponseMetric">—</div>
+                </article>
+                <article class="metric-card">
+                    <div class="metric-label">Решение</div>
+                    <div class="metric-value" id="ticketResolutionMetric">—</div>
+                </article>
+            </div>
+
+            <div id="messagesList" class="chat-thread u-mt-18">
+                <div class="skeleton skeleton-card-96"></div>
+                <div class="skeleton skeleton-card-96"></div>
+            </div>
+        </article>
+
+        <article class="form-shell span-4">
+            <div class="section-title-wrap">
+                <div>
+                    <h2 class="section-title">Новый ответ</h2>
+                    <p class="section-subtitle" id="replyFormCopy">Можно отправить текстовый ответ и при необходимости приложить файл.</p>
+                </div>
+            </div>
+            <form id="replyForm" class="page-section" enctype="multipart/form-data">
+                <div class="field">
+                    <label class="field-label" for="replyBody">Сообщение</label>
+                    <textarea class="textarea" id="replyBody" name="body" rows="6" required placeholder="Напишите уточнение, ответ или новый комментарий по проблеме."></textarea>
+                </div>
+                <div class="field">
+                    <label class="field-label" for="replyAttachment">Вложение</label>
+                    <input class="file-input" id="replyAttachment" type="file" name="attachment" accept=".jpg,.jpeg,.png,.gif,.pdf,.txt,.doc,.docx">
+                </div>
+                <button class="btn btn-primary" id="replySubmitBtn" type="submit">
+                    <i class="fas fa-paper-plane"></i>
+                    Отправить
+                </button>
+            </form>
+
+            <div id="resolvedActions" class="list-stack u-mt-18" hidden>
+                <div class="feature-card">
+                    <div class="table-title">Оценка решения</div>
+                    <div class="table-copy">Помогите нам понять, насколько быстро и качественно была решена проблема.</div>
+                    <div class="field u-mt-16">
+                        <label class="field-label" for="ticketRating">Ваша оценка</label>
+                        <select class="select" id="ticketRating">
+                            <option value="5">5 — отлично</option>
+                            <option value="4">4 — хорошо</option>
+                            <option value="3">3 — нормально</option>
+                            <option value="2">2 — плохо</option>
+                            <option value="1">1 — очень плохо</option>
+                        </select>
+                    </div>
+                    <div class="action-row u-mt-16">
+                        <button class="btn btn-secondary" id="ticketRateBtn" type="button">
+                            <i class="fas fa-star"></i>
+                            Сохранить оценку
+                        </button>
+                        <button class="btn btn-primary" id="ticketCloseBtn" type="button">
+                            <i class="fas fa-check"></i>
+                            Закрыть заявку
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </section>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const ticketId = {{ ticket_id }};
+    let currentTicket = null;
+
+    function ticketStatusText(status) {
+        const map = {
+            new: "Новая",
+            in_progress: "В работе",
+            waiting_customer: "Ожидает клиента",
+            resolved: "Решена",
+            closed: "Закрыта",
+            escalated: "Эскалация",
+        };
+        return map[status] || status;
+    }
+
+    function ticketPriorityText(priority) {
+        const map = {
+            low: "Низкий",
+            medium: "Средний",
+            high: "Высокий",
+            urgent: "Срочный",
+            critical: "Критический",
+        };
+        return map[priority] || priority;
+    }
+
+    function formatDuration(seconds) {
+        if (!seconds && seconds !== 0) {
+            return "—";
+        }
+        if (seconds < 60) {
+            return `${seconds} сек`;
+        }
+        const minutes = Math.round(seconds / 60);
+        if (minutes < 60) {
+            return `${minutes} мин`;
+        }
+        const hours = Math.floor(minutes / 60);
+        const restMinutes = minutes % 60;
+        return restMinutes ? `${hours} ч ${restMinutes} мин` : `${hours} ч`;
+    }
+
+    function renderTicketState(ticket) {
+        currentTicket = ticket;
+        document.getElementById("ticketSubject").textContent = ticket.subject;
+        document.getElementById("ticketMetaText").textContent = `Создана ${OperatorUI.formatDate(ticket.created_at, { includeTime: true })}. Здесь сохранён весь диалог и история изменений по обращению.`;
+        document.getElementById("ticketStatusBadge").className = `status-badge status-${String(ticket.status).replaceAll("_", "-")}`;
+        document.getElementById("ticketStatusBadge").textContent = ticketStatusText(ticket.status);
+        document.getElementById("ticketPriorityBadge").className = `priority-badge priority-${ticket.priority}`;
+        document.getElementById("ticketPriorityBadge").textContent = ticketPriorityText(ticket.priority);
+        document.getElementById("ticketSlaBadge").textContent = ticket.sla_deadline
+            ? `SLA до ${OperatorUI.formatDate(ticket.sla_deadline, { includeTime: true })}`
+            : "SLA не задан";
+        document.getElementById("ticketAssigneeMetric").textContent = ticket.assignee_name || "Ожидает";
+        document.getElementById("ticketResponseMetric").textContent = formatDuration(ticket.response_time_seconds);
+        document.getElementById("ticketResolutionMetric").textContent = formatDuration(ticket.resolution_time_seconds);
+        document.getElementById("replyFormCopy").textContent = ticket.status === "closed"
+            ? "Заявка закрыта. Для нового вопроса создайте отдельное обращение."
+            : "Можно отправить текстовый ответ и при необходимости приложить файл.";
+
+        const resolvedActions = document.getElementById("resolvedActions");
+        resolvedActions.hidden = ticket.status !== "resolved";
+        document.getElementById("ticketRating").value = String(ticket.satisfaction_rating || 5);
+
+        const replyBody = document.getElementById("replyBody");
+        const replyAttachment = document.getElementById("replyAttachment");
+        const replySubmitBtn = document.getElementById("replySubmitBtn");
+        const isClosed = ticket.status === "closed";
+        replyBody.disabled = isClosed;
+        replyAttachment.disabled = isClosed;
+        replySubmitBtn.disabled = isClosed;
+    }
+
+    function renderMessages(messages) {
+        const currentUserId = Number(localStorage.getItem("user_id") || 0);
+        const container = document.getElementById("messagesList");
+
+        if (!messages.length) {
+            container.innerHTML = OperatorUI.createEmptyState("fas fa-comments", "Переписки пока нет", "После первого сообщения здесь появится история общения по обращению.");
+            return;
+        }
+
+        container.innerHTML = messages.map((message) => {
+            const self = Number(message.user_id) === currentUserId;
+            const author = self ? "Вы" : (message.user_display_name || "Оператор");
+            const attachment = message.attachment_path
+                ? `
+                    <a class="helper-inline" href="${message.attachment_path}" target="_blank" rel="noopener">
+                        <i class="fas fa-paperclip"></i>
+                        ${OperatorUI.escapeHTML(message.attachment_name || "Открыть вложение")}
+                    </a>
+                `
+                : "";
+
+            return `
+                <div class="chat-bubble-wrap ${self ? "is-self" : ""}">
+                    <article class="chat-bubble ${self ? "is-self" : ""}">
+                    <div class="table-copy u-mb-10">${OperatorUI.escapeHTML(author)}</div>
+                        <div>${OperatorUI.escapeHTML(message.body || "")}</div>
+                        ${attachment}
+                        <div class="chat-meta">
+                            <span>${message.is_internal ? "Внутренняя заметка" : "Сообщение"}</span>
+                            <span>${OperatorUI.formatDate(message.created_at, { includeTime: true })}</span>
+                        </div>
+                    </article>
+                </div>
+            `;
+        }).join("");
+
+        container.scrollTop = container.scrollHeight;
+    }
+
+    async function loadTicketDetail() {
+        if (!OperatorUI.isAuthenticated()) {
+            OperatorUI.renderAuthRequired(document.querySelector(".site-main"));
+            return;
+        }
+
+        try {
+            const ticket = await OperatorUI.request(`/api/v1/tickets/${ticketId}`, { auth: true });
+            renderTicketState(ticket);
+            renderMessages(ticket.messages || []);
+        } catch (error) {
+            OperatorUI.toast(error.message || "Не удалось загрузить заявку.", "error");
+        }
+    }
+
+    document.getElementById("replyForm").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        if (currentTicket?.status === "closed") {
+            OperatorUI.toast("Закрытая заявка не принимает новые сообщения.", "error");
+            return;
+        }
+
+        const form = event.currentTarget;
+        const submit = document.getElementById("replySubmitBtn");
+        const formData = new FormData(form);
+
+        OperatorUI.setButtonLoading(submit, true, "Отправка...");
+        try {
+            await OperatorUI.request(`/api/v1/tickets/${ticketId}/reply`, {
+                method: "POST",
+                auth: true,
+                body: formData,
+            });
+            form.reset();
+            OperatorUI.toast("Ответ отправлен.", "success");
+            await loadTicketDetail();
+        } catch (error) {
+            OperatorUI.toast(error.message || "Не удалось отправить ответ.", "error");
+        } finally {
+            OperatorUI.setButtonLoading(submit, false);
+        }
+    });
+
+    document.getElementById("ticketRateBtn").addEventListener("click", async () => {
+        const button = document.getElementById("ticketRateBtn");
+        OperatorUI.setButtonLoading(button, true, "Сохраняем...");
+        try {
+            await OperatorUI.request(`/api/v1/tickets/${ticketId}/rate`, {
+                method: "POST",
+                auth: true,
+                body: JSON.stringify({ rating: Number(document.getElementById("ticketRating").value || 5) }),
+                headers: { "Content-Type": "application/json" },
+            });
+            OperatorUI.toast("Оценка сохранена.", "success");
+            await loadTicketDetail();
+        } catch (error) {
+            OperatorUI.toast(error.message || "Не удалось сохранить оценку.", "error");
+        } finally {
+            OperatorUI.setButtonLoading(button, false);
+        }
+    });
+
+    document.getElementById("ticketCloseBtn").addEventListener("click", async () => {
+        const button = document.getElementById("ticketCloseBtn");
+        OperatorUI.setButtonLoading(button, true, "Закрываем...");
+        try {
+            await OperatorUI.request(`/api/v1/tickets/${ticketId}/close`, {
+                method: "POST",
+                auth: true,
+            });
+            OperatorUI.toast("Заявка закрыта.", "success");
+            await loadTicketDetail();
+        } catch (error) {
+            OperatorUI.toast(error.message || "Не удалось закрыть заявку.", "error");
+        } finally {
+            OperatorUI.setButtonLoading(button, false);
+        }
+    });
+
+    loadTicketDetail();
+    window.setInterval(loadTicketDetail, 30000);
+</script>
+{% endblock %}

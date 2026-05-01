@@ -1,0 +1,747 @@
+.mtn-customer-shell {
+  display: grid;
+  gap: 24px;
+}
+
+.mtn-page-hero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 28px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(255, 255, 255, 0.94));
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
+}
+
+.mtn-page-hero__eyebrow {
+  margin: 0 0 8px;
+  color: #2563EB;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.mtn-page-hero__title {
+  margin: 0;
+  color: #1A2C3E;
+  font-size: 2rem;
+  line-height: 1.15;
+}
+
+.mtn-page-hero__lead {
+  max-width: 760px;
+  margin: 10px 0 0;
+  color: #5A6B7C;
+}
+
+.mtn-page-hero__actions,
+.mtn-page-hero__inline {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.mtn-tabs-panel,
+.mtn-feature-card,
+.mtn-speedtest-stage-card {
+  background: #FFFFFF;
+  border-radius: 22px;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.06);
+}
+
+.mtn-tabs-panel {
+  padding: 12px;
+}
+
+.mtn-tabs {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.mtn-tab,
+.mtn-quick-chip {
+  border: 0;
+  border-radius: 999px;
+  background: #F3F4F6;
+  color: #5A6B7C;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.mtn-tab {
+  padding: 12px 24px;
+}
+
+.mtn-tab.is-active,
+.mtn-quick-chip.is-active {
+  background: #2563EB;
+  color: #FFFFFF;
+}
+
+.mtn-tab:hover,
+.mtn-quick-chip:hover {
+  transform: translateY(-1px);
+}
+
+.mtn-support-quick-actions,
+.mtn-chip-row,
+.mtn-notifications-toolbar__controls,
+.mtn-notifications-toolbar__actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.mtn-quick-chip {
+  padding: 10px 16px;
+}
+
+.mtn-tab-panel {
+  display: block;
+}
+
+.mtn-support-grid,
+.mtn-speedtest-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.mtn-support-grid--chat {
+  grid-template-columns: 1.6fr 1fr;
+}
+
+.mtn-feature-card {
+  padding: 24px;
+}
+
+.mtn-section-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.mtn-section-title {
+  margin: 0;
+  color: #1A2C3E;
+  font-size: 1.4rem;
+}
+
+.mtn-section-copy {
+  margin: 6px 0 0;
+  color: #5A6B7C;
+}
+
+.mtn-inline-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: #EEF4FF;
+  border: 1px solid #BFDBFE;
+}
+
+.mtn-inline-banner--soft {
+  margin-bottom: 18px;
+}
+
+.mtn-inline-banner p,
+.mtn-inline-banner strong {
+  margin: 0;
+}
+
+.mtn-inline-banner__actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.mtn-search-field {
+  position: relative;
+  display: block;
+}
+
+.mtn-search-field i {
+  position: absolute;
+  top: 50%;
+  left: 16px;
+  color: #8A9BAE;
+  transform: translateY(-50%);
+}
+
+.mtn-search-field input,
+.mtn-field input,
+.mtn-field select,
+.mtn-field textarea {
+  width: 100%;
+  border: 1px solid #E5E7EB;
+  border-radius: 14px;
+  background: #FFFFFF;
+  color: #1A2C3E;
+  font: inherit;
+}
+
+.mtn-search-field input {
+  padding: 12px 16px 12px 42px;
+}
+
+.mtn-field,
+.mtn-form-stack {
+  display: grid;
+  gap: 10px;
+}
+
+.mtn-form-stack {
+  gap: 16px;
+}
+
+.mtn-field span {
+  color: #1A2C3E;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.mtn-field input,
+.mtn-field select,
+.mtn-field textarea {
+  padding: 12px 14px;
+}
+
+.mtn-field textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.mtn-form-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.mtn-form-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.mtn-form-grid--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.mtn-faq-list,
+.mtn-ticket-list,
+.mtn-history-list,
+.mtn-notifications-list,
+.mtn-diagnostic-findings,
+.mtn-check-list {
+  display: grid;
+  gap: 12px;
+}
+
+.mtn-faq-item {
+  border: 1px solid #E5E7EB;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.mtn-faq-question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 16px 18px;
+  border: 0;
+  background: #FFFFFF;
+  color: #1A2C3E;
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.mtn-faq-answer {
+  padding: 0 18px 18px;
+  color: #5A6B7C;
+}
+
+.mtn-ticket-card,
+.mtn-notification-card,
+.mtn-history-item,
+.mtn-diagnostic-item,
+.mtn-contact-card,
+.mtn-result-card {
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: #F8FAFE;
+  border: 1px solid #E5E7EB;
+}
+
+.mtn-ticket-card__meta,
+.mtn-history-item__meta,
+.mtn-notification-card__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.mtn-ticket-card__forecast {
+  color: #2563EB;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.mtn-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.mtn-status-pill--new { background: #DBEAFE; color: #1D4ED8; }
+.mtn-status-pill--work { background: #FEF3C7; color: #B45309; }
+.mtn-status-pill--resolved { background: #D1FAE5; color: #047857; }
+.mtn-status-pill--closed { background: #E5E7EB; color: #4B5563; }
+
+.mtn-file-list {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.mtn-file-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #EEF4FF;
+  color: #2563EB;
+}
+
+.mtn-chat-demo-note {
+  margin-bottom: 14px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: #F3F4F6;
+  color: #5A6B7C;
+}
+
+.mtn-chat-messages {
+  display: grid;
+  gap: 12px;
+  min-height: 360px;
+  max-height: 520px;
+  overflow: auto;
+  padding: 8px 2px 8px 0;
+}
+
+.mtn-chat-message {
+  max-width: 82%;
+  padding: 12px 14px;
+  border-radius: 18px;
+}
+
+.mtn-chat-message--user {
+  justify-self: end;
+  background: #2563EB;
+  color: #FFFFFF;
+  border-top-right-radius: 6px;
+}
+
+.mtn-chat-message--operator {
+  justify-self: start;
+  background: #F3F4F6;
+  color: #1A2C3E;
+  border-top-left-radius: 6px;
+}
+
+.mtn-chat-message small {
+  display: block;
+  margin-top: 8px;
+  opacity: 0.72;
+}
+
+.mtn-chat-form {
+  display: grid;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.mtn-chat-form textarea {
+  min-height: 96px;
+  padding: 14px 16px;
+  border: 1px solid #E5E7EB;
+  border-radius: 18px;
+  font: inherit;
+}
+
+.mtn-contact-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.mtn-contact-card {
+  display: grid;
+  gap: 6px;
+  text-align: center;
+}
+
+.mtn-empty-state {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  padding: 32px 18px;
+  text-align: center;
+  border-radius: 20px;
+  background: #FFFFFF;
+  border: 1px dashed #CBD5E1;
+}
+
+.mtn-empty-state__icon {
+  font-size: 2rem;
+  color: #94A3B8;
+}
+
+.mtn-customer-modal {
+  width: min(720px, calc(100vw - 32px));
+  max-height: calc(100vh - 32px);
+  overflow: auto;
+  border-radius: 24px;
+}
+
+.mtn-customer-modal__body {
+  padding: 24px;
+}
+
+.mtn-counter-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #2563EB;
+  color: #FFFFFF;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.mtn-notifications-toolbar {
+  display: grid;
+  gap: 18px;
+}
+
+.mtn-notifications-toolbar__left {
+  display: grid;
+  gap: 14px;
+}
+
+.mtn-notification-card {
+  background: #FFFFFF;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+}
+
+.mtn-notification-card.is-unread {
+  border-left: 4px solid #2563EB;
+  background: #EFF6FF;
+}
+
+.mtn-notification-card__actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.mtn-notification-card__pin {
+  margin-left: auto;
+}
+
+.mtn-notifications-group {
+  display: grid;
+  gap: 14px;
+}
+
+.mtn-group-card {
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+}
+
+.mtn-load-more-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.mtn-speedtest-controls {
+  display: flex;
+  align-items: end;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.mtn-checkbox-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #1A2C3E;
+  font-weight: 600;
+}
+
+.mtn-speedtest-stage-card {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 24px;
+  padding: 28px;
+}
+
+.mtn-speedtest-stage-card__visual {
+  display: grid;
+  gap: 14px;
+  align-content: start;
+}
+
+.mtn-speedtest-dial {
+  display: grid;
+  place-items: center;
+  width: 180px;
+  height: 180px;
+  margin: 0 auto;
+  border-radius: 50%;
+  border: 10px solid rgba(37, 99, 235, 0.14);
+  background: radial-gradient(circle at center, rgba(37, 99, 235, 0.08), rgba(255,255,255,0.96));
+  color: #1A2C3E;
+  font-size: 2.4rem;
+  font-weight: 800;
+}
+
+.mtn-speedtest-stage-label {
+  text-align: center;
+  color: #5A6B7C;
+  font-weight: 600;
+}
+
+.mtn-progress {
+  height: 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #E5E7EB;
+}
+
+.mtn-progress__bar {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #2563EB, #38BDF8);
+  transition: width 0.2s ease, background 0.2s ease;
+}
+
+.mtn-progress--wide {
+  margin-top: 14px;
+}
+
+.mtn-speedtest-results {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.mtn-result-card {
+  display: grid;
+  gap: 8px;
+  text-align: center;
+}
+
+.mtn-result-card strong {
+  font-size: 2rem;
+  color: #2563EB;
+}
+
+.mtn-speedtest-comparison-copy,
+.mtn-speedtest-neighbor-copy {
+  color: #1A2C3E;
+  font-weight: 600;
+}
+
+.mtn-diagnostic-item {
+  display: grid;
+  gap: 6px;
+}
+
+.mtn-diagnostic-item strong {
+  color: #1A2C3E;
+}
+
+.mtn-history-item {
+  display: grid;
+  gap: 10px;
+}
+
+.mtn-check-list {
+  padding-left: 18px;
+  color: #5A6B7C;
+}
+
+.mtn-check-list li {
+  margin: 0 0 10px;
+}
+
+.mtn-meta-note {
+  color: #5A6B7C;
+  font-size: 0.95rem;
+}
+
+.mtn-bonus-hint {
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: #ECFDF5;
+  color: #047857;
+  font-weight: 700;
+}
+
+.mtn-quickpay-card {
+  display: grid;
+  gap: 16px;
+}
+
+.mtn-quickpay-card__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.mtn-enhance-card {
+  border: 1px solid #E5E7EB;
+}
+
+.mtn-reset-button {
+  margin-top: 16px;
+}
+
+.mtn-profile-avatar-block {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 18px;
+  border-radius: 18px;
+  background: #F8FAFE;
+}
+
+.mtn-profile-avatar-preview {
+  display: grid;
+  place-items: center;
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: #2563EB;
+  color: #FFFFFF;
+  font-size: 2rem;
+  font-weight: 800;
+  overflow: hidden;
+}
+
+.mtn-profile-avatar-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mtn-profile-avatar-copy {
+  display: grid;
+  gap: 6px;
+}
+
+.mtn-password-strength {
+  width: 100%;
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #E5E7EB;
+}
+
+.mtn-password-strength__bar {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: #EF4444;
+  transition: width 0.2s ease, background 0.2s ease;
+}
+
+.mtn-profile-extra {
+  padding-top: 0;
+}
+
+@media (max-width: 1023px) {
+  .mtn-page-hero,
+  .mtn-speedtest-stage-card,
+  .mtn-support-grid,
+  .mtn-support-grid--chat,
+  .mtn-speedtest-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mtn-page-hero {
+    padding: 22px;
+  }
+
+  .mtn-speedtest-results,
+  .mtn-form-grid--2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 767px) {
+  .mtn-page-hero__title {
+    font-size: 1.6rem;
+  }
+
+  .mtn-page-hero,
+  .mtn-feature-card,
+  .mtn-speedtest-stage-card {
+    padding: 18px;
+  }
+
+  .mtn-tabs {
+    flex-wrap: nowrap;
+    overflow: auto;
+    padding-bottom: 4px;
+  }
+
+  .mtn-tab {
+    white-space: nowrap;
+  }
+
+  .mtn-speedtest-dial {
+    width: 150px;
+    height: 150px;
+    font-size: 2rem;
+  }
+
+  .mtn-ticket-card__meta,
+  .mtn-history-item__meta,
+  .mtn-notification-card__meta,
+  .mtn-inline-banner,
+  .mtn-profile-avatar-block {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .mtn-chat-message {
+    max-width: 100%;
+  }
+}

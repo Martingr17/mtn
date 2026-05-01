@@ -1,0 +1,440 @@
+<section
+    class="mtn-dashboard"
+    data-mtn-dashboard
+    data-view-state="loading"
+    aria-label="Главная страница личного кабинета MTN"
+>
+    <!-- Тост ошибки для сетевого сбоя и повторной загрузки -->
+    <div class="mtn-toast-region" aria-live="polite" aria-atomic="true">
+        <div id="mtnDashboardToast" class="mtn-toast mtn-toast--error" hidden role="alert">
+            <span class="mtn-toast__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                    <path d="M12 3.75L1.75 21h20.5L12 3.75zm0 4.2l.84 6.06h-1.68L12 7.95zm0 9.3a1.1 1.1 0 110 2.2 1.1 1.1 0 010-2.2z" fill="currentColor"></path>
+                </svg>
+            </span>
+            <div class="mtn-toast__body">
+                <strong>Не удалось загрузить данные.</strong>
+                <p id="mtnDashboardToastText">Попробуйте позже.</p>
+            </div>
+            <button id="mtnDashboardRetryToast" class="mtn-toast__action" type="button">Повторить</button>
+        </div>
+    </div>
+
+    <!-- Hero-блок с приветствием и CTA для демо-режима -->
+    <section class="mtn-hero mtn-fade-in" aria-labelledby="mtnHeroTitle">
+        <div class="mtn-hero__bar">
+            <div class="mtn-hero__copy">
+                <h1 id="mtnHeroTitle" class="mtn-hero__title">Мартин, всё главное по вашей связи — на одном экране.</h1>
+                <p id="mtnHeroSubtitle" class="mtn-hero__subtitle">Баланс, тариф, скорость и поддержка — всё под рукой.</p>
+            </div>
+            <div id="mtnHeroLoginWrap" class="mtn-hero__login" hidden>
+                <a class="mtn-button mtn-button--primary" href="/login?next=/dashboard">Войти</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Панель быстрых действий с горизонтальным скроллом на мобильных -->
+    <section class="mtn-quick-actions mtn-fade-in" aria-labelledby="mtnQuickActionsTitle">
+        <div class="mtn-section__head">
+            <h2 id="mtnQuickActionsTitle" class="mtn-section__title">Быстрые действия</h2>
+        </div>
+        <div class="mtn-quick-actions__track">
+            <a id="mtnQuickPayments" class="mtn-quick-actions__item" href="/payments">
+                <span class="mtn-quick-actions__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" focusable="false"><path d="M3 7.5A2.5 2.5 0 015.5 5h13A2.5 2.5 0 0121 7.5v9a2.5 2.5 0 01-2.5 2.5h-13A2.5 2.5 0 013 16.5v-9zm2 1.5v1h14V9H5zm10.5 4.25a1.25 1.25 0 100 2.5 1.25 1.25 0 000-2.5z" fill="currentColor"></path></svg>
+                </span>
+                <span class="mtn-quick-actions__label">Пополнить</span>
+            </a>
+            <a id="mtnQuickTariff" class="mtn-quick-actions__item" href="/tariffs">
+                <span class="mtn-quick-actions__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" focusable="false"><path d="M5 18.25a1 1 0 001 1h12a1 1 0 001-1v-1.03a3.25 3.25 0 00-1.2-2.52l-2.74-2.22A3 3 0 0013.17 12H10.8a3 3 0 00-1.9.68L6.18 14.9A3.25 3.25 0 005 17.42v.83zm7-13.5a3.25 3.25 0 110 6.5 3.25 3.25 0 010-6.5z" fill="currentColor"></path></svg>
+                </span>
+                <span class="mtn-quick-actions__label">Сменить тариф</span>
+            </a>
+            <a id="mtnQuickSpeedtest" class="mtn-quick-actions__item" href="/speedtest">
+                <span class="mtn-quick-actions__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" focusable="false"><path d="M13.25 3L6.9 13.2h4.06L9.8 21l7.3-10.8h-4.22L13.25 3z" fill="currentColor"></path></svg>
+                </span>
+                <span class="mtn-quick-actions__label">Speedtest</span>
+            </a>
+            <a id="mtnQuickSupport" class="mtn-quick-actions__item" href="/tickets">
+                <span class="mtn-quick-actions__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" focusable="false"><path d="M4 6.75A2.75 2.75 0 016.75 4h10.5A2.75 2.75 0 0120 6.75v6.5A2.75 2.75 0 0117.25 16H10l-4.2 3.36A1 1 0 014 18.58V16.7A2.75 2.75 0 012 14.25v-7.5A2.75 2.75 0 014.75 4h.25z" fill="currentColor"></path></svg>
+                </span>
+                <span class="mtn-quick-actions__label">Поддержка</span>
+            </a>
+            <a id="mtnQuickHistory" class="mtn-quick-actions__item" href="/payments">
+                <span class="mtn-quick-actions__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" focusable="false"><path d="M6 3.5A2.5 2.5 0 003.5 6v12A2.5 2.5 0 006 20.5h12a2.5 2.5 0 002.5-2.5V9.5L14 3.5H6zm7 1.75L18.25 10H14a1 1 0 01-1-1V5.25zM8 12h8v1.75H8V12zm0 3.5h8v1.75H8V15.5z" fill="currentColor"></path></svg>
+                </span>
+                <span class="mtn-quick-actions__label">История</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Умные уведомления по долгам, скорости и заявкам -->
+    <section id="mtnAlertStack" class="mtn-alert-stack" hidden aria-live="polite"></section>
+
+    <!-- Карточки действий с одинаковой высотой, quality-индикатором и sparkline баланса -->
+    <section class="mtn-section" aria-labelledby="mtnActionsTitle">
+        <div class="mtn-section__head mtn-fade-in">
+            <h2 id="mtnActionsTitle" class="mtn-section__title">Главные действия</h2>
+        </div>
+        <div class="mtn-action-grid">
+            <article class="mtn-card mtn-action-card is-loading" data-dashboard-card data-stagger-item>
+                <div class="mtn-card-skeleton" aria-hidden="true">
+                    <span class="mtn-skeleton mtn-skeleton--icon"></span>
+                    <span class="mtn-skeleton mtn-skeleton--title"></span>
+                    <span class="mtn-skeleton mtn-skeleton--value"></span>
+                    <span class="mtn-skeleton mtn-skeleton--meta"></span>
+                    <span class="mtn-skeleton mtn-skeleton--chart"></span>
+                    <span class="mtn-skeleton mtn-skeleton--button"></span>
+                </div>
+                <div class="mtn-card-content">
+                    <div class="mtn-action-card__head">
+                        <span class="mtn-action-card__icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" focusable="false"><path d="M4 7.5A3.5 3.5 0 017.5 4h9A3.5 3.5 0 0120 7.5v9a3.5 3.5 0 01-3.5 3.5h-9A3.5 3.5 0 014 16.5v-9zm2 1v1h12v-1a1.5 1.5 0 00-1.5-1.5h-9A1.5 1.5 0 006 8.5zm0 3v5a1.5 1.5 0 001.5 1.5h9a1.5 1.5 0 001.5-1.5v-5H6zm3 2.25h3.5a1 1 0 110 2H9a1 1 0 110-2z" fill="currentColor"></path></svg>
+                        </span>
+                        <span class="mtn-action-card__label">Баланс</span>
+                    </div>
+                    <div id="mtnBalanceValue" class="mtn-action-card__value">1 470 ₽</div>
+                    <p id="mtnBalanceMeta" class="mtn-action-card__meta">Лицевой счёт DEMO77777</p>
+                    <div class="mtn-balance-trend" aria-labelledby="mtnBalanceTrendTitle">
+                        <div class="mtn-balance-trend__head">
+                            <span id="mtnBalanceTrendTitle">Динамика за 30 дней</span>
+                            <span class="mtn-balance-trend__hint">Нажмите на точку</span>
+                        </div>
+                        <svg id="mtnBalanceSparkline" class="mtn-balance-trend__chart" viewBox="0 0 280 72" role="img" aria-label="График баланса за 30 дней"></svg>
+                        <div id="mtnBalancePointDetail" class="mtn-balance-trend__detail">1 марта · Пополнение +900 ₽</div>
+                    </div>
+                    <div class="mtn-action-card__footer">
+                        <a id="mtnBalanceButton" class="mtn-button mtn-button--primary mtn-button--sm mtn-auth-only" href="/payments">Пополнить</a>
+                    </div>
+                </div>
+            </article>
+
+            <article class="mtn-card mtn-action-card is-loading" data-dashboard-card data-stagger-item>
+                <div class="mtn-card-skeleton" aria-hidden="true">
+                    <span class="mtn-skeleton mtn-skeleton--icon"></span>
+                    <span class="mtn-skeleton mtn-skeleton--title"></span>
+                    <span class="mtn-skeleton mtn-skeleton--value mtn-skeleton--value-small"></span>
+                    <span class="mtn-skeleton mtn-skeleton--meta"></span>
+                    <span class="mtn-skeleton mtn-skeleton--button"></span>
+                </div>
+                <div class="mtn-card-content">
+                    <div class="mtn-action-card__head">
+                        <span class="mtn-action-card__icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" focusable="false"><path d="M5 18.25a1 1 0 001 1h12a1 1 0 001-1v-1.03a3.25 3.25 0 00-1.2-2.52l-2.74-2.22A3 3 0 0013.17 12H10.8a3 3 0 00-1.9.68L6.18 14.9A3.25 3.25 0 005 17.42v.83zm7-13.5a3.25 3.25 0 110 6.5 3.25 3.25 0 010-6.5z" fill="currentColor"></path></svg>
+                        </span>
+                        <span class="mtn-action-card__label">Тариф</span>
+                    </div>
+                    <div id="mtnTariffValue" class="mtn-action-card__value mtn-action-card__value--compact">Город 300</div>
+                    <p id="mtnTariffMeta" class="mtn-action-card__meta">До 300 Мбит/с · 790 ₽</p>
+                    <div class="mtn-action-card__footer">
+                        <a id="mtnTariffButton" class="mtn-button mtn-button--secondary mtn-button--sm mtn-auth-only" href="/tariffs">Сменить</a>
+                    </div>
+                </div>
+            </article>
+
+            <article class="mtn-card mtn-action-card is-loading" data-dashboard-card data-stagger-item>
+                <div class="mtn-card-skeleton" aria-hidden="true">
+                    <span class="mtn-skeleton mtn-skeleton--icon"></span>
+                    <span class="mtn-skeleton mtn-skeleton--title"></span>
+                    <span class="mtn-skeleton mtn-skeleton--value"></span>
+                    <span class="mtn-skeleton mtn-skeleton--meta"></span>
+                    <span class="mtn-skeleton mtn-skeleton--quality"></span>
+                    <span class="mtn-skeleton mtn-skeleton--button mtn-skeleton--button-wide"></span>
+                </div>
+                <div class="mtn-card-content">
+                    <div class="mtn-action-card__head">
+                        <span class="mtn-action-card__icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" focusable="false"><path d="M13.25 3L6.9 13.2h4.06L9.8 21l7.3-10.8h-4.22L13.25 3z" fill="currentColor"></path></svg>
+                        </span>
+                        <span class="mtn-action-card__label">Скорость</span>
+                    </div>
+                    <div id="mtnSpeedValue" class="mtn-action-card__value">271 Мбит/с</div>
+                    <p id="mtnSpeedMeta" class="mtn-action-card__meta">Оценка по последнему мониторингу</p>
+                    <div class="mtn-quality-indicator">
+                        <div class="mtn-quality-indicator__track">
+                            <span id="mtnSpeedQualityBar" class="mtn-quality-indicator__bar"></span>
+                        </div>
+                        <div id="mtnSpeedQualityText" class="mtn-quality-indicator__text">Скорость соответствует тарифу на 83%</div>
+                    </div>
+                    <div class="mtn-action-card__footer">
+                        <a id="mtnSpeedButton" class="mtn-button mtn-button--secondary mtn-button--sm mtn-auth-only" href="/speedtest">Запустить speedtest</a>
+                    </div>
+                </div>
+            </article>
+
+            <article class="mtn-card mtn-action-card is-loading" data-dashboard-card data-stagger-item>
+                <div class="mtn-card-skeleton" aria-hidden="true">
+                    <span class="mtn-skeleton mtn-skeleton--icon"></span>
+                    <span class="mtn-skeleton mtn-skeleton--title"></span>
+                    <span class="mtn-skeleton mtn-skeleton--value mtn-skeleton--value-small"></span>
+                    <span class="mtn-skeleton mtn-skeleton--meta"></span>
+                    <span class="mtn-skeleton mtn-skeleton--button"></span>
+                </div>
+                <div class="mtn-card-content">
+                    <div class="mtn-action-card__head">
+                        <span class="mtn-action-card__icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" focusable="false"><path d="M4 6.75A2.75 2.75 0 016.75 4h10.5A2.75 2.75 0 0120 6.75v6.5A2.75 2.75 0 0117.25 16H10l-4.2 3.36A1 1 0 014 18.58V16.7A2.75 2.75 0 012 14.25v-7.5A2.75 2.75 0 014.75 4h.25z" fill="currentColor"></path></svg>
+                        </span>
+                        <span class="mtn-action-card__label">Поддержка</span>
+                    </div>
+                    <div id="mtnSupportValue" class="mtn-action-card__value mtn-action-card__value--compact">0 открытых</div>
+                    <p id="mtnSupportMeta" class="mtn-action-card__meta">Чат доступен 24/7</p>
+                    <div id="mtnSupportEmpty" class="mtn-inline-empty" hidden>
+                        <span class="mtn-inline-empty__icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" focusable="false"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm-1 5h2v6h-2V7zm0 8h2v2h-2v-2z" fill="currentColor"></path></svg>
+                        </span>
+                        <span>У вас пока нет заявок</span>
+                    </div>
+                    <div class="mtn-action-card__footer">
+                        <a id="mtnSupportButton" class="mtn-button mtn-button--secondary mtn-button--sm mtn-auth-only" href="/tickets">Написать</a>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <!-- Умные виджеты: рекомендованный тариф, плановые списания и бонусы -->
+    <section class="mtn-section" aria-labelledby="mtnSmartWidgetsTitle">
+        <div class="mtn-section__head mtn-fade-in">
+            <h2 id="mtnSmartWidgetsTitle" class="mtn-section__title">Умные подсказки MTN</h2>
+        </div>
+        <div class="mtn-smart-grid">
+            <article class="mtn-card mtn-widget-card mtn-fade-in">
+                <div class="mtn-widget-card__head">
+                    <div>
+                        <span class="mtn-widget-card__eyebrow">Рекомендуемый тариф</span>
+                        <h3 id="mtnRecommendationTitle" class="mtn-widget-card__title">Вам подойдёт тариф «Старт 100»</h3>
+                    </div>
+                    <span id="mtnRecommendationBadge" class="mtn-widget-card__badge">Экономия</span>
+                </div>
+                <p id="mtnRecommendationText" class="mtn-widget-card__copy">Вам подойдёт тариф «Старт 100»: 100 Мбит/с за 490 ₽/мес. Экономия 300 ₽/мес.</p>
+                <div class="mtn-widget-card__footer">
+                    <button id="mtnRecommendationButton" class="mtn-button mtn-button--secondary mtn-button--sm" type="button">Выбрать</button>
+                </div>
+            </article>
+
+            <article class="mtn-card mtn-widget-card mtn-fade-in">
+                <div class="mtn-widget-card__head">
+                    <div>
+                        <span class="mtn-widget-card__eyebrow">Плановые списания</span>
+                        <h3 class="mtn-widget-card__title">Прогноз списаний</h3>
+                    </div>
+                </div>
+                <div id="mtnChargesList" class="mtn-charges-list">
+                    <div class="mtn-charge-row">
+                        <span class="mtn-charge-row__date">1 апреля</span>
+                        <span class="mtn-charge-row__label">Абонентская плата</span>
+                        <strong>790 ₽</strong>
+                    </div>
+                    <div class="mtn-charge-row">
+                        <span class="mtn-charge-row__date">15 апреля</span>
+                        <span class="mtn-charge-row__label">ТВ-пакет</span>
+                        <strong>200 ₽</strong>
+                    </div>
+                </div>
+                <div class="mtn-widget-card__footer mtn-widget-card__footer--split">
+                    <div class="mtn-widget-card__total">
+                        Итого за месяц:
+                        <strong id="mtnChargesTotal">990 ₽</strong>
+                    </div>
+                    <a id="mtnChargesButton" class="mtn-button mtn-button--ghost" href="/payments?filter=charges">Подробнее</a>
+                </div>
+            </article>
+
+            <article class="mtn-card mtn-widget-card mtn-fade-in">
+                <div class="mtn-widget-card__head">
+                    <div>
+                        <span class="mtn-widget-card__eyebrow">Бонусы / кешбэк</span>
+                        <h3 class="mtn-widget-card__title">Бонусы</h3>
+                    </div>
+                </div>
+                <div id="mtnBonusValue" class="mtn-widget-card__value">350</div>
+                <p id="mtnBonusMeta" class="mtn-widget-card__copy">До 500 бонусов осталось 150.</p>
+                <div class="mtn-bonus-progress" aria-hidden="true">
+                    <span id="mtnBonusProgressBar" class="mtn-bonus-progress__bar" style="width: 70%;"></span>
+                </div>
+                <div id="mtnBonusProgressText" class="mtn-widget-card__subtext">70% от следующей награды.</div>
+                <div class="mtn-widget-card__footer">
+                    <button id="mtnBonusButton" class="mtn-button mtn-button--secondary mtn-button--sm" type="button">Как потратить?</button>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <!-- Метрики сети -->
+    <section class="mtn-section" aria-labelledby="mtnMetricsTitle">
+        <div class="mtn-section__head mtn-fade-in">
+            <h2 id="mtnMetricsTitle" class="mtn-section__title">Метрики сети</h2>
+        </div>
+        <div class="mtn-metrics-band mtn-fade-in">
+            <article class="mtn-metric-card is-loading" data-dashboard-metric>
+                <div class="mtn-card-skeleton mtn-card-skeleton--metric" aria-hidden="true">
+                    <span class="mtn-skeleton mtn-skeleton--metric-value"></span>
+                    <span class="mtn-skeleton mtn-skeleton--title"></span>
+                    <span class="mtn-skeleton mtn-skeleton--meta"></span>
+                </div>
+                <div class="mtn-card-content">
+                    <div id="mtnAvailabilityValue" class="mtn-metric-card__value mtn-metric-card__value--success">99.8%</div>
+                    <div class="mtn-metric-card__label">Доступность сети</div>
+                    <div id="mtnAvailabilityMeta" class="mtn-metric-card__meta">0 событий за 24 часа</div>
+                </div>
+            </article>
+
+            <article class="mtn-metric-card is-loading" data-dashboard-metric>
+                <div class="mtn-card-skeleton mtn-card-skeleton--metric" aria-hidden="true">
+                    <span class="mtn-skeleton mtn-skeleton--metric-value"></span>
+                    <span class="mtn-skeleton mtn-skeleton--title"></span>
+                    <span class="mtn-skeleton mtn-skeleton--meta"></span>
+                </div>
+                <div class="mtn-card-content">
+                    <div id="mtnResponseValue" class="mtn-metric-card__value">3 мин</div>
+                    <div class="mtn-metric-card__label">Среднее время ответа</div>
+                    <div id="mtnResponseMeta" class="mtn-metric-card__meta">Поддержка MTN</div>
+                </div>
+            </article>
+
+            <article class="mtn-metric-card is-loading" data-dashboard-metric>
+                <div class="mtn-card-skeleton mtn-card-skeleton--metric" aria-hidden="true">
+                    <span class="mtn-skeleton mtn-skeleton--metric-value"></span>
+                    <span class="mtn-skeleton mtn-skeleton--title"></span>
+                    <span class="mtn-skeleton mtn-skeleton--meta"></span>
+                </div>
+                <div class="mtn-card-content">
+                    <div id="mtnHomesValue" class="mtn-metric-card__value">5 200+</div>
+                    <div class="mtn-metric-card__label">Подключённых домов</div>
+                    <div id="mtnHomesMeta" class="mtn-metric-card__meta">Жилых объектов</div>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <!-- Превью тарифов -->
+    <section class="mtn-section" aria-labelledby="mtnTariffsTitle">
+        <div class="mtn-section__head mtn-section__head--split mtn-fade-in">
+            <h2 id="mtnTariffsTitle" class="mtn-section__title">Популярные тарифы</h2>
+            <a class="mtn-section__link" href="/tariffs">Все тарифы →</a>
+        </div>
+        <div class="mtn-tariffs-grid mtn-fade-in">
+            <article class="mtn-card mtn-tariff-card">
+                <div class="mtn-tariff-card__name">Старт 100</div>
+                <div class="mtn-tariff-card__price">490 ₽</div>
+                <div class="mtn-tariff-card__speed">
+                    <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M5 12h10.2l-3.6 3.6L13 17l6-6-6-6-1.4 1.4L15.2 10H5v2z" fill="currentColor"></path></svg>
+                    <span>До 100 Мбит/с</span>
+                </div>
+                <p class="mtn-tariff-card__description">Базовый тариф для квартиры: стабильный интернет, мессенджеры, видео.</p>
+                <a class="mtn-button mtn-button--ghost mtn-button--ghost-link" href="/tariffs">Подробнее →</a>
+            </article>
+
+            <article class="mtn-card mtn-tariff-card">
+                <div class="mtn-tariff-card__name">Город 300</div>
+                <div class="mtn-tariff-card__price">790 ₽</div>
+                <div class="mtn-tariff-card__speed">
+                    <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M5 12h10.2l-3.6 3.6L13 17l6-6-6-6-1.4 1.4L15.2 10H5v2z" fill="currentColor"></path></svg>
+                    <span>До 300 Мбит/с</span>
+                </div>
+                <p class="mtn-tariff-card__description">Сбалансированный тариф для семей, 4K-стриминга и работы из дома.</p>
+                <a class="mtn-button mtn-button--ghost mtn-button--ghost-link" href="/tariffs">Подробнее →</a>
+            </article>
+
+            <article class="mtn-card mtn-tariff-card">
+                <div class="mtn-tariff-card__name">Смена 500</div>
+                <div class="mtn-tariff-card__price">1 090 ₽</div>
+                <div class="mtn-tariff-card__speed">
+                    <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M5 12h10.2l-3.6 3.6L13 17l6-6-6-6-1.4 1.4L15.2 10H5v2z" fill="currentColor"></path></svg>
+                    <span>До 500 Мбит/с</span>
+                </div>
+                <p class="mtn-tariff-card__description">Для насыщенного цифрового дома: игры, стриминг, облака, десятки устройств.</p>
+                <a class="mtn-button mtn-button--ghost mtn-button--ghost-link" href="/tariffs">Подробнее →</a>
+            </article>
+        </div>
+    </section>
+
+    <!-- Сценарии использования -->
+    <section class="mtn-section" aria-labelledby="mtnScenariosTitle">
+        <div class="mtn-section__head mtn-section__head--center mtn-fade-in">
+            <h2 id="mtnScenariosTitle" class="mtn-section__title">Выберите подходящий сценарий</h2>
+        </div>
+        <div class="mtn-scenarios-grid mtn-fade-in">
+            <article class="mtn-card mtn-scenario-card">
+                <span class="mtn-scenario-card__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" focusable="false"><path d="M4.5 10.2L12 4l7.5 6.2V20h-5.5v-5h-4v5H4.5v-9.8z" fill="currentColor"></path></svg>
+                </span>
+                <h3 class="mtn-scenario-card__title">Для дома</h3>
+                <p class="mtn-scenario-card__description">Подключение, тариф, роутер — всё в одном месте.</p>
+                <a class="mtn-scenario-card__link" href="/tariffs">Подробнее →</a>
+            </article>
+
+            <article class="mtn-card mtn-scenario-card">
+                <span class="mtn-scenario-card__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" focusable="false"><path d="M5 6.5A2.5 2.5 0 017.5 4h9A2.5 2.5 0 0119 6.5v9A2.5 2.5 0 0116.5 18h-2.25l1.1 2H8.65l1.1-2H7.5A2.5 2.5 0 015 15.5v-9zm2 .5v8h10V7H7z" fill="currentColor"></path></svg>
+                </span>
+                <h3 class="mtn-scenario-card__title">Для работы</h3>
+                <p class="mtn-scenario-card__description">Speedtest, статистика и стабильность для удалённой команды.</p>
+                <a class="mtn-scenario-card__link" href="/speedtest">Подробнее →</a>
+            </article>
+
+            <article class="mtn-card mtn-scenario-card">
+                <span class="mtn-scenario-card__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" focusable="false"><path d="M5 20V6.5A2.5 2.5 0 017.5 4H14v16H5zm11 0V10h3v10h-3zM9 8h2v2H9V8zm0 4h2v2H9v-2zm0 4h2v2H9v-2z" fill="currentColor"></path></svg>
+                </span>
+                <h3 class="mtn-scenario-card__title">Для бизнеса</h3>
+                <p class="mtn-scenario-card__description">SLA, приоритетная поддержка и управление услугами.</p>
+                <a class="mtn-scenario-card__link" href="/support">Подробнее →</a>
+            </article>
+        </div>
+    </section>
+
+    <!-- Краткий дайджест за месяц внизу дашборда -->
+    <section class="mtn-section" aria-labelledby="mtnDigestTitle">
+        <div class="mtn-section__head mtn-section__head--split mtn-fade-in">
+            <div>
+                <h2 id="mtnDigestTitle" class="mtn-section__title">Сводка за месяц</h2>
+                <p id="mtnDigestCaption" class="mtn-digest__caption">Сводка за март</p>
+            </div>
+            <a id="mtnDigestButton" class="mtn-section__link" href="/statistics">Подробнее →</a>
+        </div>
+        <div class="mtn-digest-grid mtn-fade-in">
+            <article class="mtn-card mtn-digest-card">
+                <span class="mtn-digest-card__label">Расходы</span>
+                <strong id="mtnDigestSpend" class="mtn-digest-card__value">1 790 ₽</strong>
+                <span class="mtn-digest-card__meta">Интернет + ТВ</span>
+            </article>
+            <article class="mtn-card mtn-digest-card">
+                <span class="mtn-digest-card__label">Трафик</span>
+                <strong id="mtnDigestTraffic" class="mtn-digest-card__value">450 ГБ</strong>
+                <span class="mtn-digest-card__meta">За календарный месяц</span>
+            </article>
+            <article class="mtn-card mtn-digest-card">
+                <span class="mtn-digest-card__label">Заявки</span>
+                <strong id="mtnDigestTickets" class="mtn-digest-card__value">2</strong>
+                <span id="mtnDigestTicketsMeta" class="mtn-digest-card__meta">1 открыта, 1 решена</span>
+            </article>
+        </div>
+    </section>
+
+    <!-- Модалка с вариантами траты бонусов -->
+    <div id="mtnBonusModal" class="mtn-modal" hidden>
+        <div class="mtn-modal__backdrop" data-mtn-modal-close></div>
+        <div class="mtn-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="mtnBonusModalTitle">
+            <button id="mtnBonusModalClose" class="mtn-modal__close" type="button" aria-label="Закрыть модальное окно">
+                <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M6.7 5.3L12 10.6l5.3-5.3 1.4 1.4-5.3 5.3 5.3 5.3-1.4 1.4-5.3-5.3-5.3 5.3-1.4-1.4 5.3-5.3-5.3-5.3 1.4-1.4z" fill="currentColor"></path></svg>
+            </button>
+            <div class="mtn-modal__content">
+                <span class="mtn-widget-card__eyebrow">Бонусы / кешбэк</span>
+                <h3 id="mtnBonusModalTitle" class="mtn-modal__title">Как потратить бонусы</h3>
+                <p class="mtn-modal__copy">Выберите удобный сценарий использования бонусов MTN.</p>
+                <div id="mtnBonusOptionsList" class="mtn-bonus-options">
+                    <article class="mtn-bonus-option">
+                        <strong>Скидка на абонентскую плату</strong>
+                        <span>Списать бонусы при следующем платеже.</span>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

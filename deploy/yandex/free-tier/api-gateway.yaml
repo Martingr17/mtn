@@ -1,0 +1,127 @@
+openapi: 3.0.0
+info:
+  title: MTN Free Tier Gateway
+  version: 1.0.0
+
+x-yc-apigateway:
+  variables:
+    bucket_name:
+      default: "mtn"
+      description: "Object Storage bucket with the built SPA."
+    function_id:
+      default: "replace-me"
+      description: "Cloud Function ID for the MTN backend."
+    service_account_id:
+      default: "replace-me"
+      description: "Service account used by API Gateway to read Object Storage and invoke the backend."
+
+paths:
+  /health:
+    get:
+      responses:
+        "200":
+          description: Health check response.
+      x-yc-apigateway-integration:
+        type: cloud_functions
+        function_id: ${var.function_id}
+        service_account_id: ${var.service_account_id}
+        tag: "$latest"
+        payload_format_version: "1.0"
+
+  /api:
+    x-yc-apigateway-any-method:
+      responses:
+        "200":
+          description: Proxied backend response.
+      x-yc-apigateway-integration:
+        type: cloud_functions
+        function_id: ${var.function_id}
+        service_account_id: ${var.service_account_id}
+        tag: "$latest"
+        payload_format_version: "1.0"
+
+  /api/{proxy+}:
+    x-yc-apigateway-any-method:
+      parameters:
+        - explode: false
+          in: path
+          name: proxy
+          required: false
+          schema:
+            default: "-"
+            type: string
+          style: simple
+      responses:
+        "200":
+          description: Proxied backend response.
+      x-yc-apigateway-integration:
+        type: cloud_functions
+        function_id: ${var.function_id}
+        service_account_id: ${var.service_account_id}
+        tag: "$latest"
+        payload_format_version: "1.0"
+
+  /:
+    get:
+      responses:
+        "200":
+          description: SPA entrypoint.
+      x-yc-apigateway-integration:
+        type: object_storage
+        bucket: ${var.bucket_name}
+        object: index.html
+        service_account_id: ${var.service_account_id}
+
+  /assets/{file+}:
+    get:
+      parameters:
+        - in: path
+          name: file
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Static asset.
+      x-yc-apigateway-integration:
+        type: object_storage
+        bucket: ${var.bucket_name}
+        object: assets/{file}
+        service_account_id: ${var.service_account_id}
+
+  /static/spa/{file+}:
+    get:
+      parameters:
+        - in: path
+          name: file
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Static file served under the FastAPI-style /static/spa prefix.
+      x-yc-apigateway-integration:
+        type: object_storage
+        bucket: ${var.bucket_name}
+        object: "{file}"
+        service_account_id: ${var.service_account_id}
+
+  /{file+}:
+    get:
+      parameters:
+        - in: path
+          name: file
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Static file or SPA fallback.
+      x-yc-apigateway-integration:
+        type: object_storage
+        bucket: ${var.bucket_name}
+        object: "{file}"
+        error_object:
+          object: index.html
+          statusCode: 200
+        service_account_id: ${var.service_account_id}

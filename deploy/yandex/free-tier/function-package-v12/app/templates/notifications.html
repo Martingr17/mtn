@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Уведомления | MTN{% endblock %}
+{% block body_class %}page-public mtn-notifications-page{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="/static/css/mtn-customer-pages.css?v={{ asset_version }}">
+{% endblock %}
+
+{% block content %}
+<section class="mtn-customer-shell mtn-notifications-shell" data-customer-page="notifications">
+    <header class="mtn-page-hero">
+        <div>
+            <p class="mtn-page-hero__eyebrow">Центр событий</p>
+            <div class="mtn-page-hero__inline">
+                <h1 class="mtn-page-hero__title">Уведомления</h1>
+                <span id="mtnNotificationsUnreadBadge" class="mtn-counter-badge">0 непрочитанных</span>
+            </div>
+            <p class="mtn-page-hero__lead">Здесь собраны все важные события: списания, ответы поддержки, акции и технические работы.</p>
+        </div>
+    </header>
+
+    <section class="mtn-feature-card mtn-notifications-toolbar">
+        <div class="mtn-notifications-toolbar__left">
+            <div id="mtnNotificationsTypeFilters" class="mtn-chip-row" aria-label="Фильтры уведомлений по типу">
+                <button class="mtn-quick-chip is-active" type="button" data-type-filter="all">Все</button>
+                <button class="mtn-quick-chip" type="button" data-type-filter="charge">Списания</button>
+                <button class="mtn-quick-chip" type="button" data-type-filter="topup">Пополнения</button>
+                <button class="mtn-quick-chip" type="button" data-type-filter="support">Поддержка</button>
+                <button class="mtn-quick-chip" type="button" data-type-filter="promo">Акции</button>
+                <button class="mtn-quick-chip" type="button" data-type-filter="maintenance">Технические работы</button>
+            </div>
+            <div class="mtn-notifications-toolbar__controls">
+                <label class="mtn-search-field">
+                    <i class="fas fa-magnifying-glass" aria-hidden="true"></i>
+                    <input id="mtnNotificationsSearchInput" type="search" placeholder="Поиск по уведомлениям">
+                </label>
+                <select id="mtnNotificationsDateFilter">
+                    <option value="all">За всё время</option>
+                    <option value="today">За сегодня</option>
+                    <option value="week">За неделю</option>
+                    <option value="month">За месяц</option>
+                </select>
+            </div>
+        </div>
+        <div class="mtn-notifications-toolbar__actions">
+            <button id="mtnNotificationsEnablePush" class="btn btn-secondary btn-sm" type="button">Включить уведомления</button>
+            <button id="mtnNotificationsMarkAll" class="btn btn-secondary btn-sm" type="button">Отметить всё прочитанным</button>
+            <button id="mtnNotificationsExport" class="btn btn-ghost btn-sm" type="button">Экспорт JSON</button>
+            <a class="btn btn-ghost btn-sm" href="/profile#notifications">Настройки уведомлений</a>
+        </div>
+    </section>
+
+    <section id="mtnNotificationsPinnedSection" class="mtn-notifications-group" hidden>
+        <div class="mtn-section-head">
+            <div>
+                <h2 class="mtn-section-title">Закреплённые</h2>
+                <p class="mtn-section-copy">Важные события всегда остаются наверху.</p>
+            </div>
+        </div>
+        <div id="mtnNotificationsPinnedList" class="mtn-notifications-list"></div>
+    </section>
+
+    <section id="mtnNotificationsEmptyState" class="mtn-empty-state" hidden>
+        <div class="mtn-empty-state__icon"><i class="fas fa-bell-slash"></i></div>
+        <strong>У вас пока нет уведомлений</strong>
+        <p>Когда произойдут важные события, они появятся здесь.</p>
+        <a class="btn btn-primary" href="/">Перейти на главную</a>
+    </section>
+
+    <section id="mtnNotificationsContent" class="mtn-notifications-content"></section>
+
+    <div class="mtn-load-more-wrap">
+        <button id="mtnNotificationsLoadMore" class="btn btn-secondary" type="button">Загрузить ещё</button>
+    </div>
+    
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="/static/js/mtn-customer-pages.js?v={{ asset_version }}"></script>
+{% endblock %}

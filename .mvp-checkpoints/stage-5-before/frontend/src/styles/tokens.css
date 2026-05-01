@@ -1,0 +1,252 @@
+:root,
+:root[data-theme="gradient"] {
+  color-scheme: light;
+
+  --font-family-sans:
+    "Manrope", "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  --font-family-mono:
+    "IBM Plex Mono", "SFMono-Regular", "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+
+  /* Layout foundations */
+  --container-max-width: 84rem;
+  --container-padding: 1.75rem;
+  --container-padding-compact: 1rem;
+  --sidebar-width: 18.75rem;
+
+  /* Spacing scale based on 4px rhythm */
+  --space-0: 0;
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 0.875rem;
+  --space-lg: 1.125rem;
+  --space-xl: 1.5rem;
+  --space-2xl: 1.875rem;
+  --space-3xl: 2.5rem;
+  --space-4xl: 3.5rem;
+  --space-5xl: 5rem;
+  --space-6xl: 7rem;
+
+  /* Type scale */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.3125rem;
+  --text-2xl: 1.625rem;
+  --text-3xl: 2rem;
+  --text-4xl: 2.625rem;
+  --text-5xl: 3.25rem;
+
+  --leading-tight: 1.08;
+  --leading-snug: 1.24;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.68;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* Sizing */
+  --control-height-sm: 2.625rem;
+  --control-height: 3.125rem;
+  --control-height-lg: 3.5rem;
+  --icon-size-sm: 1rem;
+  --icon-size-md: 1.125rem;
+  --icon-size-lg: 1.25rem;
+
+  /* Radius */
+  --radius-xs: 0.625rem;
+  --radius-sm: 0.875rem;
+  --radius-md: 1.125rem;
+  --radius-lg: 1.5rem;
+  --radius-xl: 1.875rem;
+  --radius-2xl: 2.25rem;
+  --radius-full: 999px;
+
+  /* Motion */
+  --duration-fast: 0.18s;
+  --duration-base: 0.24s;
+  --duration-slow: 0.34s;
+  --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  /* Breakpoints */
+  --breakpoint-mobile: 20rem;
+  --breakpoint-tablet: 48rem;
+  --breakpoint-desktop: 64rem;
+  --breakpoint-wide: 80rem;
+
+  /* Theme: Clean Futurism */
+  --bg-page:
+    linear-gradient(180deg, #f8fbff 0%, #eef4fa 100%);
+  --bg-page-solid: #f8fbff;
+  --bg-page-glow:
+    radial-gradient(circle at top left, rgba(15, 76, 255, 0.08), transparent 26%),
+    radial-gradient(circle at top right, rgba(6, 182, 212, 0.09), transparent 28%),
+    radial-gradient(circle at bottom center, rgba(15, 76, 255, 0.05), transparent 38%);
+  --bg-card: rgba(255, 255, 255, 0.92);
+  --bg-surface: rgba(238, 244, 250, 0.88);
+  --bg-card-hover: #ffffff;
+  --bg-accent: #0f4cff;
+
+  --text-primary: #0f172a;
+  --text-secondary: #6b7a90;
+  --text-muted: #8b98ad;
+  --text-accent: #0f4cff;
+
+  --border-light: #dce6f2;
+  --border-medium: #cad7e8;
+
+  --accent-primary: #0f4cff;
+  --accent-hover: #245bff;
+  --accent-active: #0838cb;
+
+  --success: #06b6d4;
+  --warning: #0f4cff;
+  --danger: #d9485f;
+
+  --glass-blur: blur(18px);
+  --glass-border: 1px solid rgba(220, 230, 242, 0.92);
+  --brand-gradient: linear-gradient(135deg, #0f4cff 0%, #06b6d4 100%);
+
+  --shadow-sm: 0 12px 24px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 18px 40px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 28px 56px rgba(15, 23, 42, 0.11);
+  --shadow-xl: 0 42px 88px rgba(15, 23, 42, 0.14);
+
+  /* Semantic aliases used across styles */
+  --bg: var(--bg-page-solid);
+  --bg-elevated: var(--bg-card);
+  --bg-muted: var(--bg-surface);
+  --surface: var(--bg-card);
+  --surface-soft: rgba(248, 251, 255, 0.88);
+  --surface-strong: #ffffff;
+  --surface-secondary: rgba(238, 244, 250, 0.96);
+  --surface-raised: rgba(255, 255, 255, 0.98);
+  --text: var(--text-primary);
+  --border: var(--border-light);
+  --border-strong: var(--border-medium);
+  --primary: #0f4cff;
+  --primary-strong: #0838cb;
+  --accent: var(--accent-primary);
+  --accent-soft: rgba(6, 182, 212, 0.12);
+  --shadow-color: #0f172a;
+
+  --color-bg-page: var(--bg-page);
+  --color-bg-page-solid: var(--bg-page-solid);
+  --color-bg-glow: var(--bg-page-glow);
+  --color-bg-card: var(--bg-card);
+  --color-bg-hover: var(--bg-card-hover);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-accent: var(--text-accent);
+  --color-border: var(--border-light);
+  --color-border-strong: var(--border-medium);
+  --color-primary: var(--primary);
+  --color-primary-dark: var(--primary-strong);
+  --color-accent: var(--accent);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--danger);
+  --color-accent-contrast: #ffffff;
+
+  --theme-card-background: rgba(255, 255, 255, 0.78);
+  --theme-card-border: 1px solid rgba(220, 230, 242, 0.92);
+  --theme-card-hover-background: #ffffff;
+  --theme-card-hover-border: color-mix(in srgb, var(--color-primary) 20%, var(--border-medium));
+  --theme-card-backdrop: var(--glass-blur);
+  --theme-control-background: rgba(248, 251, 255, 0.92);
+  --theme-control-border: #dce6f2;
+  --theme-overlay: rgba(15, 23, 42, 0.12);
+  --theme-toast-background: rgba(255, 255, 255, 0.96);
+  --theme-toast-border: rgba(220, 230, 242, 0.96);
+}
+
+:root[data-theme="black-beige"] {
+  color-scheme: light;
+
+  --bg-page:
+    linear-gradient(180deg, #f7fbff 0%, #edf3fb 100%);
+  --bg-page-solid: #f8fbff;
+  --bg-page-glow:
+    radial-gradient(circle at top, rgba(15, 76, 255, 0.06), transparent 30%),
+    radial-gradient(circle at bottom right, rgba(6, 182, 212, 0.08), transparent 34%);
+  --bg-card: rgba(255, 255, 255, 0.96);
+  --bg-surface: rgba(238, 244, 250, 0.96);
+  --bg-card-hover: #ffffff;
+  --bg-accent: #0f4cff;
+
+  --text-primary: #0f172a;
+  --text-secondary: #6b7a90;
+  --text-muted: #8b98ad;
+  --text-accent: #0f4cff;
+
+  --border-light: #dce6f2;
+  --border-medium: #cad7e8;
+
+  --accent-primary: #0f4cff;
+  --accent-hover: #245bff;
+  --accent-active: #0838cb;
+
+  --success: #06b6d4;
+  --warning: #0f4cff;
+  --danger: #d9485f;
+
+  --glass-blur: blur(10px);
+  --glass-border: 1px solid rgba(220, 230, 242, 0.96);
+  --brand-gradient: linear-gradient(135deg, #0f4cff 0%, #06b6d4 100%);
+
+  --shadow-sm: 0 10px 22px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 16px 34px rgba(15, 23, 42, 0.07);
+  --shadow-lg: 0 24px 50px rgba(15, 23, 42, 0.1);
+  --shadow-xl: 0 38px 72px rgba(15, 23, 42, 0.12);
+
+  --bg: var(--bg-page-solid);
+  --bg-elevated: var(--bg-card);
+  --bg-muted: var(--bg-surface);
+  --surface: var(--bg-card);
+  --surface-soft: rgba(248, 251, 255, 0.92);
+  --surface-strong: #ffffff;
+  --surface-secondary: rgba(238, 244, 250, 0.98);
+  --surface-raised: #ffffff;
+  --text: var(--text-primary);
+  --border: var(--border-light);
+  --border-strong: var(--border-medium);
+  --primary: var(--accent-primary);
+  --primary-strong: var(--accent-active);
+  --accent: var(--accent-primary);
+  --accent-soft: rgba(6, 182, 212, 0.12);
+  --shadow-color: #0f172a;
+
+  --color-bg-page: var(--bg-page);
+  --color-bg-page-solid: var(--bg-page-solid);
+  --color-bg-glow: var(--bg-page-glow);
+  --color-bg-card: var(--bg-card);
+  --color-bg-hover: var(--bg-card-hover);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-accent: var(--text-accent);
+  --color-border: var(--border-light);
+  --color-border-strong: var(--border-medium);
+  --color-primary: var(--primary);
+  --color-primary-dark: var(--primary-strong);
+  --color-accent: var(--accent);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--danger);
+  --color-accent-contrast: #ffffff;
+
+  --theme-card-background: rgba(255, 255, 255, 0.88);
+  --theme-card-border: 1px solid rgba(220, 230, 242, 0.96);
+  --theme-card-hover-background: #ffffff;
+  --theme-card-hover-border: color-mix(in srgb, var(--color-primary) 18%, var(--border-medium));
+  --theme-card-backdrop: var(--glass-blur);
+  --theme-control-background: rgba(255, 255, 255, 0.96);
+  --theme-control-border: #dce6f2;
+  --theme-overlay: rgba(15, 23, 42, 0.1);
+  --theme-toast-background: rgba(255, 255, 255, 0.96);
+  --theme-toast-border: rgba(220, 230, 242, 0.96);
+}

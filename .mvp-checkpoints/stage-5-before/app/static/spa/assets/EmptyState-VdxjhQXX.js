@@ -1,0 +1,2 @@
+import{n as e}from"./createLucideIcon-qlCADwNN.js";import{t}from"./sparkles-335Ufe5n.js";var n=e();function r({action:e,description:r,icon:i,title:a}){return(0,n.jsxs)(`div`,{className:`empty-state`,children:[(0,n.jsx)(`div`,{className:`empty-state__icon`,"aria-hidden":`true`,children:i??(0,n.jsx)(t,{size:20})}),(0,n.jsx)(`h3`,{children:a}),(0,n.jsx)(`p`,{children:r}),e?(0,n.jsx)(`div`,{className:`empty-state__action`,children:e}):null]})}export{r as t};
+//# sourceMappingURL=EmptyState-VdxjhQXX.js.map

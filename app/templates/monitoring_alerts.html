@@ -1,0 +1,410 @@
+{% extends "base.html" %}
+
+{% block title %}История алертов | MTN{% endblock %}
+
+{% block content %}
+<section class="page-section monitoring-page">
+    <section class="hero">
+        <div class="hero-grid">
+            <div>
+                <div class="eyebrow">
+                    <i class="fas fa-bell"></i>
+                    История алертов качества связи
+                </div>
+                <h1 class="hero-title">Смотрите, когда линия MTN выходила за нормальные параметры и как быстро она восстанавливалась</h1>
+                <p class="hero-subtitle">
+                    Здесь собраны предупреждения по задержке, джиттеру, потерям пакетов и снижению скорости. Журнал помогает понять,
+                    проблема была кратковременной или повторяется по расписанию.
+                </p>
+                <div class="hero-actions">
+                    <a class="btn btn-primary" href="/monitoring">
+                        <i class="fas fa-heart-pulse"></i>
+                        Вернуться к графикам
+                    </a>
+                    <a class="btn btn-secondary" href="/notifications">
+                        <i class="fas fa-bell-concierge"></i>
+                        Центр уведомлений
+                    </a>
+                </div>
+            </div>
+
+            <div class="hero-panel">
+                <div class="section-title-wrap">
+                    <div>
+                        <h2 class="section-title">Сводка по алертам</h2>
+                        <p class="section-subtitle">Короткий статус по линии за последние сутки.</p>
+                    </div>
+                </div>
+                <div class="hero-panel-grid">
+                    <div class="insight-card">
+                        <div class="insight-label">Новых алертов</div>
+                        <div class="insight-value" id="monitoringAlertsUnread">0</div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-label">Активные сейчас</div>
+                        <div class="insight-value" id="monitoringAlertsActive">0</div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-label">Качество линии</div>
+                        <div class="insight-value" id="monitoringAlertsQuality">—</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="table-shell">
+        <div class="section-title-wrap">
+            <div>
+                <h2 class="section-title">Фильтры журнала</h2>
+                <p class="section-subtitle">Отберите события по периоду, тяжести и типу проблемы.</p>
+            </div>
+        </div>
+
+        <form id="monitoringAlertsFilters" class="monitoring-filter-grid u-mt-20">
+            <div class="field">
+                <label class="field-label" for="monitoringFilterFrom">Дата от</label>
+                <input class="input" id="monitoringFilterFrom" name="date_from" type="date">
+            </div>
+            <div class="field">
+                <label class="field-label" for="monitoringFilterTo">Дата до</label>
+                <input class="input" id="monitoringFilterTo" name="date_to" type="date">
+            </div>
+            <div class="field">
+                <label class="field-label" for="monitoringFilterType">Тип проблемы</label>
+                <select class="select" id="monitoringFilterType" name="type">
+                    <option value="">Все типы</option>
+                    <option value="high_ping">Высокий ping</option>
+                    <option value="packet_loss">Потеря пакетов</option>
+                    <option value="slow_speed">Низкая скорость</option>
+                    <option value="high_jitter">Высокий джиттер</option>
+                    <option value="no_connection">Нет ответа от линии</option>
+                </select>
+            </div>
+            <div class="field">
+                <label class="field-label" for="monitoringFilterSeverity">Уровень</label>
+                <select class="select" id="monitoringFilterSeverity" name="severity">
+                    <option value="">Любой</option>
+                    <option value="warning">Предупреждение</option>
+                    <option value="critical">Критический</option>
+                    <option value="info">Инфо</option>
+                </select>
+            </div>
+            <div class="field">
+                <label class="field-label" for="monitoringFilterStatus">Статус</label>
+                <select class="select" id="monitoringFilterStatus" name="status">
+                    <option value="">Все статусы</option>
+                    <option value="active">Активен</option>
+                    <option value="resolved">Разрешён</option>
+                </select>
+            </div>
+            <div class="action-row u-align-end u-action-row-reset">
+                <button class="btn btn-primary" id="monitoringAlertsApplyBtn" type="submit">
+                    <i class="fas fa-filter"></i>
+                    Применить
+                </button>
+                <button class="btn btn-secondary" type="button" onclick="resetMonitoringAlertFilters()">
+                    <i class="fas fa-rotate-left"></i>
+                    Сбросить
+                </button>
+            </div>
+        </form>
+    </section>
+
+    <section class="table-shell">
+        <div class="section-title-wrap">
+            <div>
+                <h2 class="section-title">Журнал событий</h2>
+                <p class="section-subtitle" id="monitoringAlertsCount">Загружаем историю алертов...</p>
+            </div>
+            <button class="btn btn-secondary btn-sm" type="button" onclick="loadMonitoringAlertsPage()">
+                <i class="fas fa-rotate"></i>
+                Обновить
+            </button>
+        </div>
+
+        <div id="monitoringAlertsList" class="list-stack u-mt-18">
+            <div class="skeleton skeleton-card-lg"></div>
+            <div class="skeleton skeleton-card-lg"></div>
+            <div class="skeleton skeleton-card-lg"></div>
+        </div>
+
+        <div class="toolbar u-mt-20">
+            <div class="table-copy" id="monitoringAlertsPager">Страница 1</div>
+            <div class="action-row u-action-row-reset">
+                <button class="btn btn-secondary btn-sm" id="monitoringAlertsPrevBtn" type="button" onclick="changeMonitoringAlertsPage(-1)">
+                    <i class="fas fa-arrow-left"></i>
+                    Назад
+                </button>
+                <button class="btn btn-secondary btn-sm" id="monitoringAlertsNextBtn" type="button" onclick="changeMonitoringAlertsPage(1)">
+                    Вперёд
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+</section>
+
+<div id="monitoringAlertDetailModal" class="modal">
+    <div class="dialog">
+        <div class="dialog-header">
+            <div>
+                <div class="section-title u-title-md">Детали алерта</div>
+                <div class="table-copy">Точная причина, длительность и технические параметры события.</div>
+            </div>
+            <button class="dialog-close" type="button" data-modal-close="monitoringAlertDetailModal">
+                <i class="fas fa-xmark"></i>
+            </button>
+        </div>
+        <div class="dialog-body">
+            <div id="monitoringAlertDetailBody" class="list-stack"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    let monitoringAlertsPage = 1;
+    const monitoringAlertsPageSize = 12;
+    let monitoringAlertsTotal = 0;
+    let monitoringAlertItems = [];
+
+    function monitoringSeverityLabel(value) {
+        return {
+            warning: "Предупреждение",
+            critical: "Критический",
+            info: "Инфо",
+        }[value] || value || "Алерт";
+    }
+
+    function monitoringSeverityClass(value) {
+        return {
+            warning: "badge-warning",
+            critical: "badge-danger",
+            info: "badge-info",
+        }[value] || "badge-info";
+    }
+
+    function monitoringStatusLabel(value) {
+        return {
+            active: "Активен",
+            resolved: "Разрешён",
+        }[value] || value || "—";
+    }
+
+    function monitoringStatusClass(value) {
+        return value === "resolved" ? "badge-success" : value === "active" ? "badge-warning" : "badge-info";
+    }
+
+    function monitoringTypeLabel(value) {
+        return {
+            high_ping: "Высокая задержка",
+            packet_loss: "Потеря пакетов",
+            slow_speed: "Падение скорости",
+            high_jitter: "Высокий джиттер",
+            no_connection: "Нет ответа от линии",
+        }[value] || value || "Событие";
+    }
+
+    function monitoringAlertDuration(item) {
+        if (!item.start_time) return "—";
+        if (!item.end_time) return "Идёт сейчас";
+        const start = new Date(item.start_time).getTime();
+        const end = new Date(item.end_time).getTime();
+        const minutes = Math.max(1, Math.round((end - start) / 60000));
+        return `${minutes} мин`;
+    }
+
+    function monitoringAlertFiltersQuery() {
+        const params = new URLSearchParams({
+            page: String(monitoringAlertsPage),
+            page_size: String(monitoringAlertsPageSize),
+        });
+
+        const from = document.getElementById("monitoringFilterFrom").value;
+        const to = document.getElementById("monitoringFilterTo").value;
+        const type = document.getElementById("monitoringFilterType").value;
+        const severity = document.getElementById("monitoringFilterSeverity").value;
+        const status = document.getElementById("monitoringFilterStatus").value;
+
+        if (from) params.set("from", new Date(`${from}T00:00:00`).toISOString());
+        if (to) params.set("to", new Date(`${to}T23:59:59`).toISOString());
+        if (type) params.set("type", type);
+        if (severity) params.set("severity", severity);
+        if (status) params.set("status", status);
+
+        return params.toString();
+    }
+
+    function renderMonitoringAlertsSummary(summary) {
+        document.getElementById("monitoringAlertsUnread").textContent = String(summary.unread_alerts || 0);
+        document.getElementById("monitoringAlertsActive").textContent = String(summary.active_alerts || 0);
+        document.getElementById("monitoringAlertsQuality").textContent = summary.quality_label || "Нет данных";
+    }
+
+    function showMonitoringAlertDetail(alertId) {
+        const item = monitoringAlertItems.find((entry) => entry.id === alertId);
+        if (!item) return;
+        const body = document.getElementById("monitoringAlertDetailBody");
+        body.innerHTML = `
+            <article class="feature-card">
+                <div class="toolbar">
+                    <div>
+                        <div class="table-title">${OperatorUI.escapeHTML(item.message || "Событие линии")}</div>
+                        <div class="table-copy">${OperatorUI.formatDate(item.start_time, { includeTime: true })}</div>
+                    </div>
+                    <div class="chip-row">
+                        <span class="badge ${monitoringSeverityClass(item.severity)}">${monitoringSeverityLabel(item.severity)}</span>
+                        <span class="badge ${monitoringStatusClass(item.status)}">${monitoringStatusLabel(item.status)}</span>
+                    </div>
+                </div>
+            </article>
+            <article class="feature-card">
+                <div class="toolbar">
+                    <div>
+                        <div class="table-title">Параметры события</div>
+                        <div class="table-copy">Время, длительность, текущее и пороговое значения.</div>
+                    </div>
+                </div>
+                <div class="admin-kpi-grid u-mt-16">
+                    <div class="feature-card">
+                        <div class="table-title">Тип</div>
+                        <div class="table-copy">${OperatorUI.escapeHTML(monitoringTypeLabel(item.type))}</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="table-title">Метрика</div>
+                        <div class="table-copy">${OperatorUI.escapeHTML(item.metric_name || "—")}</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="table-title">Длительность</div>
+                        <div class="table-copy">${monitoringAlertDuration(item)}</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="table-title">Текущее значение</div>
+                        <div class="table-copy">${item.current_value ?? "—"}</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="table-title">Порог</div>
+                        <div class="table-copy">${item.threshold_value ?? "—"}</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="table-title">Окончание</div>
+                        <div class="table-copy">${item.end_time ? OperatorUI.formatDate(item.end_time, { includeTime: true }) : "Ещё активно"}</div>
+                    </div>
+                </div>
+            </article>
+        `;
+        openModal("monitoringAlertDetailModal");
+    }
+
+    async function markMonitoringAlertRead(alertId) {
+        try {
+            await OperatorUI.request(`/api/v1/monitoring/alerts/${alertId}/read`, {
+                method: "POST",
+                auth: true,
+            });
+            await loadMonitoringAlertsPage();
+        } catch (error) {
+            OperatorUI.toast(error.message || "Не удалось отметить алерт прочитанным.", "error");
+        }
+    }
+
+    function renderMonitoringAlertsList(items) {
+        const container = document.getElementById("monitoringAlertsList");
+        monitoringAlertItems = items;
+        if (!items.length) {
+            container.innerHTML = OperatorUI.createEmptyState(
+                "fas fa-shield-heart",
+                "Совпадений не найдено",
+                "За выбранный период линия не выходила за пороги или фильтры слишком строгие."
+            );
+            return;
+        }
+
+        container.innerHTML = items.map((item) => `
+            <article class="feature-card monitoring-alert-card">
+                <div class="toolbar">
+                    <div>
+                        <div class="table-title">${OperatorUI.escapeHTML(item.message)}</div>
+                        <div class="table-copy">${OperatorUI.formatDate(item.start_time, { includeTime: true })}</div>
+                    </div>
+                    <div class="chip-row">
+                        <span class="badge ${monitoringSeverityClass(item.severity)}">${monitoringSeverityLabel(item.severity)}</span>
+                        <span class="badge ${monitoringStatusClass(item.status)}">${monitoringStatusLabel(item.status)}</span>
+                    </div>
+                </div>
+                <div class="monitoring-alert-meta">
+                    <span><strong>Тип:</strong> ${OperatorUI.escapeHTML(monitoringTypeLabel(item.type))}</span>
+                    <span><strong>Длительность:</strong> ${monitoringAlertDuration(item)}</span>
+                    <span><strong>Порог:</strong> ${item.threshold_value ?? "—"}</span>
+                    <span><strong>Значение:</strong> ${item.current_value ?? "—"}</span>
+                </div>
+                <div class="action-row u-mt-16">
+                    <button class="btn btn-secondary btn-sm" type="button" onclick="showMonitoringAlertDetail(${item.id})">
+                        <i class="fas fa-eye"></i>
+                        Подробнее
+                    </button>
+                    ${item.is_read ? "" : `<button class="btn btn-secondary btn-sm" type="button" onclick="markMonitoringAlertRead(${item.id})"><i class="fas fa-check"></i>Прочитано</button>`}
+                </div>
+            </article>
+        `).join("");
+    }
+
+    async function loadMonitoringAlertsPage() {
+        if (!OperatorUI.isAuthenticated()) {
+            OperatorUI.renderAuthRequired(document.querySelector(".site-main"), {
+                title: "Журнал алертов доступен после входа",
+                message: "Авторизуйтесь, чтобы просматривать историю качества связи и статусы уведомлений.",
+            });
+            return;
+        }
+
+        try {
+            const [summary, payload] = await Promise.all([
+                OperatorUI.request("/api/v1/monitoring/summary", { auth: true }),
+                OperatorUI.request(`/api/v1/monitoring/alerts?${monitoringAlertFiltersQuery()}`, { auth: true }),
+            ]);
+
+            renderMonitoringAlertsSummary(summary);
+            renderMonitoringAlertsList(payload.items || []);
+
+            monitoringAlertsTotal = Number(payload.total || 0);
+            const totalPages = Math.max(1, Math.ceil(monitoringAlertsTotal / monitoringAlertsPageSize));
+            document.getElementById("monitoringAlertsCount").textContent = `Найдено ${monitoringAlertsTotal} событий мониторинга.`;
+            document.getElementById("monitoringAlertsPager").textContent = `Страница ${monitoringAlertsPage} из ${totalPages}`;
+            document.getElementById("monitoringAlertsPrevBtn").disabled = monitoringAlertsPage <= 1;
+            document.getElementById("monitoringAlertsNextBtn").disabled = monitoringAlertsPage >= totalPages;
+        } catch (error) {
+            OperatorUI.toast(error.message || "Не удалось загрузить журнал алертов.", "error");
+        }
+    }
+
+    function changeMonitoringAlertsPage(delta) {
+        monitoringAlertsPage = Math.max(1, monitoringAlertsPage + delta);
+        loadMonitoringAlertsPage();
+    }
+
+    function resetMonitoringAlertFilters() {
+        document.getElementById("monitoringAlertsFilters").reset();
+        monitoringAlertsPage = 1;
+        loadMonitoringAlertsPage();
+    }
+
+    document.getElementById("monitoringAlertsFilters").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        monitoringAlertsPage = 1;
+        await loadMonitoringAlertsPage();
+    });
+
+    (() => {
+        const now = new Date();
+        const from = new Date(now);
+        from.setDate(now.getDate() - 30);
+        document.getElementById("monitoringFilterFrom").value = from.toISOString().slice(0, 10);
+        document.getElementById("monitoringFilterTo").value = now.toISOString().slice(0, 10);
+    })();
+
+    loadMonitoringAlertsPage();
+</script>
+{% endblock %}

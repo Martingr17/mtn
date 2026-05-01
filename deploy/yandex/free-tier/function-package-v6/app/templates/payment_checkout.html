@@ -1,0 +1,285 @@
+{% extends "base.html" %}
+
+{% block title %}Подтверждение платежа | Личный кабинет MTN{% endblock %}
+{% block body_class %}payment-checkout-page{% endblock %}
+
+{% block content %}
+<section class="page-section">
+    <section class="hero">
+        <div class="hero-grid">
+            <div>
+                <div class="eyebrow">
+                    <i class="fas fa-wallet"></i>
+                    Проверка и завершение оплаты
+                </div>
+                <h1 class="hero-title">Контролируйте статус пополнения до последнего шага</h1>
+                <p class="hero-subtitle">
+                    Для demo-сценария MTN подтверждение выполняется прямо на сайте. Для внешнего шлюза здесь можно
+                    повторно открыть checkout, обновить статус и убедиться, что средства действительно дошли до лицевого счёта.
+                </p>
+            </div>
+            <div class="hero-panel">
+                <div class="hero-panel-grid">
+                    <div class="insight-card">
+                        <div class="insight-label">Статус</div>
+                        <div class="insight-value" id="checkoutStatusLabel">Подготовка</div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-label">Сумма</div>
+                        <div class="insight-value" id="checkoutAmountLabel">—</div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-label">Лицевой счёт</div>
+                        <div class="insight-value text-mono" id="checkoutBillingLabel">—</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="payments-grid">
+        <article class="form-shell span-7">
+            <div class="section-title-wrap">
+                <div>
+                    <h2 class="section-title">Сводка по операции</h2>
+                    <p class="section-subtitle">
+                        Здесь отображаются провайдер платежа, сумма, статус синхронизации с биллингом и доступные действия по операции.
+                    </p>
+                </div>
+            </div>
+
+            <div class="list-stack u-mt-20" id="checkoutSummary">
+                <div class="skeleton skeleton-card-132"></div>
+            </div>
+
+            <div class="action-row u-mt-24">
+                <button class="btn btn-primary" id="checkoutPrimaryBtn" type="button">
+                    <i class="fas fa-circle-check"></i>
+                    Продолжить
+                </button>
+                <button class="btn btn-secondary" id="checkoutRefreshBtn" type="button">
+                    <i class="fas fa-rotate"></i>
+                    Проверить статус
+                </button>
+                <a class="btn btn-ghost" href="/payments">
+                    <i class="fas fa-arrow-left"></i>
+                    Вернуться к платежам
+                </a>
+            </div>
+        </article>
+
+        <article class="profile-panel span-5">
+            <div class="section-title-wrap">
+                <div>
+                    <h2 class="section-title">Сценарий MTN Payments</h2>
+                    <p class="section-subtitle">Платёжная логика больше не обрывается после редиректа: кабинет умеет продолжить checkout, синхронизировать статус и показать итог пользователю.</p>
+                </div>
+            </div>
+
+            <div class="list-stack u-mt-18">
+                <div class="feature-card">
+                    <div class="table-title">1. Создание операции</div>
+                    <div class="table-copy">Платёж сохраняется в истории со ссылкой повторной оплаты и идентификатором внешнего провайдера.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="table-title">2. Проверка статуса</div>
+                    <div class="table-copy">После возврата кабинет запрашивает провайдера и подтверждает фактический результат операции.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="table-title">3. Начисление в биллинг</div>
+                    <div class="table-copy">После успеха баланс синхронизируется, кэш сбрасывается, а пользователь сразу видит новый статус и сумму.</div>
+                </div>
+            </div>
+        </article>
+    </section>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const checkoutPaymentId = {{ payment_id }};
+    let checkoutPayment = null;
+
+    function paymentStatusText(status) {
+        const map = {
+            succeeded: "Успешно",
+            pending: "Ожидает оплаты",
+            processing: "Обрабатывается",
+            failed: "Ошибка",
+            cancelled: "Отменён",
+            refunded: "Возврат",
+        };
+        return map[status] || status;
+    }
+
+    function paymentStatusClass(status) {
+        const map = {
+            succeeded: "status-resolved",
+            pending: "status-waiting-customer",
+            processing: "status-in-progress",
+            failed: "status-critical",
+            cancelled: "status-closed",
+            refunded: "status-closed",
+        };
+        return map[status] || "status-new";
+    }
+
+    function configureCheckoutPrimaryAction(payment) {
+        const button = document.getElementById("checkoutPrimaryBtn");
+        button.disabled = false;
+        button.onclick = null;
+
+        if (payment.provider === "demo" && payment.status !== "succeeded") {
+            button.innerHTML = `<i class="fas fa-circle-check"></i>Подтвердить и зачислить`;
+            button.onclick = confirmDemoPayment;
+            return;
+        }
+
+        if (payment.status === "succeeded") {
+            button.innerHTML = `<i class="fas fa-list"></i>Открыть историю платежей`;
+            button.onclick = () => {
+                window.location.href = "/payments?payment=success";
+            };
+            return;
+        }
+
+        if (payment.payment_url) {
+            button.innerHTML = `<i class="fas fa-up-right-from-square"></i>Открыть платёжный шлюз`;
+            button.onclick = () => {
+                window.location.href = payment.payment_url;
+            };
+            return;
+        }
+
+        if (payment.can_retry) {
+            button.innerHTML = `<i class="fas fa-rotate-right"></i>Создать новую ссылку`;
+            button.onclick = retryPayment;
+            return;
+        }
+
+        button.innerHTML = `<i class="fas fa-ban"></i>Операция недоступна`;
+        button.disabled = true;
+    }
+
+    function renderCheckoutSummary(payment, me) {
+        checkoutPayment = payment;
+
+        document.getElementById("checkoutStatusLabel").textContent = paymentStatusText(payment.status);
+        document.getElementById("checkoutAmountLabel").textContent = OperatorUI.formatCurrency(payment.amount);
+        document.getElementById("checkoutBillingLabel").textContent = me.billing_id || "—";
+
+        const billingState = payment.billing_applied ? "Зачисление подтверждено" : "Ожидает синхронизации";
+        document.getElementById("checkoutSummary").innerHTML = `
+            <article class="feature-card">
+                <div class="toolbar">
+                    <div>
+                        <div class="table-title">Пополнение баланса</div>
+                        <div class="table-copy">Операция #${payment.id} · ${OperatorUI.formatDate(payment.created_at, { includeTime: true })}</div>
+                    </div>
+                    <span class="status-badge ${paymentStatusClass(payment.status)}">${paymentStatusText(payment.status)}</span>
+                </div>
+                <div class="tariff-specs">
+                    <div class="tariff-spec">
+                        <span class="tariff-spec-label">Сумма</span>
+                        <strong>${OperatorUI.formatCurrency(payment.amount)}</strong>
+                    </div>
+                    <div class="tariff-spec">
+                        <span class="tariff-spec-label">Способ оплаты</span>
+                        <strong>${OperatorUI.escapeHTML(OperatorUI.paymentMethodLabel(payment.payment_method || ""))}</strong>
+                    </div>
+                    <div class="tariff-spec">
+                        <span class="tariff-spec-label">Провайдер</span>
+                        <strong>${OperatorUI.escapeHTML(payment.provider || "gateway")}</strong>
+                    </div>
+                    <div class="tariff-spec">
+                        <span class="tariff-spec-label">Лицевой счёт</span>
+                        <strong>${OperatorUI.escapeHTML(me.billing_id || "—")}</strong>
+                    </div>
+                </div>
+                <div class="content-note">
+                    ${billingState}. ${payment.payment_url ? "Ссылка оплаты остаётся доступной до завершения или отмены операции." : "Новая ссылка будет сформирована повторным запуском checkout."}
+                </div>
+            </article>
+        `;
+
+        configureCheckoutPrimaryAction(payment);
+    }
+
+    async function loadCheckoutPage() {
+        if (!OperatorUI.isAuthenticated()) {
+            OperatorUI.renderAuthRequired(document.querySelector(".site-main"));
+            return;
+        }
+
+        try {
+            const [payment, me] = await Promise.all([
+                OperatorUI.request(`/api/v1/payments/${checkoutPaymentId}`, { auth: true }),
+                OperatorUI.request("/api/v1/users/me", { auth: true }),
+            ]);
+            renderCheckoutSummary(payment, me);
+        } catch (error) {
+            document.getElementById("checkoutSummary").innerHTML = OperatorUI.createEmptyState(
+                "fas fa-triangle-exclamation",
+                "Не удалось загрузить платёж",
+                error.message || "Попробуйте вернуться к списку платежей и создать операцию заново."
+            );
+            document.getElementById("checkoutPrimaryBtn").disabled = true;
+            document.getElementById("checkoutRefreshBtn").disabled = true;
+        }
+    }
+
+    async function confirmDemoPayment() {
+        const button = document.getElementById("checkoutPrimaryBtn");
+        OperatorUI.setButtonLoading(button, true, "Подтверждаем...");
+        try {
+            const result = await OperatorUI.request(`/api/v1/payments/${checkoutPaymentId}/confirm-demo`, {
+                method: "POST",
+                auth: true,
+            });
+            OperatorUI.toast(result.message || "Баланс успешно пополнен.", "success");
+            window.location.href = result.redirect_url || "/payments?payment=success";
+        } catch (error) {
+            OperatorUI.toast(error.message || "Не удалось подтвердить платёж.", "error");
+            OperatorUI.setButtonLoading(button, false);
+        }
+    }
+
+    async function refreshCheckoutStatus() {
+        const button = document.getElementById("checkoutRefreshBtn");
+        OperatorUI.setButtonLoading(button, true, "Проверяем...");
+        try {
+            const [payment, me] = await Promise.all([
+                OperatorUI.request(`/api/v1/payments/${checkoutPaymentId}/refresh`, {
+                    method: "POST",
+                    auth: true,
+                }),
+                OperatorUI.request("/api/v1/users/me", { auth: true }),
+            ]);
+            renderCheckoutSummary(payment, me);
+            OperatorUI.toast(`Статус обновлён: ${paymentStatusText(payment.status)}`, payment.status === "succeeded" ? "success" : "info");
+        } catch (error) {
+            OperatorUI.toast(error.message || "Не удалось обновить статус.", "error");
+        } finally {
+            OperatorUI.setButtonLoading(button, false);
+        }
+    }
+
+    async function retryPayment() {
+        const button = document.getElementById("checkoutPrimaryBtn");
+        OperatorUI.setButtonLoading(button, true, "Готовим ссылку...");
+        try {
+            const response = await OperatorUI.request(`/api/v1/payments/${checkoutPaymentId}/retry`, {
+                method: "POST",
+                auth: true,
+            });
+            window.location.href = response.redirect_url || response.payment_url || `/payments/checkout/${checkoutPaymentId}`;
+        } catch (error) {
+            OperatorUI.toast(error.message || "Не удалось переоткрыть checkout.", "error");
+            OperatorUI.setButtonLoading(button, false);
+        }
+    }
+
+    document.getElementById("checkoutRefreshBtn").addEventListener("click", refreshCheckoutStatus);
+    loadCheckoutPage();
+</script>
+{% endblock %}

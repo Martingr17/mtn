@@ -1,0 +1,2 @@
+import{t as e}from"./api-client-DKMEYva-.js";var t={async me(){let{data:t}=await e.get(`/users/me`);return t},async updateProfile(t){let{data:n}=await e.put(`/users/me`,t);return n},async uploadAvatar(t){let n=new FormData;n.append(`avatar`,t);let{data:r}=await e.post(`/users/me/avatar`,n,{headers:{"Content-Type":`multipart/form-data`}});return r},async sessions(){let{data:t}=await e.get(`/users/me/sessions`);return t},async revokeSession(t){let{data:n}=await e.delete(`/users/me/sessions/${t}`);return n}};export{t};
+//# sourceMappingURL=users-IhLnYrfI.js.map

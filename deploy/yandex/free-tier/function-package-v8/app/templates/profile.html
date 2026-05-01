@@ -1,0 +1,568 @@
+{% extends "base.html" %}
+
+{% block title %}Профиль | Личный кабинет оператора{% endblock %}
+{% block body_class %}profile-page{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="/static/css/mtn-customer-pages.css?v={{ asset_version }}">
+{% endblock %}
+
+{% block content %}
+<section class="page-section">
+    <section class="hero">
+        <div class="hero-grid">
+            <div>
+                <div class="eyebrow">
+                    <i class="fas fa-user-circle"></i>
+                    Профиль и безопасность аккаунта
+                </div>
+                <h1 class="hero-title" id="profileHeroName">Профиль пользователя</h1>
+                <p class="hero-subtitle" id="profileHeroMeta">
+                    Здесь можно обновить личные данные, проверить активные сессии и управлять защитой аккаунта без лишних переходов.
+                </p>
+            </div>
+            <div class="hero-panel">
+                <div class="hero-panel-grid">
+                    <div class="insight-card">
+                        <div class="insight-label">Лицевой счёт</div>
+                        <div class="insight-value text-mono" id="profileBillingId">—</div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-label">Баланс</div>
+                        <div class="insight-value" id="profileBalance">—</div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-label">Активные сессии</div>
+                        <div class="insight-value" id="profileSessionsCount">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="profile-grid">
+        <article class="profile-panel span-7">
+            <div class="section-title-wrap">
+                <div>
+                    <h2 class="section-title">Личные данные</h2>
+                    <p class="section-subtitle">Изменения сохраняются сразу в аккаунт и используются во всех сервисных сценариях кабинета.</p>
+                </div>
+            </div>
+
+            <div class="mtn-profile-avatar-block">
+                <div id="mtnProfileAvatarPreview" class="mtn-profile-avatar-preview">М</div>
+                <div class="mtn-profile-avatar-copy">
+                    <strong>Аватар профиля</strong>
+                    <p class="table-copy">Загрузите JPG или PNG до 2 МБ. Изображение сохраняется локально для демо-режима.</p>
+                    <div class="action-row">
+                        <label class="btn btn-secondary btn-sm">
+                            <input id="mtnProfileAvatarInput" type="file" accept=".jpg,.jpeg,.png" hidden>
+                            Загрузить фото
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <form id="profileForm" class="page-section">
+                <div class="field-row">
+                    <div class="field">
+                        <label class="field-label" for="profileFirstName">Имя</label>
+                        <input class="input" id="profileFirstName" type="text" name="first_name" autocomplete="given-name">
+                    </div>
+                    <div class="field">
+                        <label class="field-label" for="profileLastName">Фамилия</label>
+                        <input class="input" id="profileLastName" type="text" name="last_name" autocomplete="family-name">
+                    </div>
+                </div>
+
+                <div class="field-row">
+                    <div class="field">
+                        <label class="field-label" for="profileMiddleName">Отчество</label>
+                        <input class="input" id="profileMiddleName" type="text" name="middle_name" autocomplete="additional-name">
+                    </div>
+                    <div class="field">
+                        <label class="field-label" for="profileEmail">Электронная почта</label>
+                        <input class="input" id="profileEmail" type="email" name="email" autocomplete="email">
+                    </div>
+                </div>
+
+                <div class="field-row">
+                    <div class="field">
+                        <label class="field-label" for="profilePhone">Телефон</label>
+                        <input class="input" id="profilePhone" type="tel" disabled>
+                        <p class="field-help">Номер связан с авторизацией и изменяется через обращение в поддержку.</p>
+                    </div>
+                    <div class="field">
+                        <label class="field-label" for="profileLanguage">Язык интерфейса</label>
+                        <select class="select" id="profileLanguage" name="language">
+                            <option value="ru">Русский</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" id="profileSaveBtn" type="submit">
+                    <i class="fas fa-floppy-disk"></i>
+                    Сохранить изменения
+                </button>
+            </form>
+        </article>
+
+        <article class="profile-panel span-5">
+            <div class="section-title-wrap">
+                <div>
+                    <h2 class="section-title">Безопасность</h2>
+                    <p class="section-subtitle">Контролируйте пароль и состояние дополнительной защиты из одного блока.</p>
+                </div>
+            </div>
+            <div class="list-stack">
+                <div class="feature-card">
+                    <div class="table-title">Двухфакторная защита</div>
+                    <div class="table-copy" id="profile2faState">Состояние 2FA определится после загрузки профиля.</div>
+                </div>
+                <div class="feature-card" id="profile2faEligibilityCard">
+                    <div class="table-title">2FA</div>
+                    <div class="table-copy" id="profile2faEligibility">Проверяем доступность двухфакторной защиты для этой учетной записи.</div>
+                </div>
+                <div class="action-row" id="profile2faActions">
+                    <button class="btn btn-secondary" id="profile2faSetupBtn" type="button">
+                        <i class="fas fa-qrcode"></i>
+                        Настроить 2FA
+                    </button>
+                    <button class="btn btn-danger hidden" id="profile2faDisableBtn" type="button">
+                        <i class="fas fa-shield-halved"></i>
+                        Отключить 2FA
+                    </button>
+                </div>
+                <button class="btn btn-secondary" type="button" onclick="openModal('changePasswordModal')">
+                    <i class="fas fa-key"></i>
+                    Сменить пароль
+                </button>
+            </div>
+        </article>
+
+        <article class="profile-panel span-12">
+            <div class="section-title-wrap">
+                <div>
+                    <h2 class="section-title">Активные сессии</h2>
+                    <p class="section-subtitle">Здесь отображаются текущие входы в аккаунт. Лишние устройства можно отключить в один клик.</p>
+                </div>
+            </div>
+            <div id="sessionsList" class="list-stack u-mt-18">
+                <div class="skeleton skeleton-card-xs"></div>
+            </div>
+        </article>
+    </section>
+</section>
+
+<div id="changePasswordModal" class="modal">
+    <div class="dialog">
+        <div class="dialog-header">
+            <div>
+                <div class="section-title u-title-md">Смена пароля</div>
+                <div class="table-copy">Новый пароль начнёт действовать сразу после успешной проверки текущего.</div>
+            </div>
+            <button class="dialog-close" type="button" data-modal-close="changePasswordModal">
+                <i class="fas fa-xmark"></i>
+            </button>
+        </div>
+        <div class="dialog-body">
+            <form id="passwordForm" class="page-section">
+                <div class="field">
+                    <label class="field-label" for="oldPassword">Текущий пароль</label>
+                    <input class="input" id="oldPassword" type="password" name="old_password" required>
+                </div>
+                <div class="field">
+                    <label class="field-label" for="newPassword">Новый пароль</label>
+                    <input class="input" id="newPassword" type="password" name="new_password" required>
+                    <div class="mtn-password-strength">
+                        <span id="mtnPasswordStrengthBar" class="mtn-password-strength__bar"></span>
+                    </div>
+                    <div id="mtnPasswordStrengthText" class="table-copy">Сила пароля появится во время ввода.</div>
+                </div>
+                <div class="field">
+                    <label class="field-label" for="confirmPassword">Подтверждение</label>
+                    <input class="input" id="confirmPassword" type="password" name="confirm_password" required>
+                </div>
+                <button class="btn btn-primary" id="passwordSaveBtn" type="submit">
+                    <i class="fas fa-shield-halved"></i>
+                    Обновить пароль
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="twoFactorSetupModal" class="modal">
+    <div class="dialog">
+        <div class="dialog-header">
+            <div>
+                <div class="section-title u-title-md">Настройка 2FA</div>
+                <div class="table-copy">Отсканируйте QR-код в приложении-аутентификаторе и подтвердите шестизначный код.</div>
+            </div>
+            <button class="dialog-close" type="button" data-modal-close="twoFactorSetupModal">
+                <i class="fas fa-xmark"></i>
+            </button>
+        </div>
+        <div class="dialog-body">
+            <div class="page-section">
+                <div class="feature-card u-panel-gap-18">
+                    <img id="twoFactorQrCode" class="u-qr-image" alt="QR-код для настройки 2FA">
+                    <div class="list-stack u-flex-1">
+                        <div>
+                            <div class="table-copy">Резервный секрет</div>
+                            <div class="table-title text-mono" id="twoFactorSecret">—</div>
+                        </div>
+                        <div class="table-copy">Если QR не открывается, добавьте секрет вручную в TOTP-приложении.</div>
+                    </div>
+                </div>
+                <form id="twoFactorSetupForm" class="page-section">
+                    <div class="field">
+                        <label class="field-label" for="twoFactorSetupCode">Подтверждающий код</label>
+                        <input class="input" id="twoFactorSetupCode" type="text" maxlength="6" placeholder="6 цифр" required>
+                    </div>
+                    <button class="btn btn-primary" id="twoFactorSetupSaveBtn" type="submit">
+                        <i class="fas fa-shield-halved"></i>
+                        Включить 2FA
+                    </button>
+                </form>
+                <div class="feature-card hidden" id="twoFactorBackupCodesCard">
+                    <div class="table-title">Резервные коды</div>
+                    <div class="table-copy">Сохраните их в надежном месте. Мы показываем их только один раз.</div>
+                    <div class="table-grid" id="twoFactorBackupCodes"></div>
+                    <div class="action-row u-mt-18">
+                        <button class="btn btn-secondary btn-sm" id="mtnProfileDownloadBackupCodes" type="button">Скачать коды</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="twoFactorDisableModal" class="modal">
+    <div class="dialog">
+        <div class="dialog-header">
+            <div>
+                <div class="section-title u-title-md">Отключение 2FA</div>
+                <div class="table-copy">Подтвердите действие кодом из приложения-аутентификатора.</div>
+            </div>
+            <button class="dialog-close" type="button" data-modal-close="twoFactorDisableModal">
+                <i class="fas fa-xmark"></i>
+            </button>
+        </div>
+        <div class="dialog-body">
+            <form id="twoFactorDisableForm" class="page-section">
+                <div class="field">
+                    <label class="field-label" for="twoFactorDisableCode">Код из приложения</label>
+                    <input class="input" id="twoFactorDisableCode" type="text" maxlength="6" placeholder="6 цифр" required>
+                </div>
+                <button class="btn btn-danger" id="twoFactorDisableConfirmBtn" type="submit">
+                    <i class="fas fa-shield-xmark"></i>
+                    Отключить 2FA
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<section class="page-section mtn-profile-extra">
+    <section class="profile-grid">
+        <article class="profile-panel span-7">
+            <div class="section-title-wrap">
+                <div>
+                    <h2 class="section-title">История входов</h2>
+                    <p class="section-subtitle">Последние входы в аккаунт, устройство, браузер и примерная география.</p>
+                </div>
+            </div>
+            <div id="mtnProfileLoginHistory" class="list-stack u-mt-18"></div>
+        </article>
+
+        <article class="profile-panel span-5">
+            <div class="section-title-wrap">
+                <div>
+                    <h2 class="section-title">Экспорт данных</h2>
+                    <p class="section-subtitle">Скачайте копию данных профиля в удобном формате.</p>
+                </div>
+            </div>
+            <div class="list-stack u-mt-18">
+                <button id="mtnProfileExportJson" class="btn btn-secondary" type="button">Скачать как JSON</button>
+                <button id="mtnProfileExportCsv" class="btn btn-secondary" type="button">Скачать как CSV</button>
+                <button id="mtnProfileExportPdf" class="btn btn-secondary" type="button">Скачать как PDF</button>
+            </div>
+        </article>
+    </section>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const staffRoles = new Set(["admin", "operator", "super_admin"]);
+    let currentProfile = null;
+
+    function isStaffRole(role) {
+        return staffRoles.has(String(role || ""));
+    }
+
+    function resetTwoFactorSetupState() {
+        document.getElementById("twoFactorSecret").textContent = "—";
+        document.getElementById("twoFactorQrCode").removeAttribute("src");
+        document.getElementById("twoFactorSetupForm").reset();
+        document.getElementById("twoFactorBackupCodesCard").classList.add("hidden");
+        document.getElementById("twoFactorBackupCodes").innerHTML = "";
+    }
+
+    function renderTwoFactorUi(profile) {
+        const eligibleCopy = document.getElementById("profile2faEligibility");
+        const setupBtn = document.getElementById("profile2faSetupBtn");
+        const disableBtn = document.getElementById("profile2faDisableBtn");
+        const isStaff = isStaffRole(profile.role);
+
+        if (!isStaff) {
+            eligibleCopy.textContent = "Двухфакторная защита доступна только для сотрудников. Для абонентов вход подтверждается по SMS.";
+            setupBtn.classList.add("hidden");
+            disableBtn.classList.add("hidden");
+            return;
+        }
+
+        eligibleCopy.textContent = profile.is_2fa_enabled
+            ? "Для этой учетной записи включена дополнительная проверка через TOTP-приложение."
+            : "Можно подключить дополнительную защиту входа через TOTP-приложение.";
+        setupBtn.classList.toggle("hidden", Boolean(profile.is_2fa_enabled));
+        disableBtn.classList.toggle("hidden", !profile.is_2fa_enabled);
+    }
+
+    async function loadProfilePage() {
+        if (!OperatorUI.isAuthenticated()) {
+            OperatorUI.renderAuthRequired(document.querySelector(".site-main"));
+            return;
+        }
+
+        try {
+            const [profile, sessions] = await Promise.all([
+                OperatorUI.request("/api/v1/users/me", { auth: true }),
+                OperatorUI.request("/api/v1/users/me/sessions", { auth: true }),
+            ]);
+            currentProfile = profile;
+
+            const fullName =
+                [profile.last_name, profile.first_name, profile.middle_name].filter(Boolean).join(" ").trim() ||
+                profile.phone ||
+                "Пользователь";
+
+            document.getElementById("profileHeroName").textContent = fullName;
+            document.getElementById("profileHeroMeta").textContent =
+                `${OperatorUI.roleLabel(profile.role)} · Последний вход: ${OperatorUI.formatDate(profile.last_login_at, { includeTime: true })}`;
+            document.getElementById("profileBillingId").textContent = profile.billing_id || "—";
+            document.getElementById("profileBalance").textContent = OperatorUI.formatCurrency(profile.balance || 0);
+            document.getElementById("profileSessionsCount").textContent = String(profile.active_sessions_count || sessions.length || 0);
+            document.getElementById("profile2faState").textContent = profile.is_2fa_enabled
+                ? "2FA включена и дополнительно защищает вход в аккаунт."
+                : "2FA пока отключена. При необходимости её можно будет включить в настройках безопасности.";
+
+            document.getElementById("profileFirstName").value = profile.first_name || "";
+            document.getElementById("profileLastName").value = profile.last_name || "";
+            document.getElementById("profileMiddleName").value = profile.middle_name || "";
+            document.getElementById("profileEmail").value = profile.email || "";
+            document.getElementById("profilePhone").value = profile.phone || "";
+            document.getElementById("profileLanguage").value = profile.language || "ru";
+            renderTwoFactorUi(profile);
+
+            const sessionsList = document.getElementById("sessionsList");
+            if (!sessions.length) {
+                sessionsList.innerHTML = OperatorUI.createEmptyState(
+                    "fas fa-laptop",
+                    "Нет активных сессий",
+                    "Когда появятся авторизованные устройства, они будут отображены в этом блоке."
+                );
+            } else {
+                sessionsList.innerHTML = sessions.map((session) => `
+                    <article class="feature-card">
+                        <div class="toolbar">
+                            <div>
+                                <div class="table-title">${OperatorUI.escapeHTML(session.ip_address || "unknown")}</div>
+                                <div class="table-copy">${OperatorUI.formatDate(session.created_at, { includeTime: true })}</div>
+                            </div>
+                            ${session.is_current
+                                ? `<span class="badge badge-success">Текущая сессия</span>`
+                                : `<button class="btn btn-secondary btn-sm" type="button" onclick="revokeSession(${session.id})"><i class="fas fa-ban"></i>Отключить</button>`}
+                        </div>
+                        <div class="table-copy">${OperatorUI.escapeHTML(session.user_agent || "Без данных об устройстве")}</div>
+                    </article>
+                `).join("");
+            }
+        } catch (error) {
+            OperatorUI.toast(error.message || "Не удалось загрузить профиль.", "error");
+        }
+    }
+
+    async function startTwoFactorSetup() {
+        if (!currentProfile || !isStaffRole(currentProfile.role)) {
+            OperatorUI.toast("2FA доступна только для сотрудников.", "info");
+            return;
+        }
+
+        const button = document.getElementById("profile2faSetupBtn");
+        OperatorUI.setButtonLoading(button, true, "Подготовка...");
+        try {
+            resetTwoFactorSetupState();
+            const data = await OperatorUI.request("/api/v1/auth/2fa/setup", {
+                method: "POST",
+                auth: true,
+            });
+            document.getElementById("twoFactorSecret").textContent = data.secret || "—";
+            document.getElementById("twoFactorQrCode").src = data.qr_code;
+            openModal("twoFactorSetupModal");
+        } catch (error) {
+            OperatorUI.toast(error.message || "Не удалось подготовить 2FA.", "error");
+        } finally {
+            OperatorUI.setButtonLoading(button, false);
+        }
+    }
+
+    async function confirmTwoFactorSetup(event) {
+        event.preventDefault();
+        const submit = document.getElementById("twoFactorSetupSaveBtn");
+        const code = String(document.getElementById("twoFactorSetupCode").value || "").trim();
+        if (!code) {
+            OperatorUI.toast("Введите код из приложения-аутентификатора.", "error");
+            return;
+        }
+
+        OperatorUI.setButtonLoading(submit, true, "Проверка...");
+        try {
+            const data = await OperatorUI.request("/api/v1/auth/2fa/verify", {
+                method: "POST",
+                auth: true,
+                json: true,
+                body: { code },
+            });
+            const backupCodes = Array.isArray(data.backup_codes) ? data.backup_codes : [];
+            if (backupCodes.length) {
+                document.getElementById("twoFactorBackupCodesCard").classList.remove("hidden");
+                document.getElementById("twoFactorBackupCodes").innerHTML = backupCodes
+                    .map((item) => `<div class="feature-card text-mono">${OperatorUI.escapeHTML(item)}</div>`)
+                    .join("");
+            }
+            OperatorUI.toast(data.message || "2FA включена.", "success");
+            await loadProfilePage();
+        } catch (error) {
+            OperatorUI.toast(error.message || "Не удалось включить 2FA.", "error");
+        } finally {
+            OperatorUI.setButtonLoading(submit, false);
+        }
+    }
+
+    function openDisableTwoFactorModal() {
+        document.getElementById("twoFactorDisableForm").reset();
+        openModal("twoFactorDisableModal");
+    }
+
+    async function confirmTwoFactorDisable(event) {
+        event.preventDefault();
+        const submit = document.getElementById("twoFactorDisableConfirmBtn");
+        const code = String(document.getElementById("twoFactorDisableCode").value || "").trim();
+        if (!code) {
+            OperatorUI.toast("Введите текущий код из приложения-аутентификатора.", "error");
+            return;
+        }
+
+        OperatorUI.setButtonLoading(submit, true, "Отключение...");
+        try {
+            const data = await OperatorUI.request("/api/v1/auth/2fa/disable", {
+                method: "POST",
+                auth: true,
+                json: true,
+                body: { code },
+            });
+            OperatorUI.toast(data.message || "2FA отключена.", "success");
+            closeModal("twoFactorDisableModal");
+            await loadProfilePage();
+        } catch (error) {
+            OperatorUI.toast(error.message || "Не удалось отключить 2FA.", "error");
+        } finally {
+            OperatorUI.setButtonLoading(submit, false);
+        }
+    }
+
+    async function revokeSession(sessionId) {
+        try {
+            await OperatorUI.request(`/api/v1/users/me/sessions/${sessionId}`, {
+                method: "DELETE",
+                auth: true,
+            });
+            OperatorUI.toast("Сессия отключена.", "success");
+            loadProfilePage();
+        } catch (error) {
+            OperatorUI.toast(error.message || "Не удалось отключить сессию.", "error");
+        }
+    }
+
+    document.getElementById("profileForm").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const formData = new FormData(event.currentTarget);
+        const submit = document.getElementById("profileSaveBtn");
+        const payload = {
+            first_name: String(formData.get("first_name") || "").trim(),
+            last_name: String(formData.get("last_name") || "").trim(),
+            middle_name: String(formData.get("middle_name") || "").trim(),
+            email: String(formData.get("email") || "").trim(),
+            language: String(formData.get("language") || "ru").trim(),
+        };
+
+        OperatorUI.setButtonLoading(submit, true, "Сохранение...");
+        try {
+            await OperatorUI.request("/api/v1/users/me", {
+                method: "PUT",
+                auth: true,
+                json: true,
+                body: payload,
+            });
+            OperatorUI.toast("Профиль обновлён.", "success");
+            loadProfilePage();
+        } catch (error) {
+            OperatorUI.toast(error.message || "Не удалось обновить профиль.", "error");
+        } finally {
+            OperatorUI.setButtonLoading(submit, false);
+        }
+    });
+
+    document.getElementById("passwordForm").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const formData = new FormData(event.currentTarget);
+        const payload = Object.fromEntries(formData.entries());
+        const submit = document.getElementById("passwordSaveBtn");
+
+        if (payload.new_password !== payload.confirm_password) {
+            OperatorUI.toast("Пароли не совпадают.", "error");
+            return;
+        }
+
+        OperatorUI.setButtonLoading(submit, true, "Обновление...");
+        try {
+            await OperatorUI.request("/api/v1/auth/change-password", {
+                method: "POST",
+                auth: true,
+                json: true,
+                body: {
+                    old_password: payload.old_password,
+                    new_password: payload.new_password,
+                },
+            });
+            OperatorUI.toast("Пароль обновлён.", "success");
+            closeModal("changePasswordModal");
+            event.currentTarget.reset();
+        } catch (error) {
+            OperatorUI.toast(error.message || "Не удалось изменить пароль.", "error");
+        } finally {
+            OperatorUI.setButtonLoading(submit, false);
+        }
+    });
+
+    document.getElementById("profile2faSetupBtn").addEventListener("click", startTwoFactorSetup);
+    document.getElementById("profile2faDisableBtn").addEventListener("click", openDisableTwoFactorModal);
+    document.getElementById("twoFactorSetupForm").addEventListener("submit", confirmTwoFactorSetup);
+    document.getElementById("twoFactorDisableForm").addEventListener("submit", confirmTwoFactorDisable);
+
+    loadProfilePage();
+</script>
+<script src="/static/js/mtn-customer-pages.js?v={{ asset_version }}"></script>
+{% endblock %}

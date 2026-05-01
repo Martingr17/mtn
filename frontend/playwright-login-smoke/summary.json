@@ -1,0 +1,28 @@
+{
+  "steps": [
+    {
+      "step": "open_login",
+      "url": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/login",
+      "title": "MTN — личный кабинет и сервис"
+    },
+    {
+      "step": "form_fields",
+      "hasEmail": 1,
+      "hasPhone": 0
+    },
+    {
+      "step": "request_code",
+      "statusText": "Код отправлен\n\nПроверьте почту de***@operator.local. Повторная отправка станет доступна через 60 сек.\n\nПодставить демо-код"
+    },
+    {
+      "step": "code_filled",
+      "codeLength": 6
+    },
+    {
+      "step": "after_login",
+      "url": "https://d5dc0uqj173qg7q2s83h.y3q8o1jq.apigw.yandexcloud.net/dashboard"
+    }
+  ],
+  "errors": [],
+  "success": true
+}

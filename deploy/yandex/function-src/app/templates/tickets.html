@@ -1,0 +1,239 @@
+{% extends "base.html" %}
+
+{% block title %}Поддержка | MTN{% endblock %}
+{% block body_class %}page-public mtn-support-page{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="/static/css/mtn-customer-pages.css?v={{ asset_version }}">
+{% endblock %}
+
+{% block content %}
+<section class="mtn-customer-shell mtn-support-shell" data-customer-page="support">
+    <header class="mtn-page-hero">
+        <div>
+            <p class="mtn-page-hero__eyebrow">Поддержка MTN</p>
+            <h1 class="mtn-page-hero__title">Поддержка</h1>
+            <p class="mtn-page-hero__lead">Напишите нам, и мы поможем. Отвечаем в среднем за 3 минуты.</p>
+        </div>
+        <button id="mtnSupportCallbackOpen" class="btn btn-secondary" type="button">Перезвоните мне</button>
+    </header>
+
+    <section class="mtn-tabs-panel" aria-label="Навигация по разделам поддержки">
+        <div class="mtn-tabs" role="tablist">
+            <button class="mtn-tab is-active" type="button" data-support-tab="faq" role="tab" aria-selected="true">Часто задаваемые вопросы</button>
+            <button class="mtn-tab" type="button" data-support-tab="tickets" role="tab" aria-selected="false">Мои заявки</button>
+            <button class="mtn-tab" type="button" data-support-tab="chat" role="tab" aria-selected="false">Чат с оператором</button>
+        </div>
+    </section>
+
+    <section class="mtn-support-quick-actions">
+        <button class="mtn-quick-chip" type="button" data-chat-template="internet_down">Нет интернета</button>
+        <button class="mtn-quick-chip" type="button" data-chat-template="speed_low">Снижена скорость</button>
+        <button class="mtn-quick-chip" type="button" data-chat-template="payment_issue">Проблема с оплатой</button>
+        <button class="mtn-quick-chip" type="button" data-chat-template="tariff_change">Смена тарифа</button>
+    </section>
+
+    <div id="mtnSupportRestoreDraft" class="mtn-inline-banner" hidden>
+        <div>
+            <strong>У вас есть неотправленная заявка.</strong>
+            <p>Восстановить черновик или удалить его?</p>
+        </div>
+        <div class="mtn-inline-banner__actions">
+            <button id="mtnSupportRestoreDraftButton" class="btn btn-secondary btn-sm" type="button">Восстановить</button>
+            <button id="mtnSupportDropDraftButton" class="btn btn-ghost btn-sm" type="button">Удалить</button>
+        </div>
+    </div>
+
+    <section id="mtnSupportTabFaq" class="mtn-tab-panel is-active" data-support-panel="faq">
+        <div class="mtn-support-grid">
+            <article class="mtn-feature-card">
+                <div class="mtn-section-head">
+                    <div>
+                        <h2 class="mtn-section-title">Умный диагностический помощник</h2>
+                        <p class="mtn-section-copy">Ответьте на 2-3 вопроса, и мы подскажем следующий шаг без ожидания оператора.</p>
+                    </div>
+                </div>
+                <div id="mtnDiagnosticWizard" class="mtn-diagnostic-wizard" aria-live="polite"></div>
+            </article>
+
+            <article class="mtn-feature-card">
+                <div class="mtn-section-head">
+                    <div>
+                        <h2 class="mtn-section-title">Популярные вопросы</h2>
+                        <p class="mtn-section-copy">Поиск работает по вопросу и содержимому ответа.</p>
+                    </div>
+                </div>
+                <label class="mtn-search-field">
+                    <span class="sr-only">Поиск по вопросам</span>
+                    <i class="fas fa-magnifying-glass" aria-hidden="true"></i>
+                    <input id="mtnFaqSearchInput" type="search" placeholder="Поиск по вопросам...">
+                </label>
+                <div id="mtnFaqEmptyState" class="mtn-empty-state" hidden>
+                    <div class="mtn-empty-state__icon"><i class="fas fa-magnifying-glass"></i></div>
+                    <strong>Ничего не найдено</strong>
+                    <p>Попробуйте изменить запрос или создайте заявку.</p>
+                    <button class="btn btn-primary btn-sm" type="button" data-support-tab-open="tickets">Создать заявку</button>
+                </div>
+                <div id="mtnFaqList" class="mtn-faq-list"></div>
+            </article>
+        </div>
+    </section>
+
+    <section id="mtnSupportTabTickets" class="mtn-tab-panel" data-support-panel="tickets" hidden>
+        <div class="mtn-support-grid">
+            <article class="mtn-feature-card">
+                <div class="mtn-section-head">
+                    <div>
+                        <h2 class="mtn-section-title">Создать новую заявку</h2>
+                        <p class="mtn-section-copy">Опишите проблему подробно, и мы приложим к обращению контекст из кабинета.</p>
+                    </div>
+                </div>
+                <form id="mtnTicketCreateForm" class="mtn-form-stack">
+                    <label class="mtn-field">
+                        <span>Тема заявки</span>
+                        <select id="mtnTicketTopicInput" required>
+                            <option value="">Выберите тему</option>
+                            <option value="Отсутствует доступ к интернету">Отсутствует доступ к интернету</option>
+                            <option value="Снижена скорость соединения">Снижена скорость соединения</option>
+                            <option value="Вопрос по оплате">Вопрос по оплате</option>
+                            <option value="Смена тарифного плана">Смена тарифного плана</option>
+                            <option value="Технические работы">Технические работы</option>
+                            <option value="Жалоба на качество связи">Жалоба на качество связи</option>
+                            <option value="Другое">Другое</option>
+                        </select>
+                    </label>
+                    <div id="mtnSupportSpeedContext" class="mtn-speed-context" hidden></div>
+                    <label class="mtn-field">
+                        <span>Описание проблемы</span>
+                        <textarea id="mtnTicketDescriptionInput" rows="6" maxlength="2000" placeholder="Опишите проблему подробно..." required></textarea>
+                    </label>
+                    <label class="mtn-field">
+                        <span>Прикрепить файл</span>
+                        <input id="mtnTicketFilesInput" type="file" accept=".jpg,.jpeg,.png,.pdf" multiple>
+                    </label>
+                    <div id="mtnTicketFilesList" class="mtn-file-list"></div>
+                    <div class="mtn-form-actions">
+                        <button id="mtnTicketSubmitButton" class="btn btn-primary" type="submit">Отправить заявку</button>
+                        <button id="mtnSupportRunSpeedtest" class="btn btn-secondary" type="button">Запустить speedtest</button>
+                    </div>
+                </form>
+            </article>
+
+            <article class="mtn-feature-card">
+                <div class="mtn-section-head">
+                    <div>
+                        <h2 class="mtn-section-title">Мои заявки</h2>
+                        <p class="mtn-section-copy">Статусы и прогноз времени решения обновляются автоматически.</p>
+                    </div>
+                </div>
+                <div id="mtnSupportTicketsEmpty" class="mtn-empty-state" hidden>
+                    <div class="mtn-empty-state__icon"><i class="fas fa-inbox"></i></div>
+                    <strong>У вас пока нет заявок</strong>
+                    <p>Создайте первую заявку, и мы поможем.</p>
+                </div>
+                <div id="mtnSupportTicketsList" class="mtn-ticket-list"></div>
+            </article>
+        </div>
+    </section>
+
+    <section id="mtnSupportTabChat" class="mtn-tab-panel" data-support-panel="chat" hidden>
+        <div class="mtn-support-grid mtn-support-grid--chat">
+            <article class="mtn-feature-card">
+                <div class="mtn-section-head">
+                    <div>
+                        <h2 class="mtn-section-title">Чат с поддержкой MTN</h2>
+                        <p class="mtn-section-copy">Оператор онлайн. В демо-режиме сообщения сохраняются локально.</p>
+                    </div>
+                    <span class="mtn-online-dot">Оператор онлайн</span>
+                </div>
+                <div class="mtn-chat-demo-note">Демо-режим. Сообщения не отправляются реальным операторам.</div>
+                <div id="mtnChatMessages" class="mtn-chat-messages" aria-live="polite"></div>
+                <div class="mtn-chat-templates">
+                    <button class="mtn-quick-chip" type="button" data-chat-template="internet_down">Нет интернета</button>
+                    <button class="mtn-quick-chip" type="button" data-chat-template="speed_low">Снижена скорость</button>
+                    <button class="mtn-quick-chip" type="button" data-chat-template="payment_issue">Проблема с оплатой</button>
+                    <button class="mtn-quick-chip" type="button" data-chat-template="tariff_change">Смена тарифа</button>
+                </div>
+                <form id="mtnChatForm" class="mtn-chat-form">
+                    <textarea id="mtnChatInput" rows="3" placeholder="Введите сообщение..."></textarea>
+                    <div class="mtn-form-actions">
+                        <button class="btn btn-primary" type="submit">Отправить</button>
+                    </div>
+                </form>
+            </article>
+
+            <aside class="mtn-feature-card">
+                <div class="mtn-section-head">
+                    <div>
+                        <h2 class="mtn-section-title">Другие способы связи</h2>
+                        <p class="mtn-section-copy">Если вопрос срочный, выберите удобный канал.</p>
+                    </div>
+                </div>
+                <div class="mtn-contact-grid">
+                    <article class="mtn-contact-card">
+                        <strong>Телефон</strong>
+                        <span>8 (800) 123-45-67</span>
+                        <small>Круглосуточно</small>
+                    </article>
+                    <article class="mtn-contact-card">
+                        <strong>Email</strong>
+                        <span>support@mtn.ru</span>
+                        <small>Ответ в течение 24 часов</small>
+                    </article>
+                    <article class="mtn-contact-card">
+                        <strong>Мессенджеры</strong>
+                        <span>Telegram · WhatsApp</span>
+                        <small>Оперативный канал связи</small>
+                    </article>
+                </div>
+            </aside>
+        </div>
+    </section>
+</section>
+
+<div id="mtnSupportTicketModal" class="modal" hidden>
+    <div class="modal-content mtn-customer-modal" role="dialog" aria-modal="true" aria-labelledby="mtnSupportTicketModalTitle">
+        <div class="modal-header">
+            <div>
+                <h3 id="mtnSupportTicketModalTitle" class="modal-title">Детали заявки</h3>
+                <p id="mtnSupportTicketModalMeta" class="table-copy">Переписка с оператором и история изменений.</p>
+            </div>
+            <button class="icon-btn" type="button" data-support-modal-close aria-label="Закрыть окно"><i class="fas fa-xmark"></i></button>
+        </div>
+        <div id="mtnSupportTicketModalBody" class="mtn-customer-modal__body"></div>
+    </div>
+</div>
+
+<div id="mtnSupportCallbackModal" class="modal" hidden>
+    <div class="modal-content mtn-customer-modal" role="dialog" aria-modal="true" aria-labelledby="mtnSupportCallbackTitle">
+        <div class="modal-header">
+            <div>
+                <h3 id="mtnSupportCallbackTitle" class="modal-title">Заказать звонок</h3>
+                <p class="table-copy">Не хотите ждать? Оператор перезвонит в удобное время.</p>
+            </div>
+            <button class="icon-btn" type="button" data-support-callback-close aria-label="Закрыть окно"><i class="fas fa-xmark"></i></button>
+        </div>
+        <form id="mtnSupportCallbackForm" class="mtn-form-stack mtn-customer-modal__body">
+            <label class="mtn-field">
+                <span>Номер телефона</span>
+                <input id="mtnSupportCallbackPhone" type="tel" value="+7 999 123-45-67">
+            </label>
+            <label class="mtn-field">
+                <span>Удобное время</span>
+                <select id="mtnSupportCallbackTime">
+                    <option value="now">Сейчас</option>
+                    <option value="hour">Через час</option>
+                    <option value="evening">После 18:00</option>
+                </select>
+            </label>
+            <div class="mtn-form-actions">
+                <button class="btn btn-primary" type="submit">Заказать звонок</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="/static/js/mtn-customer-pages.js?v={{ asset_version }}"></script>
+{% endblock %}

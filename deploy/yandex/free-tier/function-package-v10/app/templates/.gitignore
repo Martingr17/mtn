@@ -1,0 +1,82 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment
+.env
+.env.local
+.env.production
+
+# Database
+*.db
+*.sql
+*.sqlite
+*.sqlite3
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# Uploads
+uploads/
+uploads/*
+
+# Static files
+static/
+static/*
+
+# Backups
+backups/
+*.backup
+*.sql.gz
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+.ruff_cache/
+
+# Docker
+*.pid
+docker-compose.override.yml
+
+# Secrets
+*.pem
+*.key
+*.crt
+*.p12
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# Alembic
+alembic/versions/*.pyc
+
+# Prometheus
+prometheus_data/
+grafana_data/
+loki_data/

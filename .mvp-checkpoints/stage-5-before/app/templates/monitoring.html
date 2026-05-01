@@ -1,0 +1,504 @@
+{% extends "base.html" %}
+
+{% block title %}Мониторинг линии | MTN{% endblock %}
+
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<section class="page-section">
+    <section class="hero">
+        <div class="hero-grid">
+            <div>
+                <div class="eyebrow">
+                    <i class="fas fa-heart-pulse"></i>
+                    Мониторинг качества связи MTN
+                </div>
+                <h1 class="hero-title">Следите за состоянием линии, скоростью, задержкой и алертами без ручных проверок</h1>
+                <p class="hero-subtitle">
+                    Модуль автоматически собирает метрики качества соединения и показывает, когда линия работает стабильно,
+                    а когда требуется внимание. История помогает увидеть вечерние просадки, нестабильность пинга,
+                    потерю пакетов и периоды снижения скорости.
+                </p>
+                <div class="hero-actions">
+                    <a class="btn btn-primary" href="/monitoring/alerts">
+                        <i class="fas fa-bell"></i>
+                        История алертов
+                    </a>
+                    <a class="btn btn-secondary" href="/speedtest">
+                        <i class="fas fa-gauge-high"></i>
+                        Открыть Speedtest
+                    </a>
+                    <button class="btn btn-ghost" type="button" onclick="document.getElementById('monitoringSubscribeCard').scrollIntoView({ behavior: 'smooth', block: 'start' })">
+                        <i class="fas fa-sliders"></i>
+                        Настроить уведомления
+                    </button>
+                </div>
+            </div>
+
+            <div class="hero-panel">
+                <div class="section-title-wrap">
+                    <div>
+                        <h2 class="section-title">Текущее состояние линии</h2>
+                        <p class="section-subtitle">Виджет обновляется по последним собранным данным мониторинга.</p>
+                    </div>
+                </div>
+                <div class="monitoring-quality-shell" id="monitoringQualityHero">
+                    <div class="monitoring-quality-badge state-no-data" id="monitoringHeroBadge">Нет данных</div>
+                    <div class="insight-value" id="monitoringHeroScore">0</div>
+                    <div class="table-copy" id="monitoringHeroLabel">Ожидаем первую серию метрик.</div>
+                    <div class="monitoring-inline-metrics">
+                        <div class="insight-card">
+                            <div class="insight-label">Пинг</div>
+                            <div class="insight-value" id="monitoringHeroPing">—</div>
+                        </div>
+                        <div class="insight-card">
+                            <div class="insight-label">Потери</div>
+                            <div class="insight-value" id="monitoringHeroLoss">—</div>
+                        </div>
+                        <div class="insight-card">
+                            <div class="insight-label">Джиттер</div>
+                            <div class="insight-value" id="monitoringHeroJitter">—</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats-grid">
+        <article class="metric-card">
+            <div class="metric-meta">
+                <span class="metric-label">Качество сегодня</span>
+                <span class="metric-icon"><i class="fas fa-signal"></i></span>
+            </div>
+            <div class="metric-value" id="monitoringQualityMetric">—</div>
+            <div class="metric-foot" id="monitoringQualityFoot">Статус будет рассчитан после загрузки сводки.</div>
+        </article>
+        <article class="metric-card">
+            <div class="metric-meta">
+                <span class="metric-label">Алерты за 24 часа</span>
+                <span class="metric-icon"><i class="fas fa-triangle-exclamation"></i></span>
+            </div>
+            <div class="metric-value" id="monitoringAlerts24hMetric">0</div>
+            <div class="metric-foot">Количество событий, которые попали в журнал мониторинга за последние сутки.</div>
+        </article>
+        <article class="metric-card">
+            <div class="metric-meta">
+                <span class="metric-label">Активные алерты</span>
+                <span class="metric-icon"><i class="fas fa-bell"></i></span>
+            </div>
+            <div class="metric-value" id="monitoringActiveAlertsMetric">0</div>
+            <div class="metric-foot">Если значение больше нуля, линия требует внимания прямо сейчас.</div>
+        </article>
+        <article class="metric-card">
+            <div class="metric-meta">
+                <span class="metric-label">Последнее обновление</span>
+                <span class="metric-icon"><i class="fas fa-clock"></i></span>
+            </div>
+            <div class="metric-value" id="monitoringLastCollectedMetric">—</div>
+            <div class="metric-foot">Время последней серии измерений, полученной модулем мониторинга.</div>
+        </article>
+    </section>
+
+    <section class="payments-grid">
+        <article class="feed-card span-8">
+            <div class="section-title-wrap">
+                <div>
+                    <h2 class="section-title">График скорости и качества</h2>
+                    <p class="section-subtitle">Скачивание, отдача и интегральная оценка качества линии.</p>
+                </div>
+                <div class="chip-row">
+                    <button class="chip is-accent" type="button" data-monitoring-range="6h">6 часов</button>
+                    <button class="chip" type="button" data-monitoring-range="24h">24 часа</button>
+                    <button class="chip" type="button" data-monitoring-range="7d">7 дней</button>
+                    <button class="chip" type="button" data-monitoring-range="30d">30 дней</button>
+                </div>
+            </div>
+            <canvas id="monitoringSpeedChart" height="140"></canvas>
+        </article>
+
+        <article class="profile-panel span-4" id="monitoringSubscribeCard">
+            <div class="section-title-wrap">
+                <div>
+                    <h2 class="section-title">Настройки уведомлений</h2>
+                    <p class="section-subtitle">Управляйте каналами доставки и временно отключайте мониторинг для линии.</p>
+                </div>
+            </div>
+            <form id="monitoringSubscriptionForm" class="page-section">
+                <label class="feature-card toolbar">
+                    <span>
+                        <span class="table-title">Мониторинг активен</span>
+                        <span class="table-copy">Если выключить, новые метрики и алерты временно перестанут собираться.</span>
+                    </span>
+                    <input type="checkbox" id="monitoringEnabledToggle" name="monitoring_enabled">
+                </label>
+                <label class="feature-card toolbar">
+                    <span>
+                        <span class="table-title">Email</span>
+                        <span class="table-copy">Получать уведомления на email, привязанный к профилю.</span>
+                    </span>
+                    <input type="checkbox" id="monitoringEmailToggle" name="email_enabled">
+                </label>
+                <label class="feature-card toolbar">
+                    <span>
+                        <span class="table-title">Telegram</span>
+                        <span class="table-copy">Отправка в Telegram-чат для важных событий линии.</span>
+                    </span>
+                    <input type="checkbox" id="monitoringTelegramToggle" name="telegram_enabled">
+                </label>
+                <label class="feature-card toolbar">
+                    <span>
+                        <span class="table-title">Push в браузере</span>
+                        <span class="table-copy">Показывать события прямо в интерфейсе кабинета и центре уведомлений.</span>
+                    </span>
+                    <input type="checkbox" id="monitoringPushToggle" name="browser_push_enabled">
+                </label>
+                <div class="field">
+                    <label class="field-label" for="monitoringTelegramChatId">Telegram Chat ID</label>
+                    <input class="input" id="monitoringTelegramChatId" name="telegram_chat_id" type="text" placeholder="например, 123456789">
+                </div>
+                <div class="field">
+                    <label class="field-label" for="monitoringCooldown">Cooldown алертов, минут</label>
+                    <input class="input" id="monitoringCooldown" name="alert_cooldown_minutes" type="number" min="5" max="1440" step="5">
+                </div>
+                <button class="btn btn-primary" id="monitoringSubscriptionSaveBtn" type="submit">
+                    <i class="fas fa-floppy-disk"></i>
+                    Сохранить настройки
+                </button>
+            </form>
+        </article>
+    </section>
+
+    <section class="payments-grid">
+        <article class="feed-card span-7">
+            <div class="section-title-wrap">
+                <div>
+                    <h2 class="section-title">Пинг, джиттер и потери пакетов</h2>
+                    <p class="section-subtitle">Наглядный срез сетевого здоровья по задержке и стабильности линии.</p>
+                </div>
+            </div>
+            <canvas id="monitoringLatencyChart" height="140"></canvas>
+        </article>
+
+        <article class="table-shell span-5">
+            <div class="section-title-wrap">
+                <div>
+                    <h2 class="section-title">Последние алерты</h2>
+                    <p class="section-subtitle">Пять свежих событий мониторинга с быстрым переходом в журнал.</p>
+                </div>
+                <a class="btn btn-secondary btn-sm" href="/monitoring/alerts">
+                    <i class="fas fa-arrow-right"></i>
+                    Весь журнал
+                </a>
+            </div>
+            <div id="monitoringRecentAlerts" class="list-stack u-mt-18">
+                <div class="skeleton skeleton-card-md"></div>
+                <div class="skeleton skeleton-card-md"></div>
+            </div>
+        </article>
+    </section>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    let monitoringSpeedChart = null;
+    let monitoringLatencyChart = null;
+    let monitoringRange = "24h";
+
+    const monitoringRangeConfig = {
+        "6h": { hours: 6, interval: "15m" },
+        "24h": { hours: 24, interval: "1h" },
+        "7d": { days: 7, interval: "6h" },
+        "30d": { days: 30, interval: "1d" },
+    };
+
+    function monitoringBadgeClass(state) {
+        return {
+            good: "state-good",
+            warning: "state-warning",
+            critical: "state-critical",
+            no_data: "state-no-data",
+        }[state] || "state-no-data";
+    }
+
+    function monitoringAlertSeverityLabel(value) {
+        return {
+            warning: "Предупреждение",
+            critical: "Критический",
+            info: "Инфо",
+        }[value] || value || "Алерт";
+    }
+
+    function monitoringAlertSeverityClass(value) {
+        return {
+            warning: "badge-warning",
+            critical: "badge-danger",
+            info: "badge-info",
+        }[value] || "badge-info";
+    }
+
+    function monitoringAlertStatusLabel(value) {
+        return {
+            active: "Активен",
+            resolved: "Разрешён",
+        }[value] || value || "—";
+    }
+
+    function monitoringRangeDates(rangeKey) {
+        const config = monitoringRangeConfig[rangeKey] || monitoringRangeConfig["24h"];
+        const dateTo = new Date();
+        const dateFrom = new Date(dateTo);
+        if (config.hours) {
+            dateFrom.setHours(dateFrom.getHours() - config.hours);
+        }
+        if (config.days) {
+            dateFrom.setDate(dateFrom.getDate() - config.days);
+        }
+        return {
+            interval: config.interval,
+            from: dateFrom.toISOString(),
+            to: dateTo.toISOString(),
+        };
+    }
+
+    function updateMonitoringHero(summary) {
+        const badge = document.getElementById("monitoringHeroBadge");
+        badge.className = `monitoring-quality-badge ${monitoringBadgeClass(summary.quality_state)}`;
+        badge.textContent = summary.quality_label;
+        document.getElementById("monitoringHeroScore").textContent = `${summary.quality_score}/100`;
+        document.getElementById("monitoringHeroLabel").textContent = summary.current_metrics
+            ? `Пинг ${summary.current_metrics.ping_ms ?? "—"} мс, потери ${summary.current_metrics.packet_loss_pct ?? "—"}%, скорость ${summary.current_metrics.download_mbps ?? "—"} Мбит/с.`
+            : "Ожидаем первую серию метрик.";
+        document.getElementById("monitoringHeroPing").textContent = summary.current_metrics?.ping_ms != null ? `${summary.current_metrics.ping_ms} мс` : "—";
+        document.getElementById("monitoringHeroLoss").textContent = summary.current_metrics?.packet_loss_pct != null ? `${summary.current_metrics.packet_loss_pct}%` : "—";
+        document.getElementById("monitoringHeroJitter").textContent = summary.current_metrics?.jitter_ms != null ? `${summary.current_metrics.jitter_ms} мс` : "—";
+
+        document.getElementById("monitoringQualityMetric").textContent = `${summary.quality_score}/100`;
+        document.getElementById("monitoringQualityFoot").textContent = summary.quality_label;
+        document.getElementById("monitoringAlerts24hMetric").textContent = String(summary.alerts_last_24h || 0);
+        document.getElementById("monitoringActiveAlertsMetric").textContent = String(summary.active_alerts || 0);
+        document.getElementById("monitoringLastCollectedMetric").textContent = summary.last_collected_at
+            ? OperatorUI.formatDate(summary.last_collected_at, { includeTime: true })
+            : "Нет данных";
+    }
+
+    function renderMonitoringSpeedChart(payload) {
+        const canvas = document.getElementById("monitoringSpeedChart");
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        if (monitoringSpeedChart) monitoringSpeedChart.destroy();
+
+        monitoringSpeedChart = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: payload.charts.labels,
+                datasets: [
+                    {
+                        label: "Скачивание",
+                        data: payload.charts.download_mbps,
+                        borderColor: "#38bdf8",
+                        backgroundColor: "rgba(56, 189, 248, 0.12)",
+                        tension: 0.35,
+                        fill: true,
+                        yAxisID: "speed",
+                    },
+                    {
+                        label: "Отдача",
+                        data: payload.charts.upload_mbps,
+                        borderColor: "#34d399",
+                        backgroundColor: "rgba(52, 211, 153, 0.10)",
+                        tension: 0.35,
+                        fill: true,
+                        yAxisID: "speed",
+                    },
+                    {
+                        label: "Качество",
+                        data: payload.charts.quality_score,
+                        borderColor: "#f59e0b",
+                        backgroundColor: "rgba(245, 158, 11, 0.08)",
+                        tension: 0.35,
+                        fill: false,
+                        yAxisID: "quality",
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: "bottom" } },
+                scales: {
+                    speed: { beginAtZero: true, grid: { color: "rgba(148, 163, 184, 0.08)" } },
+                    quality: { position: "right", min: 0, max: 100, grid: { display: false } },
+                    x: { grid: { color: "rgba(148, 163, 184, 0.06)" } },
+                },
+            },
+        });
+    }
+
+    function renderMonitoringLatencyChart(payload) {
+        const canvas = document.getElementById("monitoringLatencyChart");
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        if (monitoringLatencyChart) monitoringLatencyChart.destroy();
+
+        monitoringLatencyChart = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: payload.charts.labels,
+                datasets: [
+                    {
+                        label: "Пинг",
+                        data: payload.charts.ping_ms,
+                        borderColor: "#f97316",
+                        backgroundColor: "rgba(249, 115, 22, 0.10)",
+                        tension: 0.35,
+                        fill: true,
+                    },
+                    {
+                        label: "Джиттер",
+                        data: payload.charts.jitter_ms,
+                        borderColor: "#8b5cf6",
+                        backgroundColor: "rgba(139, 92, 246, 0.08)",
+                        tension: 0.35,
+                        fill: true,
+                    },
+                    {
+                        label: "Потери пакетов, %",
+                        data: payload.charts.packet_loss_pct,
+                        borderColor: "#ef4444",
+                        backgroundColor: "rgba(239, 68, 68, 0.08)",
+                        tension: 0.35,
+                        fill: false,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: "bottom" } },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: "rgba(148, 163, 184, 0.08)" } },
+                    x: { grid: { color: "rgba(148, 163, 184, 0.06)" } },
+                },
+            },
+        });
+    }
+
+    function renderMonitoringRecentAlerts(items) {
+        const container = document.getElementById("monitoringRecentAlerts");
+        if (!items.length) {
+            container.innerHTML = OperatorUI.createEmptyState(
+                "fas fa-shield-heart",
+                "Пока без событий",
+                "Алерты появятся здесь, если линия выйдет за нормальные параметры."
+            );
+            return;
+        }
+
+        container.innerHTML = items.map((item) => `
+            <article class="feature-card">
+                <div class="toolbar">
+                    <div>
+                        <div class="table-title">${OperatorUI.escapeHTML(item.message)}</div>
+                        <div class="table-copy">${OperatorUI.formatDate(item.start_time, { includeTime: true })}</div>
+                    </div>
+                    <div class="chip-row">
+                        <span class="badge ${monitoringAlertSeverityClass(item.severity)}">${monitoringAlertSeverityLabel(item.severity)}</span>
+                        <span class="badge badge-info">${monitoringAlertStatusLabel(item.status)}</span>
+                    </div>
+                </div>
+                <div class="content-note">
+                    Тип: ${OperatorUI.escapeHTML(item.type)} · Метрика: ${OperatorUI.escapeHTML(item.metric_name || "—")}
+                </div>
+            </article>
+        `).join("");
+    }
+
+    function fillMonitoringSubscription(summary) {
+        document.getElementById("monitoringEnabledToggle").checked = Boolean(summary.monitoring_enabled);
+        document.getElementById("monitoringEmailToggle").checked = Boolean(summary.email_enabled ?? summary.notification_channels?.email);
+        document.getElementById("monitoringTelegramToggle").checked = Boolean(summary.telegram_enabled ?? summary.notification_channels?.telegram);
+        document.getElementById("monitoringPushToggle").checked = Boolean(summary.browser_push_enabled ?? summary.notification_channels?.browser_push);
+        document.getElementById("monitoringTelegramChatId").value = summary.telegram_chat_id || "";
+        document.getElementById("monitoringCooldown").value = summary.alert_cooldown_minutes || 30;
+    }
+
+    async function loadMonitoringPage() {
+        if (!OperatorUI.isAuthenticated()) {
+            OperatorUI.renderAuthRequired(document.querySelector(".site-main"), {
+                title: "Мониторинг доступен после входа",
+                message: "Авторизуйтесь в кабинете MTN, чтобы видеть историю качества линии и получать алерты."
+            });
+            return;
+        }
+
+        const range = monitoringRangeDates(monitoringRange);
+        try {
+            const [summary, metrics, alerts, subscription] = await Promise.all([
+                OperatorUI.request("/api/v1/monitoring/summary", { auth: true }),
+                OperatorUI.request(`/api/v1/monitoring/metrics?from=${encodeURIComponent(range.from)}&to=${encodeURIComponent(range.to)}&interval=${range.interval}`, { auth: true }),
+                OperatorUI.request("/api/v1/monitoring/alerts?page=1&page_size=5", { auth: true }),
+                OperatorUI.request("/api/v1/monitoring/subscribe", { auth: true }).catch(() => null),
+            ]);
+
+            updateMonitoringHero(summary);
+            renderMonitoringSpeedChart(metrics);
+            renderMonitoringLatencyChart(metrics);
+            renderMonitoringRecentAlerts((alerts.items && alerts.items.length ? alerts.items : summary.recent_alerts) || []);
+            fillMonitoringSubscription(subscription || summary || {});
+        } catch (error) {
+            OperatorUI.toast(error.message || "Не удалось загрузить модуль мониторинга.", "error");
+        }
+    }
+
+    document.querySelectorAll("[data-monitoring-range]").forEach((button) => {
+        button.addEventListener("click", () => {
+            document.querySelectorAll("[data-monitoring-range]").forEach((node) => node.classList.remove("is-accent"));
+            button.classList.add("is-accent");
+            monitoringRange = button.getAttribute("data-monitoring-range") || "24h";
+            loadMonitoringPage();
+        });
+    });
+
+    document.getElementById("monitoringSubscriptionForm").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const submit = document.getElementById("monitoringSubscriptionSaveBtn");
+        const payload = {
+            monitoring_enabled: document.getElementById("monitoringEnabledToggle").checked,
+            email_enabled: document.getElementById("monitoringEmailToggle").checked,
+            telegram_enabled: document.getElementById("monitoringTelegramToggle").checked,
+            browser_push_enabled: document.getElementById("monitoringPushToggle").checked,
+            telegram_chat_id: document.getElementById("monitoringTelegramChatId").value.trim() || null,
+            alert_cooldown_minutes: Number(document.getElementById("monitoringCooldown").value || 30),
+        };
+
+        OperatorUI.setButtonLoading(submit, true, "Сохранение...");
+        try {
+            const response = await OperatorUI.request("/api/v1/monitoring/subscribe", {
+                method: "POST",
+                auth: true,
+                json: true,
+                body: payload,
+            });
+            fillMonitoringSubscription({
+                monitoring_enabled: response.monitoring_enabled,
+                notification_channels: {
+                    email: response.email_enabled,
+                    telegram: response.telegram_enabled,
+                    browser_push: response.browser_push_enabled,
+                },
+            });
+            document.getElementById("monitoringTelegramChatId").value = response.telegram_chat_id || "";
+            document.getElementById("monitoringCooldown").value = response.alert_cooldown_minutes || 30;
+            OperatorUI.toast("Настройки мониторинга сохранены.", "success");
+        } catch (error) {
+            OperatorUI.toast(error.message || "Не удалось сохранить настройки мониторинга.", "error");
+        } finally {
+            OperatorUI.setButtonLoading(submit, false);
+        }
+    });
+
+    loadMonitoringPage();
+</script>
+{% endblock %}

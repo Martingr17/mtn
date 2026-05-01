@@ -1,0 +1,2 @@
+import{c as e,n as t,r as n}from"./createLucideIcon-qlCADwNN.js";import{t as r}from"./cn-BpLujWe5.js";var i=e(n(),1),a=t(),o=(0,i.forwardRef)(({children:e,className:t,...n},i)=>(0,a.jsx)(`div`,{ref:i,className:r(`ui-card`,t),...n,children:e}));o.displayName=`Card`;export{o as t};
+//# sourceMappingURL=Card-CF4vl5fJ.js.map

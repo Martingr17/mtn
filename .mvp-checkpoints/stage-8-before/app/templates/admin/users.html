@@ -1,0 +1,397 @@
+{% extends "base.html" %}
+
+{% block title %}Абоненты | Админ-панель MTN{% endblock %}
+{% block body_class %}admin-page admin-users-v2{% endblock %}
+
+{% block content %}
+<section class="page-section admin-users-page-shell" id="adminUsersPage">
+    {% include "admin/_subnav.html" %}
+
+    <section class="hero admin-users-hero">
+        <div class="hero-grid hero-grid-single">
+            <div class="admin-users-hero-copy">
+                <div class="eyebrow">
+                    <i class="fas fa-users"></i>
+                    Управление абонентской базой
+                </div>
+                <h1 class="hero-title">Абоненты MTN</h1>
+                <p class="hero-subtitle">
+                    Единый рабочий экран для поиска по клиентской базе, проверки статусов, просмотра карточки
+                    абонента, ручных операций и быстрого перехода к связанным заявкам и финансам.
+                </p>
+                <div class="chip-row">
+                    <span class="chip is-accent"><i class="fas fa-magnifying-glass"></i>Умный поиск по всем полям</span>
+                    <span class="chip"><i class="fas fa-file-export"></i>Экспорт текущей выборки</span>
+                    <span class="chip"><i class="fas fa-shield-halved"></i>Роли admin / operator</span>
+                </div>
+            </div>
+
+            <div class="admin-users-hero-panel">
+                <article class="admin-users-kpi-card">
+                    <div class="admin-users-kpi-label">Всего в каталоге</div>
+                    <div class="admin-users-kpi-value" id="adminUsersMetricTotal">—</div>
+                    <div class="admin-users-kpi-note" id="adminUsersMetricTotalNote">Загружаем каталог</div>
+                </article>
+                <article class="admin-users-kpi-card">
+                    <div class="admin-users-kpi-label">Активные абоненты</div>
+                    <div class="admin-users-kpi-value" id="adminUsersMetricActive">—</div>
+                    <div class="admin-users-kpi-note">Без блокировки и критических ограничений</div>
+                </article>
+                <article class="admin-users-kpi-card">
+                    <div class="admin-users-kpi-label">С задолженностью</div>
+                    <div class="admin-users-kpi-value" id="adminUsersMetricDebt">—</div>
+                    <div class="admin-users-kpi-note">Требуют контроля оплаты</div>
+                </article>
+                <article class="admin-users-kpi-card">
+                    <div class="admin-users-kpi-label">Открытые заявки</div>
+                    <div class="admin-users-kpi-value" id="adminUsersMetricTickets">—</div>
+                    <div class="admin-users-kpi-note">Суммарно по текущей выборке</div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="table-shell admin-users-workspace">
+        <div class="section-title-wrap">
+            <div>
+                <h2 class="section-title">Список абонентов</h2>
+                <p class="section-subtitle">
+                    Фильтруйте каталог по статусу, тарифу, балансу и дате регистрации, сохраняйте рабочие пресеты
+                    и открывайте карточку абонента без перехода на отдельную страницу.
+                </p>
+            </div>
+            <div class="action-row">
+                <span id="adminUsersRoleBadge" class="badge badge-info">Роль: —</span>
+                <button class="btn btn-secondary btn-sm" type="button" id="adminUsersExportButton">
+                    <i class="fas fa-file-arrow-down"></i>
+                    Экспорт CSV
+                </button>
+                <button class="btn btn-primary btn-sm" type="button" id="adminUsersCreateButton" hidden>
+                    <i class="fas fa-user-plus"></i>
+                    Новый абонент
+                </button>
+            </div>
+        </div>
+
+        <div class="admin-users-toolbar-grid">
+            <label class="field">
+                <span class="field-label">Поиск</span>
+                <div class="admin-users-search-shell">
+                    <i class="fas fa-magnifying-glass"></i>
+                    <input
+                        class="input"
+                        id="adminUsersSearchInput"
+                        type="search"
+                        placeholder="Лицевой счёт, телефон, ФИО или email"
+                        autocomplete="off"
+                    >
+                </div>
+            </label>
+
+            <label class="field">
+                <span class="field-label">Статус</span>
+                <select class="select" id="adminUsersStatusSelect">
+                    <option value="all">Все</option>
+                    <option value="active">Активен</option>
+                    <option value="blocked">Заблокирован</option>
+                    <option value="suspended">Приостановлен</option>
+                </select>
+            </label>
+
+            <label class="field">
+                <span class="field-label">Тариф</span>
+                <select class="select" id="adminUsersTariffSelect">
+                    <option value="all">Все тарифы</option>
+                </select>
+            </label>
+
+            <label class="field">
+                <span class="field-label">Баланс</span>
+                <select class="select" id="adminUsersBalanceSelect">
+                    <option value="all">Любой</option>
+                    <option value="positive">Положительный</option>
+                    <option value="debt">Есть задолженность</option>
+                    <option value="critical">Критический долг</option>
+                </select>
+            </label>
+
+            <label class="field">
+                <span class="field-label">Регистрация</span>
+                <select class="select" id="adminUsersDateSelect">
+                    <option value="all">За всё время</option>
+                    <option value="today">Сегодня</option>
+                    <option value="week">За неделю</option>
+                    <option value="month">За месяц</option>
+                </select>
+            </label>
+
+            <label class="field">
+                <span class="field-label">Сохранённый фильтр</span>
+                <select class="select" id="adminUsersPresetSelect">
+                    <option value="">Не выбран</option>
+                </select>
+            </label>
+
+            <label class="field">
+                <span class="field-label">На странице</span>
+                <select class="select" id="adminUsersPageSizeSelect">
+                    <option value="10">10</option>
+                    <option value="20" selected>20</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+            </label>
+
+            <div class="admin-users-toolbar-actions">
+                <button class="btn btn-primary btn-sm" type="button" id="adminUsersApplyButton">
+                    <i class="fas fa-filter"></i>
+                    Применить
+                </button>
+                <button class="btn btn-secondary btn-sm" type="button" id="adminUsersSavePresetButton">
+                    <i class="fas fa-bookmark"></i>
+                    Сохранить фильтр
+                </button>
+                <button class="btn btn-ghost btn-sm" type="button" id="adminUsersResetButton">
+                    <i class="fas fa-rotate-left"></i>
+                    Сбросить
+                </button>
+            </div>
+        </div>
+
+        <div class="toolbar admin-users-selection-bar">
+            <div class="table-copy" id="adminUsersResultsText">Подготавливаем каталог абонентов...</div>
+            <div class="action-row">
+                <button class="btn btn-danger btn-sm" type="button" id="adminUsersBulkBlockButton" hidden>
+                    <i class="fas fa-lock"></i>
+                    Блокировать
+                </button>
+                <button class="btn btn-secondary btn-sm" type="button" id="adminUsersBulkUnblockButton" hidden>
+                    <i class="fas fa-lock-open"></i>
+                    Разблокировать
+                </button>
+            </div>
+        </div>
+
+        <div class="table-scroll admin-users-table-wrap">
+            <table class="data-table admin-users-table">
+                <thead>
+                    <tr>
+                        <th class="cell-checkbox">
+                            <input
+                                id="adminUsersSelectAll"
+                                type="checkbox"
+                                aria-label="Выбрать всех абонентов на текущей странице"
+                            >
+                        </th>
+                        <th><button class="admin-users-sort" type="button" data-sort-key="id">ID</button></th>
+                        <th><button class="admin-users-sort" type="button" data-sort-key="billing_id">Лицевой счёт</button></th>
+                        <th><button class="admin-users-sort" type="button" data-sort-key="full_name">Абонент</button></th>
+                        <th>Контакты</th>
+                        <th><button class="admin-users-sort" type="button" data-sort-key="tariff_name">Тариф</button></th>
+                        <th><button class="admin-users-sort" type="button" data-sort-key="balance">Баланс</button></th>
+                        <th><button class="admin-users-sort" type="button" data-sort-key="status_order">Статус</button></th>
+                        <th><button class="admin-users-sort" type="button" data-sort-key="open_tickets">Заявки</button></th>
+                        <th><button class="admin-users-sort" type="button" data-sort-key="last_activity_at">Последняя активность</button></th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody id="adminUsersTableBody">
+                    <tr>
+                        <td colspan="11">
+                            <div class="skeleton skeleton-panel-lg"></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="adminUsersMobileList" class="admin-users-mobile-list" hidden></div>
+
+        <div class="toolbar admin-users-pagination-bar">
+            <div class="table-copy" id="adminUsersPaginationText">Загрузка страницы...</div>
+            <div class="action-row">
+                <button class="btn btn-secondary btn-sm" type="button" id="adminUsersPrevButton">Назад</button>
+                <div class="admin-users-page-indicator" id="adminUsersPageIndicator">1 / 1</div>
+                <button class="btn btn-secondary btn-sm" type="button" id="adminUsersNextButton">Вперёд</button>
+            </div>
+        </div>
+    </section>
+</section>
+
+<div id="adminUsersProfileModal" class="modal" aria-hidden="true">
+    <div class="dialog admin-users-dialog-xl">
+        <div class="dialog-header">
+            <div>
+                <div class="section-title section-title-compact">Карточка абонента</div>
+                <div class="table-copy" id="adminUsersProfileLead">Выберите абонента из таблицы.</div>
+            </div>
+            <button class="dialog-close" type="button" data-modal-close="adminUsersProfileModal" aria-label="Закрыть карточку абонента">
+                <i class="fas fa-xmark"></i>
+            </button>
+        </div>
+        <div class="dialog-body">
+            <div id="adminUsersProfileContent">
+                <div class="skeleton skeleton-panel-lg"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="adminUsersFormModal" class="modal" aria-hidden="true">
+    <div class="dialog admin-users-dialog-md">
+        <form id="adminUsersForm">
+            <div class="dialog-header">
+                <div>
+                    <div class="section-title section-title-compact" id="adminUsersFormTitle">Новый абонент</div>
+                    <div class="table-copy" id="adminUsersFormLead">Заполните основные данные абонента.</div>
+                </div>
+                <button class="dialog-close" type="button" data-modal-close="adminUsersFormModal" aria-label="Закрыть форму">
+                    <i class="fas fa-xmark"></i>
+                </button>
+            </div>
+            <div class="dialog-body">
+                <input id="adminUsersFormMode" type="hidden" value="create">
+                <input id="adminUsersFormUserId" type="hidden" value="">
+
+                <div class="admin-users-form-grid">
+                    <label class="field">
+                        <span class="field-label">Фамилия</span>
+                        <input class="input" id="adminUsersLastNameInput" type="text" maxlength="100" placeholder="Григорян">
+                    </label>
+                    <label class="field">
+                        <span class="field-label">Имя</span>
+                        <input class="input" id="adminUsersFirstNameInput" type="text" maxlength="100" placeholder="Мартин">
+                    </label>
+                    <label class="field">
+                        <span class="field-label">Отчество</span>
+                        <input class="input" id="adminUsersMiddleNameInput" type="text" maxlength="100" placeholder="По желанию">
+                    </label>
+                    <label class="field">
+                        <span class="field-label">Телефон</span>
+                        <input class="input" id="adminUsersPhoneInput" type="tel" placeholder="+7 (999) 123-45-67">
+                    </label>
+                    <label class="field">
+                        <span class="field-label">Email</span>
+                        <input class="input" id="adminUsersEmailInput" type="email" maxlength="255" placeholder="client@mtn.ru">
+                    </label>
+                    <label class="field">
+                        <span class="field-label">Лицевой счёт</span>
+                        <input class="input" id="adminUsersBillingInput" type="text" maxlength="64" placeholder="DEMO77777">
+                    </label>
+                    <label class="field admin-users-form-grid-full">
+                        <span class="field-label">Адрес</span>
+                        <input class="input" id="adminUsersAddressInput" type="text" maxlength="255" placeholder="Город, улица, дом, квартира">
+                        <span class="field-hint">Адрес хранится как локальная demo-надстройка для административной карточки.</span>
+                    </label>
+                    <label class="field admin-users-form-grid-full">
+                        <span class="field-label">Стартовый тариф</span>
+                        <select class="select" id="adminUsersCreateTariffSelect">
+                            <option value="">По умолчанию</option>
+                        </select>
+                    </label>
+                </div>
+            </div>
+            <div class="dialog-footer">
+                <button class="btn btn-ghost btn-sm" type="button" data-modal-close="adminUsersFormModal">Отмена</button>
+                <button class="btn btn-primary btn-sm" type="submit" id="adminUsersFormSubmit">
+                    <i class="fas fa-floppy-disk"></i>
+                    Сохранить
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="adminUsersPaymentModal" class="modal" aria-hidden="true">
+    <div class="dialog admin-users-dialog-sm">
+        <form id="adminUsersPaymentForm">
+            <div class="dialog-header">
+                <div>
+                    <div class="section-title section-title-compact">Ручное зачисление</div>
+                    <div class="table-copy" id="adminUsersPaymentLead">Сумма будет зачислена на баланс абонента.</div>
+                </div>
+                <button class="dialog-close" type="button" data-modal-close="adminUsersPaymentModal" aria-label="Закрыть форму пополнения">
+                    <i class="fas fa-xmark"></i>
+                </button>
+            </div>
+            <div class="dialog-body">
+                <input id="adminUsersPaymentUserId" type="hidden" value="">
+                <div class="admin-users-form-grid">
+                    <label class="field">
+                        <span class="field-label">Сумма</span>
+                        <input class="input" id="adminUsersPaymentAmountInput" type="number" min="1" max="100000" step="1" placeholder="1000">
+                    </label>
+                    <label class="field admin-users-form-grid-full">
+                        <span class="field-label">Комментарий</span>
+                        <textarea class="textarea" id="adminUsersPaymentCommentInput" rows="4" placeholder="Например: ручное зачисление по запросу клиента"></textarea>
+                    </label>
+                </div>
+            </div>
+            <div class="dialog-footer">
+                <button class="btn btn-ghost btn-sm" type="button" data-modal-close="adminUsersPaymentModal">Отмена</button>
+                <button class="btn btn-primary btn-sm" type="submit" id="adminUsersPaymentSubmit">
+                    <i class="fas fa-wallet"></i>
+                    Зачислить
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="adminUsersNotifyModal" class="modal" aria-hidden="true">
+    <div class="dialog admin-users-dialog-sm">
+        <form id="adminUsersNotifyForm">
+            <div class="dialog-header">
+                <div>
+                    <div class="section-title section-title-compact">Уведомление абоненту</div>
+                    <div class="table-copy" id="adminUsersNotifyLead">Сообщение будет отправлено в центр уведомлений пользователя.</div>
+                </div>
+                <button class="dialog-close" type="button" data-modal-close="adminUsersNotifyModal" aria-label="Закрыть форму уведомления">
+                    <i class="fas fa-xmark"></i>
+                </button>
+            </div>
+            <div class="dialog-body">
+                <input id="adminUsersNotifyUserId" type="hidden" value="">
+                <div class="admin-users-form-grid">
+                    <label class="field admin-users-form-grid-full">
+                        <span class="field-label">Заголовок</span>
+                        <input class="input" id="adminUsersNotifyTitleInput" type="text" maxlength="255" placeholder="Важно по вашему договору">
+                    </label>
+                    <label class="field">
+                        <span class="field-label">Тип события</span>
+                        <select class="select" id="adminUsersNotifyTypeSelect">
+                            <option value="system">Системное</option>
+                            <option value="payment">Платёж</option>
+                            <option value="tickets">Поддержка</option>
+                            <option value="tariff_changes">Тариф</option>
+                        </select>
+                    </label>
+                    <label class="field">
+                        <span class="field-label">Приоритет</span>
+                        <select class="select" id="adminUsersNotifyPrioritySelect">
+                            <option value="normal">Обычный</option>
+                            <option value="high">Высокий</option>
+                            <option value="urgent">Срочный</option>
+                        </select>
+                    </label>
+                    <label class="field admin-users-form-grid-full">
+                        <span class="field-label">Текст сообщения</span>
+                        <textarea class="textarea" id="adminUsersNotifyMessageInput" rows="5" maxlength="5000" placeholder="Введите текст уведомления для абонента"></textarea>
+                    </label>
+                </div>
+            </div>
+            <div class="dialog-footer">
+                <button class="btn btn-ghost btn-sm" type="button" data-modal-close="adminUsersNotifyModal">Отмена</button>
+                <button class="btn btn-primary btn-sm" type="submit" id="adminUsersNotifySubmit">
+                    <i class="fas fa-paper-plane"></i>
+                    Отправить
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="/static/js/admin-users.js?v={{ asset_version }}"></script>
+{% endblock %}

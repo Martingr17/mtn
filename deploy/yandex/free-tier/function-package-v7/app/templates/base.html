@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="MTN — Martin Telecom Network. Личный кабинет для управления связью, интернетом, платежами, поддержкой и внутренним speedtest.">
+    <meta name="theme-color" content="#0A2B4E">
+    <title>{% block title %}Личный кабинет оператора{% endblock %}</title>
+
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg?v={{ asset_version }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Manrope:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/app.css?v={{ asset_version }}">
+    {% block extra_head %}{% endblock %}
+    <link rel="stylesheet" href="/static/css/mtn-premium-system.css?v={{ asset_version }}">
+</head>
+<body
+    class="mtn-premium {% block body_class %}{% endblock %}"
+    data-demo-mode="{{ 'true' if demo_mode else 'false' }}"
+    data-notifications-polling="45000"
+    data-authenticated="{{ 'true' if current_user else 'false' }}"
+    data-current-user-name="{{ current_user.full_name if current_user and current_user.full_name else '' }}"
+    data-current-user-role="{{ current_user.role.value if current_user and current_user.role and current_user.role.value is defined else (current_user.role if current_user and current_user.role else '') }}"
+>
+    <div class="site-progress" aria-hidden="true">
+        <span id="siteProgressBar" class="site-progress-bar"></span>
+    </div>
+
+    <div class="site-shell">
+        <div id="sidebarBackdrop" class="sheet-backdrop" hidden></div>
+
+        <header class="site-header">
+            <div class="site-header-inner">
+                <div class="brand-lockup">
+                    <button
+                        class="mobile-sidebar-toggle"
+                        type="button"
+                        data-sidebar-open
+                        data-mobile-nav-toggle
+                        aria-controls="siteHeaderNav"
+                        aria-expanded="false"
+                        aria-label="Открыть меню"
+                    >
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <a class="brand-lockup" href="/">
+                        <span class="brand-mark">
+                            <i class="fas fa-satellite-dish"></i>
+                        </span>
+                        <span class="brand-copy">
+                            <span class="brand-title">MTN</span>
+                            <span class="brand-subtitle">Martin Telecom Network</span>
+                        </span>
+                    </a>
+                </div>
+
+                <div class="header-actions">
+                    <nav id="siteHeaderNav" class="site-header-nav" aria-label="Основная навигация MTN">
+                        <a class="header-nav-link" href="/" data-nav-path="/" data-auth-href="/" data-guest-href="/">Главная</a>
+                        <a class="header-nav-link" href="/tariffs" data-nav-path="/tariffs" data-auth-href="/tariffs" data-guest-href="/tariffs">Тарифы</a>
+                        <a class="header-nav-link" href="/login?next=/payments" data-nav-path="/payments" data-auth-href="/payments" data-guest-href="/login?next=/payments">Оплата</a>
+                        <a class="header-nav-link" href="/support" data-nav-path="/support" data-nav-paths="/support,/tickets" data-auth-href="/tickets" data-guest-href="/support">Поддержка</a>
+                        <a class="header-nav-link" href="/login?next=/profile" data-nav-path="/profile" data-nav-paths="/profile,/settings,/statistics,/monitoring" data-auth-href="/profile" data-guest-href="/login?next=/profile">Профиль</a>
+                        <a class="header-nav-link" href="/login?next=/notifications" data-nav-path="/notifications" data-auth-href="/notifications" data-guest-href="/login?next=/notifications">Уведомления</a>
+                    </nav>
+
+                    <div id="mtnHeaderServiceSwitcher" class="mtn-header-service" hidden>
+                        <label class="sr-only" for="mtnHeaderServiceSelect">Выберите услугу</label>
+                        <select id="mtnHeaderServiceSelect" class="mtn-header-service__select" aria-label="Выберите услугу"></select>
+                    </div>
+
+                    <div id="navGuestActions" class="nav-guest-actions"{% if current_user %} hidden{% endif %}>
+                        <a class="btn btn-primary btn-sm" href="/login">
+                            <i class="fas fa-arrow-right-to-bracket"></i>
+                            Войти
+                        </a>
+                    </div>
+
+                    <div id="navUserShell" class="nav-user-shell"{% if not current_user %} hidden{% endif %}>
+                        <div class="relative">
+                            <button class="header-notifications-trigger" type="button" data-dropdown-trigger="headerNotificationsDropdown" aria-label="Уведомления">
+                                <i class="fas fa-bell"></i>
+                                <span class="sr-only">Открыть последние уведомления</span>
+                                <span id="headerUnreadBadge" class="badge badge-danger" hidden>0</span>
+                            </button>
+                            <div id="headerNotificationsDropdown" class="dropdown">
+                                <div class="dropdown-head">
+                                    <div class="table-title">Последние уведомления</div>
+                                    <div class="table-copy">Проблемы линии, платежи, ответы поддержки и сервисные события в одном потоке.</div>
+                                </div>
+                                <div id="headerNotificationsList" class="dropdown-list">
+                                    <div class="dropdown-item">
+                                        <div class="table-copy">Загружаем последние события...</div>
+                                    </div>
+                                </div>
+                                <div class="dropdown-foot">
+                                    <div class="action-row">
+                                        <button class="btn btn-secondary btn-sm" type="button" onclick="window.OperatorUI && window.OperatorUI.markAllNotificationsRead ? window.OperatorUI.markAllNotificationsRead() : null">
+                                            <i class="fas fa-check-double"></i>
+                                            Прочитать всё
+                                        </button>
+                                        <a class="btn btn-secondary btn-sm" href="/settings">
+                                            <i class="fas fa-sliders"></i>
+                                            Настроить
+                                        </a>
+                                        <a class="btn btn-primary btn-sm" href="/notifications">
+                                            <i class="fas fa-arrow-right"></i>
+                                            Все уведомления
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative">
+                            <button class="user-chip" type="button" data-dropdown-trigger="headerUserDropdown">
+                                <span class="user-chip-avatar" data-user-initials>{{ (current_user.full_name[0] if current_user and current_user.full_name else 'ЛК') }}</span>
+                                <span>
+                                    <span id="userChipName" class="user-chip-name">{{ current_user.full_name if current_user and current_user.full_name else 'Пользователь' }}</span>
+                                    <span id="userChipRole" class="user-chip-role">{{ current_user.role.value if current_user and current_user.role.value is defined else (current_user.role if current_user else 'Абонент') }}</span>
+                                </span>
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div id="headerUserDropdown" class="dropdown">
+                                <div class="dropdown-head">
+                                    <div class="table-title" id="headerUserDropdownName">{{ current_user.full_name if current_user and current_user.full_name else 'Личный кабинет' }}</div>
+                                    <div class="table-copy">Быстрый доступ к профилю, настройкам и основным разделам кабинета MTN.</div>
+                                </div>
+                                <div class="dropdown-list">
+                                    <a class="dropdown-item" href="/">
+                                        <div class="table-title">Главная</div>
+                                        <div class="table-copy">Баланс, тариф, скорость линии и поддержка на одном экране.</div>
+                                    </a>
+                                    <a class="dropdown-item" href="/profile">
+                                        <div class="table-title">Профиль</div>
+                                        <div class="table-copy">Контакты, история аккаунта, статистика линии и персональные данные.</div>
+                                    </a>
+                                    <a class="dropdown-item" href="/settings">
+                                        <div class="table-title">Настройки</div>
+                                        <div class="table-copy">Каналы уведомлений, приватность и сервисные предпочтения.</div>
+                                    </a>
+                                </div>
+                                <div class="dropdown-foot">
+                                    <button class="btn btn-danger btn-sm" type="button" onclick="window.OperatorUI && window.OperatorUI.logout ? window.OperatorUI.logout('/') : (window.location.href='/')">
+                                        <i class="fas fa-sign-out-alt"></i>
+                                        Выйти
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div id="layoutGrid" class="layout-grid">
+            <aside id="siteSidebar" class="site-sidebar" hidden>
+                <div class="sidebar-user">
+                    <div class="sidebar-avatar" data-user-initials>ЛК</div>
+                    <div>
+                        <div id="sidebarUserName" class="sidebar-user-name">Пользователь</div>
+                        <div id="sidebarUserRole" class="sidebar-user-role">Абонент</div>
+                    </div>
+                </div>
+
+                <nav class="sidebar-nav">
+                    <div class="sidebar-label">Инструменты</div>
+                    <a class="nav-link" href="/speedtest" data-nav-path="/speedtest">
+                        <i class="fas fa-gauge-high"></i>
+                        <span>Speedtest</span>
+                    </a>
+                    <a class="nav-link" href="/statistics" data-nav-path="/statistics">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Статистика</span>
+                    </a>
+                    <a class="nav-link" href="/monitoring" data-nav-path="/monitoring">
+                        <i class="fas fa-heart-pulse"></i>
+                        <span>Мониторинг</span>
+                    </a>
+                    <a class="nav-link" href="/settings" data-nav-path="/settings">
+                        <i class="fas fa-sliders"></i>
+                        <span>Настройки</span>
+                    </a>
+
+                    <div class="sidebar-label" data-admin-only hidden>Администрирование</div>
+                    <a class="nav-link" href="/admin/dashboard" data-nav-path="/admin/dashboard" data-admin-only hidden>
+                        <i class="fas fa-users"></i>
+                        <span>Дашборд</span>
+                    </a>
+                    <a class="nav-link" href="/admin/abonents" data-nav-path="/admin/abonents" data-admin-only hidden>
+                        <i class="fas fa-gauge-high"></i>
+                        <span>Пользователи</span>
+                    </a>
+                    <a class="nav-link" href="/admin/tickets" data-nav-path="/admin/tickets" data-admin-only hidden>
+                        <i class="fas fa-headset"></i>
+                        <span>Заявки</span>
+                    </a>
+                    <a class="nav-link" href="/admin/payments" data-nav-path="/admin/payments" data-admin-only data-admin-privileged hidden>
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>Платежи</span>
+                    </a>
+                    <a class="nav-link" href="/admin/tariffs" data-nav-path="/admin/tariffs" data-admin-only data-admin-privileged hidden>
+                        <i class="fas fa-tags"></i>
+                        <span>Тарифы</span>
+                    </a>
+                    <a class="nav-link" href="/admin/operators" data-nav-path="/admin/operators" data-admin-only data-admin-privileged hidden>
+                        <i class="fas fa-user-shield"></i>
+                        <span>Операторы</span>
+                    </a>
+                    <a class="nav-link" href="/admin/activity-log" data-nav-path="/admin/activity-log" data-admin-only hidden>
+                        <i class="fas fa-scroll"></i>
+                        <span>Логи</span>
+                    </a>
+                    <a class="nav-link" href="/admin/metrics" data-nav-path="/admin/metrics" data-admin-only hidden>
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Метрики</span>
+                    </a>
+                    <a class="nav-link" href="/admin/settings" data-nav-path="/admin/settings" data-admin-only data-admin-privileged hidden>
+                        <i class="fas fa-sliders"></i>
+                        <span>Настройки</span>
+                    </a>
+                </nav>
+
+                <div class="separator"></div>
+
+                <div class="list-stack">
+                    <button class="btn btn-secondary btn-sm" type="button" data-sidebar-close>
+                        <i class="fas fa-xmark"></i>
+                        Свернуть меню
+                    </button>
+                </div>
+            </aside>
+
+            <main class="site-main">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+
+        <footer class="layout-grid site-footer-wrap">
+            <div class="card site-footer-card">
+                <div class="site-footer-grid">
+                    <div class="site-footer-brand">
+                        <div class="site-footer-lockup">
+                            <div class="site-footer-title">MTN</div>
+                            <div class="site-footer-copy">© 2026 Martin Telecom Network</div>
+                        </div>
+                    </div>
+                    <div class="site-footer-meta">
+                        <div id="footerDemoBadge" class="site-footer-note site-footer-demo" hidden>Демо-режим. Данные не настоящие.</div>
+                        <div class="site-footer-links">
+                            <a class="chip" href="/terms"><i class="fas fa-file-contract"></i>Условия</a>
+                            <a class="chip" href="/privacy"><i class="fas fa-user-shield"></i>Конфиденциальность</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="/static/js/app.js?v={{ asset_version }}"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

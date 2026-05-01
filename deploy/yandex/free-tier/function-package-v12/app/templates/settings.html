@@ -1,0 +1,348 @@
+{% extends "base.html" %}
+
+{% block title %}Настройки уведомлений | Личный кабинет MTN{% endblock %}
+
+{% block content %}
+<section class="page-section">
+    <div class="toolbar">
+        <div>
+            <h1 class="toolbar-title">Настройки уведомлений</h1>
+            <p class="toolbar-copy">Управляйте каналами оповещений MTN, выбирайте события для отслеживания и настраивайте тихие часы без перехода в сторонние сервисы.</p>
+        </div>
+        <div class="action-row u-action-row-reset">
+            <a class="btn btn-secondary btn-sm" href="/notifications">
+                <i class="fas fa-bell"></i>
+                Центр уведомлений
+            </a>
+            <a class="btn btn-primary btn-sm" href="/monitoring">
+                <i class="fas fa-heart-pulse"></i>
+                Мониторинг линии
+            </a>
+        </div>
+    </div>
+
+    <section class="settings-grid">
+        <article class="profile-panel span-8">
+            <div class="section-title-wrap">
+                <div>
+                    <h2 class="section-title">Каналы и события</h2>
+                    <p class="section-subtitle">Укажите, где получать уведомления и какие события считать важными. Изменения применяются сразу после сохранения.</p>
+                </div>
+            </div>
+
+            <form id="notificationSettingsForm" class="list-stack">
+                <div class="settings-block">
+                    <div class="settings-block-head">
+                        <div class="table-title">Каналы доставки</div>
+                        <div class="table-copy">Уведомления на сайте работают через виджет в шапке, центр уведомлений и автоматическое фоновое обновление. Внешние браузерные всплывающие уведомления в этой версии не используются.</div>
+                    </div>
+                    <div class="list-stack">
+                        <label class="feature-card toolbar settings-toggle">
+                            <span>
+                                <span class="table-title">Уведомления на сайте</span>
+                                <span class="table-copy">Показывать события в колокольчике и в центре уведомлений.</span>
+                            </span>
+                            <input type="checkbox" name="site_enabled">
+                        </label>
+                        <label class="feature-card toolbar settings-toggle">
+                            <span>
+                                <span class="table-title">Email</span>
+                                <span class="table-copy">Дублировать важные уведомления письмом на контактный email.</span>
+                            </span>
+                            <input type="checkbox" name="email_enabled">
+                        </label>
+                        <label class="feature-card toolbar settings-toggle">
+                            <span>
+                                <span class="table-title">Telegram</span>
+                                <span class="table-copy">Получать алерты в Telegram после привязки чата.</span>
+                            </span>
+                            <input type="checkbox" name="telegram_enabled" id="telegramEnabledToggle">
+                        </label>
+                        <div class="feature-card toolbar settings-toggle" id="browserPushCard">
+                            <span>
+                                <span class="table-title">Realtime-уведомления MTN</span>
+                                <span class="table-copy" id="browserPushHelp">В этой версии уведомления приходят прямо в личный кабинет: в колокольчик, центр уведомлений и через фоновое обновление без перезагрузки страницы. Внешние всплывающие уведомления браузера мы сознательно не используем.</span>
+                            </span>
+                            <span class="badge badge-neutral">На сайте</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-block">
+                    <div class="settings-block-head">
+                        <div class="table-title">Какие события отслеживать</div>
+                        <div class="table-copy">Настройте собственный набор триггеров: от проблем с линией и платежей до новостей и сервисных работ.</div>
+                    </div>
+                    <div id="notificationEventTypes" class="settings-event-grid">
+                        <div class="skeleton skeleton-card-96"></div>
+                        <div class="skeleton skeleton-card-96"></div>
+                    </div>
+                </div>
+
+                <div class="settings-block">
+                    <div class="settings-block-head">
+                        <div class="table-title">Тихие часы и параметры алертов</div>
+                        <div class="table-copy">В это время уведомления не будут дублироваться в каналы доставки. История на сайте при этом сохранится.</div>
+                    </div>
+                    <div class="filters-grid">
+                        <label class="field">
+                            <span>Начало тихого периода</span>
+                            <input class="input" type="time" name="quiet_hours_start">
+                        </label>
+                        <label class="field">
+                            <span>Окончание тихого периода</span>
+                            <input class="input" type="time" name="quiet_hours_end">
+                        </label>
+                        <label class="field">
+                            <span>Cooldown алертов, минут</span>
+                            <input class="input" type="number" min="5" max="1440" step="5" name="alert_cooldown_minutes" value="30">
+                        </label>
+                        <label class="field">
+                            <span>Telegram chat ID</span>
+                            <input class="input" type="text" name="telegram_chat_id" placeholder="Например, 123456789">
+                        </label>
+                    </div>
+                    <label class="feature-card toolbar settings-toggle">
+                        <span>
+                            <span class="table-title">Мониторинг качества связи</span>
+                            <span class="table-copy">Отключите, если не хотите получать автоматические алерты по линии и истории сетевых событий.</span>
+                        </span>
+                        <input type="checkbox" name="monitoring_enabled">
+                    </label>
+                </div>
+
+                <div class="action-row">
+                    <button class="btn btn-primary" id="settingsSaveBtn" type="submit">
+                        <i class="fas fa-floppy-disk"></i>
+                        Сохранить настройки
+                    </button>
+                    <button class="btn btn-secondary" id="settingsReloadBtn" type="button">
+                        <i class="fas fa-rotate"></i>
+                        Обновить из сервера
+                    </button>
+                </div>
+            </form>
+        </article>
+
+        <article class="profile-panel span-4">
+            <div class="section-title-wrap">
+                <div>
+                    <h2 class="section-title">Безопасность и сессии</h2>
+                    <p class="section-subtitle">Быстро завершайте лишние входы и держите контроль над доступом к кабинету.</p>
+                </div>
+            </div>
+
+            <div class="list-stack">
+                <div class="feature-card">
+                    <div class="table-title">Завершить все другие сессии</div>
+                    <div class="table-copy">Отключает все устройства, кроме текущего браузера. Полезно, если вы заметили лишнюю активность или потеряли устройство.</div>
+                </div>
+                <button class="btn btn-danger" type="button" onclick="logoutAllDevices()">
+                    <i class="fas fa-power-off"></i>
+                    Выйти на всех устройствах
+                </button>
+            </div>
+
+            <div class="separator"></div>
+
+            <div class="list-stack">
+                <div class="feature-card">
+                    <div class="table-title">Статус доставки на сайте</div>
+                    <div class="table-copy" id="pushStatusText">Уведомления приходят в шапку сайта, центр уведомлений и обновляются автоматически через realtime-канал MTN с резервным polling.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="table-title">Как это работает</div>
+                    <div class="table-copy">Если соединение с realtime-каналом недоступно, кабинет сам подхватывает новые события фоновым опросом API. История уведомлений и счётчик непрочитанных при этом сохраняются полностью.</div>
+                </div>
+            </div>
+        </article>
+    </section>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const notificationSettingsState = {
+        settings: null,
+        eventTypes: [],
+    };
+
+    const notificationEventCatalog = {
+        connection_issues: {
+            label: "Проблемы с соединением",
+            description: "Обрывы, высокий пинг, потери пакетов и другие отклонения по линии.",
+            icon: "🚨",
+            color: "danger",
+        },
+        maintenance: {
+            label: "Плановые технические работы",
+            description: "Предупреждения о сервисных окнах и возможных перерывах.",
+            icon: "🔧",
+            color: "primary",
+        },
+        news: {
+            label: "Новости и акции",
+            description: "Обновления сервиса, выгодные предложения и важные новости MTN.",
+            icon: "ℹ️",
+            color: "neutral",
+        },
+        tariff_changes: {
+            label: "Смена тарифа и услуг",
+            description: "Подтверждения изменений по тарифу, услугам и дополнительным опциям.",
+            icon: "📶",
+            color: "info",
+        },
+        traffic_threshold: {
+            label: "Достижение порога трафика",
+            description: "Предупреждения о приближении к лимиту или исчерпании пакета.",
+            icon: "📊",
+            color: "warning",
+        },
+        payment: {
+            label: "Платежи и баланс",
+            description: "Списания, пополнения и предупреждения о низком балансе.",
+            icon: "💳",
+            color: "warning",
+        },
+        tickets: {
+            label: "Заявки и поддержка",
+            description: "Ответы оператора, изменения статусов и важные действия по обращениям.",
+            icon: "🎧",
+            color: "info",
+        },
+    };
+
+    function notificationTypeCardTemplate(item, enabled = false) {
+        return `
+            <label class="feature-card notification-type-card ${enabled ? "is-enabled" : ""}">
+                <input type="checkbox" name="enabled_event_types" value="${OperatorUI.escapeHTML(item.key)}" ${enabled ? "checked" : ""}>
+                <div class="notification-type-mark is-${OperatorUI.escapeHTML(item.color || "neutral")}">${OperatorUI.escapeHTML(item.icon || "•")}</div>
+                <div class="notification-type-copy">
+                    <div class="table-title">${OperatorUI.escapeHTML(item.label)}</div>
+                    <div class="table-copy">${OperatorUI.escapeHTML(item.description)}</div>
+                </div>
+            </label>
+        `;
+    }
+
+    function syncNotificationTypeCards() {
+        document.querySelectorAll('.notification-type-card input[type="checkbox"]').forEach((input) => {
+            input.closest(".notification-type-card")?.classList.toggle("is-enabled", input.checked);
+        });
+    }
+
+    function renderNotificationEventTypes() {
+        const container = document.getElementById("notificationEventTypes");
+        const enabled = new Set(notificationSettingsState.settings?.enabled_event_types || []);
+        container.innerHTML = notificationSettingsState.eventTypes
+            .map((item) => notificationTypeCardTemplate(item, enabled.has(item.key)))
+            .join("");
+        syncNotificationTypeCards();
+        container.querySelectorAll('input[name="enabled_event_types"]').forEach((input) => {
+            input.addEventListener("change", syncNotificationTypeCards);
+        });
+    }
+
+    function applyNotificationSettings(settingsPayload) {
+        notificationSettingsState.settings = settingsPayload;
+        const form = document.getElementById("notificationSettingsForm");
+        form.site_enabled.checked = Boolean(settingsPayload.site_enabled);
+        form.email_enabled.checked = Boolean(settingsPayload.email_enabled);
+        form.telegram_enabled.checked = Boolean(settingsPayload.telegram_enabled);
+        form.monitoring_enabled.checked = Boolean(settingsPayload.monitoring_enabled);
+        form.telegram_chat_id.value = settingsPayload.telegram_chat_id || "";
+        form.alert_cooldown_minutes.value = Number(settingsPayload.alert_cooldown_minutes || 30);
+        form.quiet_hours_start.value = settingsPayload.quiet_hours_start ? String(settingsPayload.quiet_hours_start).slice(0, 5) : "";
+        form.quiet_hours_end.value = settingsPayload.quiet_hours_end ? String(settingsPayload.quiet_hours_end).slice(0, 5) : "";
+        renderNotificationEventTypes();
+        const pushStatus = document.getElementById("pushStatusText");
+        if (pushStatus) {
+            pushStatus.textContent = Boolean(settingsPayload.site_enabled)
+                ? "Уведомления на сайте активны: новые события приходят в шапку, центр уведомлений и подтягиваются автоматически."
+                : "Уведомления на сайте отключены. История сохранится, но колокольчик и realtime-лента перестанут обновляться до повторного включения.";
+        }
+    }
+
+    function collectNotificationSettingsPayload() {
+        const form = document.getElementById("notificationSettingsForm");
+        const enabledEventTypes = Array.from(
+            form.querySelectorAll('input[name="enabled_event_types"]:checked')
+        ).map((input) => input.value);
+
+        return {
+            monitoring_enabled: form.monitoring_enabled.checked,
+            site_enabled: form.site_enabled.checked,
+            email_enabled: form.email_enabled.checked,
+            telegram_enabled: form.telegram_enabled.checked,
+            browser_push_enabled: false,
+            telegram_chat_id: form.telegram_chat_id.value.trim() || null,
+            enabled_event_types: enabledEventTypes,
+            quiet_hours_start: form.quiet_hours_start.value || null,
+            quiet_hours_end: form.quiet_hours_end.value || null,
+            alert_cooldown_minutes: Number(form.alert_cooldown_minutes.value || 30),
+        };
+    }
+
+    async function loadNotificationSettingsPage() {
+        if (!OperatorUI.isAuthenticated()) {
+            OperatorUI.renderAuthRequired(document.querySelector(".site-main"));
+            return;
+        }
+
+        try {
+            const [settingsPayload, eventTypes] = await Promise.all([
+                OperatorUI.request("/api/v1/notifications/settings", { auth: true }),
+                OperatorUI.request("/api/v1/notifications/events/types", { auth: true }),
+            ]);
+            notificationSettingsState.eventTypes = Array.isArray(eventTypes)
+                ? eventTypes.map((item) => ({ ...item, ...(notificationEventCatalog[item.key] || {}) }))
+                : Object.entries(notificationEventCatalog).map(([key, value]) => ({ key, ...value, default_enabled: true }));
+            applyNotificationSettings(settingsPayload);
+        } catch (error) {
+            OperatorUI.toast(error.message || "Не удалось загрузить настройки уведомлений.", "error");
+        }
+    }
+
+    async function saveNotificationSettings(event) {
+        event.preventDefault();
+        const submit = document.getElementById("settingsSaveBtn");
+        const payload = collectNotificationSettingsPayload();
+
+        OperatorUI.setButtonLoading(submit, true, "Сохраняем...");
+        try {
+            const settingsPayload = await OperatorUI.request("/api/v1/notifications/settings", {
+                method: "PUT",
+                auth: true,
+                json: true,
+                body: payload,
+            });
+            applyNotificationSettings(settingsPayload);
+            OperatorUI.toast("Настройки уведомлений сохранены.", "success");
+        } catch (error) {
+            OperatorUI.toast(error.message || "Не удалось сохранить настройки уведомлений.", "error");
+        } finally {
+            OperatorUI.setButtonLoading(submit, false);
+        }
+    }
+
+    async function logoutAllDevices() {
+        if (!confirm("Завершить все сессии, кроме текущей?")) {
+            return;
+        }
+
+        try {
+            await OperatorUI.request("/api/v1/users/me/sessions/logout-all", {
+                method: "POST",
+                auth: true,
+            });
+            OperatorUI.toast("Все дополнительные сессии завершены.", "success");
+        } catch (error) {
+            OperatorUI.toast(error.message || "Не удалось завершить сессии.", "error");
+        }
+    }
+
+    document.getElementById("notificationSettingsForm").addEventListener("submit", saveNotificationSettings);
+    document.getElementById("settingsReloadBtn").addEventListener("click", loadNotificationSettingsPage);
+    document.addEventListener("DOMContentLoaded", loadNotificationSettingsPage);
+</script>
+{% endblock %}

@@ -1,0 +1,66 @@
+[
+  {
+    "routePath": "/",
+    "innerWidth": 1440,
+    "scrollWidth": 1440,
+    "scrollHeight": 1400,
+    "title": "Единый современный контур для клиента, поддержки и операционной команды",
+    "overflowX": false
+  },
+  {
+    "routePath": "/dashboard",
+    "innerWidth": 1440,
+    "scrollWidth": 1440,
+    "scrollHeight": 1487,
+    "title": "Alina, всё под контролем.",
+    "overflowX": false
+  },
+  {
+    "routePath": "/tariffs",
+    "innerWidth": 1440,
+    "scrollWidth": 1440,
+    "scrollHeight": 1400,
+    "title": "Тарифы MTN",
+    "overflowX": false
+  },
+  {
+    "routePath": "/payments",
+    "innerWidth": 1440,
+    "scrollWidth": 1440,
+    "scrollHeight": 1400,
+    "title": "Пополнение баланса и история платежей",
+    "overflowX": false
+  },
+  {
+    "routePath": "/support",
+    "innerWidth": 1440,
+    "scrollWidth": 1440,
+    "scrollHeight": 1400,
+    "title": "Поддержка MTN без фрагментации по страницам и модалкам.",
+    "overflowX": false
+  },
+  {
+    "routePath": "/notifications",
+    "innerWidth": 1440,
+    "scrollWidth": 1440,
+    "scrollHeight": 1400,
+    "title": "Центр уведомлений MTN",
+    "overflowX": false
+  },
+  {
+    "routePath": "/profile",
+    "innerWidth": 1440,
+    "scrollWidth": 1440,
+    "scrollHeight": 1657,
+    "title": "Личные данные и безопасность аккаунта",
+    "overflowX": false
+  },
+  {
+    "routePath": "/settings",
+    "innerWidth": 1440,
+    "scrollWidth": 1440,
+    "scrollHeight": 1550,
+    "title": "Настройки интерфейса, уведомлений и приватности",
+    "overflowX": false
+  }
+]

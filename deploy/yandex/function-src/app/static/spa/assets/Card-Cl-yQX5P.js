@@ -1,0 +1,2 @@
+import{i as e,l as t,r as n,t as r}from"./cn-Dxg1DMZx.js";var i=t(e(),1),a=n(),o=(0,i.forwardRef)(({children:e,className:t,...n},i)=>(0,a.jsx)(`div`,{ref:i,className:r(`ui-card`,t),...n,children:e}));o.displayName=`Card`;export{o as t};
+//# sourceMappingURL=Card-Cl-yQX5P.js.map
