@@ -3,6 +3,7 @@ import { ArrowRight, RotateCcw } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { ScenarioCard, type ScenarioCardItem } from "@/components/landing/ScenarioCardsSection";
+import { spaAssetPath } from "@/utils/assets";
 
 interface TrustMetric {
   icon: LucideIcon;
@@ -20,11 +21,19 @@ export function HeroSection({ scenarioItems, trustMetrics }: HeroSectionProps) {
     <section className="landing-hero-stage" aria-labelledby="landing-hero-title">
       <header className="landing-hero-header" aria-label="Навигация стартовой страницы">
         <Link className="landing-logo" to="/" aria-label="MTN ID">
-          <img className="landing-logo-image" src="/landing-header-icon-cropped.png" alt="MTN ID" />
+          <img
+            className="landing-logo-image"
+            src={spaAssetPath("landing-header-icon-cropped.png")}
+            alt="MTN ID"
+          />
         </Link>
 
         <span className="landing-header-emblem" aria-hidden="true">
-          <img className="landing-header-emblem-image" src="/landing-logo-header.png" alt="" />
+          <img
+            className="landing-header-emblem-image"
+            src={spaAssetPath("landing-logo-header.png")}
+            alt=""
+          />
         </span>
 
         <Link className="landing-header-login" to="/login">

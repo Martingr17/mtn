@@ -2,6 +2,8 @@ import type { LucideIcon } from "lucide-react";
 import { ArrowRight, Bell, CreditCard, Gauge, LifeBuoy } from "lucide-react";
 import { Link } from "react-router-dom";
 
+import { spaAssetPath } from "@/utils/assets";
+
 interface ScenarioCardItem {
   action: string;
   description: string;
@@ -48,7 +50,7 @@ function LandingPage() {
         <section className="landing-reference-hero" aria-labelledby="landing-reference-title">
           <img
             className="landing-reference-logo"
-            src="/landing-top-logo.png"
+            src={spaAssetPath("landing-top-logo.png")}
             alt="MTN Martin Telecom Network"
           />
 
@@ -81,7 +83,7 @@ function LandingPage() {
           <div className="landing-reference-visual-shell" aria-hidden="true">
             <img
               className="landing-reference-visual"
-              src="/landing-servers-hero.png"
+              src={spaAssetPath("landing-servers-hero.png")}
               alt=""
             />
           </div>

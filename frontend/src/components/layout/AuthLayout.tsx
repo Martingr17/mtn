@@ -1,6 +1,8 @@
 import type { LucideIcon } from "lucide-react";
 import type { PropsWithChildren, ReactNode } from "react";
 
+import { spaAssetPath } from "@/utils/assets";
+
 interface AuthLayoutHighlight {
   title: string;
   description: string;
@@ -56,7 +58,7 @@ export function AuthLayout({
             <div className="auth-login-brand-lockup">
               <img
                 className="auth-login-brand-wordmark"
-                src="/mtn-login-logo-hq.png"
+                src={spaAssetPath("mtn-login-logo-hq.png")}
                 alt="MTN Martin Telecom Network"
               />
             </div>
@@ -88,7 +90,7 @@ export function AuthLayout({
             <div className="auth-brand-visual-shell" aria-hidden="true">
               <img
                 className="auth-brand-visual"
-                src="/login-security-hero-transparent.png"
+                src={spaAssetPath("login-security-hero-transparent.png")}
                 alt=""
               />
             </div>
