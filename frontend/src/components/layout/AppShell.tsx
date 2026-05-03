@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Bell,
-  ChevronDown,
   Gauge,
   LayoutDashboard,
   LifeBuoy,
@@ -30,6 +29,7 @@ import { useAppStore } from "@/store/app-store";
 import type { AppState } from "@/store/app-store";
 import { useAuthStore } from "@/store/auth-store";
 import type { AuthState } from "@/store/auth-store";
+import { spaAssetPath } from "@/utils/assets";
 import { cn } from "@/utils/cn";
 import { getRoleLabel, hasMvpRole } from "@/utils/roles";
 
@@ -209,10 +209,11 @@ export function AppShell() {
 
       <aside id="app-shell-sidebar" className={cn("shell-sidebar", sidebarOpen && "is-open")}>
         <div className="brand-block">
-          <div className="brand-mark">MTN</div>
-          <div>
+          <span className="brand-mark brand-mark--logo" aria-hidden="true">
+            <img src={spaAssetPath("mtn-brand-icon.png")} alt="" />
+          </span>
+          <div className="brand-block-copy">
             <strong>Martin Telecom Network</strong>
-            <p>Личный кабинет и сервис MTN</p>
           </div>
         </div>
 
@@ -271,7 +272,6 @@ export function AppShell() {
                 <strong>{displayName}</strong>
                 <span>{roleLabel}</span>
               </div>
-              <ChevronDown size={16} className={cn("user-pill-chevron", accountMenuOpen && "is-open")} />
             </button>
 
             {accountMenuOpen ? (
