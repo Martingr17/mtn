@@ -38,6 +38,13 @@ def test_render_page_keeps_demo_staff_credentials_in_demo(monkeypatch):
     assert len(context["demo_staff_aliases"]) == 2
 
 
+async def test_root_uses_spa_index_in_demo_mode(monkeypatch):
+    monkeypatch.setattr(main.settings, "demo_mode", True)
+    response = await main.root(_build_request(), current_user=None)
+
+    assert response.path.replace("\\", "/").endswith("static/spa/index.html")
+
+
 def test_no_duplicate_payments_statement_pdf_route():
     matches = [
         route

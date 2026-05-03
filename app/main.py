@@ -446,6 +446,8 @@ async def health_check():
 
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request, current_user: Optional[User] = Depends(get_optional_current_user)):
+    if settings.demo_mode:
+        return render_spa_index()
     return render_page(request, "index.html", current_user=current_user)
 
 
