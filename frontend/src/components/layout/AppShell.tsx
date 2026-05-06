@@ -63,6 +63,7 @@ const ADMIN_ONLY_NAV: NavItem[] = [
   { to: "/admin/tariffs", label: "Тарифы", icon: RadioTower, shortcut: "G R" },
   { to: "/admin/operators", label: "Операторы", icon: Shield, shortcut: "G O" },
   { to: "/admin/settings", label: "Настройки", icon: Settings, shortcut: "G S" },
+  { to: "/admin/logs", label: "Системные логи", icon: ScrollText, shortcut: "G L" },
 ];
 
 const SUBSCRIBER_OPS_NAV: NavItem[] = [

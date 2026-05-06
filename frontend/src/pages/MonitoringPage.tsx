@@ -84,12 +84,13 @@ function MonitoringPage() {
     }
 
     return {
-      monitoring_enabled: subscriptionQuery.data.monitoring_enabled,
-      email_enabled: subscriptionQuery.data.email_enabled,
-      telegram_enabled: subscriptionQuery.data.telegram_enabled,
-      browser_push_enabled: subscriptionQuery.data.browser_push_enabled,
+      monitoring_enabled: subscriptionQuery.data.monitoring_enabled ?? DEFAULT_MONITORING_FORM.monitoring_enabled,
+      email_enabled: subscriptionQuery.data.email_enabled ?? DEFAULT_MONITORING_FORM.email_enabled,
+      telegram_enabled: subscriptionQuery.data.telegram_enabled ?? DEFAULT_MONITORING_FORM.telegram_enabled,
+      browser_push_enabled: subscriptionQuery.data.browser_push_enabled ?? DEFAULT_MONITORING_FORM.browser_push_enabled,
       telegram_chat_id: subscriptionQuery.data.telegram_chat_id ?? "",
-      alert_cooldown_minutes: subscriptionQuery.data.alert_cooldown_minutes,
+      alert_cooldown_minutes:
+        subscriptionQuery.data.alert_cooldown_minutes ?? DEFAULT_MONITORING_FORM.alert_cooldown_minutes,
       ...draftState,
     };
   }, [draftState, subscriptionQuery.data]);

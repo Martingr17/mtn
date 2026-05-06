@@ -42,6 +42,7 @@ const AdminPaymentsPage = lazy(() => import("@/pages/admin/AdminPaymentsPage"));
 const AdminTariffsPage = lazy(() => import("@/pages/admin/AdminTariffsPage"));
 const AdminOperatorsPage = lazy(() => import("@/pages/admin/AdminOperatorsPage"));
 const AdminSettingsPage = lazy(() => import("@/pages/admin/AdminSettingsPage"));
+const AdminLogsPage = lazy(() => import("@/pages/admin/AdminLogsPage"));
 const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
 
 function RouteSuspense() {
@@ -178,6 +179,7 @@ export function AppRouter() {
                   <Route path="/admin/tariffs" element={<PageTransition><AdminTariffsPage /></PageTransition>} />
                   <Route path="/admin/operators" element={<PageTransition><AdminOperatorsPage /></PageTransition>} />
                   <Route path="/admin/settings" element={<PageTransition><AdminSettingsPage /></PageTransition>} />
+                  <Route path="/admin/logs" element={<PageTransition><AdminLogsPage /></PageTransition>} />
                 </Route>
               </Route>
             </Route>

@@ -59,6 +59,10 @@ function countBy(items: NocIncident[], predicate: (item: NocIncident) => boolean
   return items.filter(predicate).length;
 }
 
+function getIncidentAlarms(incident: NocIncident) {
+  return Array.isArray(incident.alarms) ? incident.alarms : [];
+}
+
 function NocIncidentsPage() {
   const role = useAuthStore((state: AuthState) => state.role);
   const queryClient = useQueryClient();
@@ -272,27 +276,31 @@ function NocIncidentsPage() {
                 </tr>
               </thead>
               <tbody>
-                {incidents.map((incident) => (
-                  <tr key={incident.id}>
-                    <td>
-                      <div className="stack-sm">
-                        <Link className="link-line" to={`/noc/incidents/${incident.id}`}>
-                          <strong>#{incident.id} {incident.title}</strong>
-                        </Link>
-                        <span className="muted">{incident.source} source · {incident.alarms.length} alarms</span>
-                      </div>
-                    </td>
-                    <td>{incident.affected_service}</td>
-                    <td>
-                      <StatusBadge tone={severityTone(incident.severity)}>{incident.severity}</StatusBadge>
-                    </td>
-                    <td>
-                      <StatusBadge tone={statusTone(incident.status)}>{incident.status}</StatusBadge>
-                    </td>
-                    <td>{incident.assigned_user?.full_name ?? "Unassigned"}</td>
-                    <td>{formatDate(incident.created_at)}</td>
-                  </tr>
-                ))}
+                {incidents.map((incident) => {
+                  const alarms = getIncidentAlarms(incident);
+
+                  return (
+                    <tr key={incident.id}>
+                      <td>
+                        <div className="stack-sm">
+                          <Link className="link-line" to={`/noc/incidents/${incident.id}`}>
+                            <strong>#{incident.id} {incident.title}</strong>
+                          </Link>
+                          <span className="muted">{incident.source} source · {alarms.length} alarms</span>
+                        </div>
+                      </td>
+                      <td>{incident.affected_service}</td>
+                      <td>
+                        <StatusBadge tone={severityTone(incident.severity)}>{incident.severity}</StatusBadge>
+                      </td>
+                      <td>
+                        <StatusBadge tone={statusTone(incident.status)}>{incident.status}</StatusBadge>
+                      </td>
+                      <td>{incident.assigned_user?.full_name ?? "Unassigned"}</td>
+                      <td>{formatDate(incident.created_at)}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

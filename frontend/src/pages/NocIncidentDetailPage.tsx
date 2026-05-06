@@ -69,6 +69,10 @@ function timeline(incident: NocIncident) {
   ];
 }
 
+function getIncidentAlarms(incident: NocIncident) {
+  return Array.isArray(incident.alarms) ? incident.alarms : [];
+}
+
 function NocIncidentDetailPage() {
   const { id } = useParams();
   const incidentId = id ?? "";
@@ -139,6 +143,7 @@ function NocIncidentDetailPage() {
   }
 
   const incident = incidentQuery.data;
+  const alarms = getIncidentAlarms(incident);
 
   return (
     <div className="stack-lg">
@@ -270,10 +275,10 @@ function NocIncidentDetailPage() {
         <Card className="table-shell stack-md">
           <div className="toolbar-row">
             <strong>Linked Zabbix alarms</strong>
-            <span className="muted">{incident.alarms.length} alarms</span>
+            <span className="muted">{alarms.length} alarms</span>
           </div>
 
-          {incident.alarms.length ? (
+          {alarms.length ? (
             <div className="table-scroll">
               <table>
                 <thead>
@@ -287,7 +292,7 @@ function NocIncidentDetailPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {incident.alarms.map((alarm) => (
+                  {alarms.map((alarm) => (
                     <tr key={alarm.id}>
                       <td>
                         <div className="stack-sm">

@@ -64,11 +64,11 @@ function SettingsPage() {
     }
 
     return {
-      monitoring_enabled: settingsQuery.data.monitoring_enabled,
-      site_enabled: settingsQuery.data.site_enabled,
-      email_enabled: settingsQuery.data.email_enabled,
-      telegram_enabled: settingsQuery.data.telegram_enabled,
-      browser_push_enabled: settingsQuery.data.browser_push_enabled,
+      monitoring_enabled: settingsQuery.data.monitoring_enabled ?? DEFAULT_NOTIFICATION_FORM.monitoring_enabled,
+      site_enabled: settingsQuery.data.site_enabled ?? DEFAULT_NOTIFICATION_FORM.site_enabled,
+      email_enabled: settingsQuery.data.email_enabled ?? DEFAULT_NOTIFICATION_FORM.email_enabled,
+      telegram_enabled: settingsQuery.data.telegram_enabled ?? DEFAULT_NOTIFICATION_FORM.telegram_enabled,
+      browser_push_enabled: settingsQuery.data.browser_push_enabled ?? DEFAULT_NOTIFICATION_FORM.browser_push_enabled,
       telegram_chat_id: settingsQuery.data.telegram_chat_id ?? "",
       enabled_event_types: settingsQuery.data.enabled_event_types ?? [],
       quiet_hours_start: settingsQuery.data.quiet_hours_start ?? "",

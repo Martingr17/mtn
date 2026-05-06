@@ -1853,6 +1853,7 @@ async def get_logs(
     items = records[start:end]
 
     return {
+        "items": items,
         "logs": items,
         "total": total,
         "page": page,

@@ -19,6 +19,13 @@ function normalizeStaffListResponse(payload: AdminStaffRow[] | ApiListPayload<Ad
   return Array.isArray(payload.items) ? payload.items : [];
 }
 
+function normalizeLogsResponse(payload: ApiListPayload<Record<string, unknown>> & { logs?: Record<string, unknown>[] }) {
+  return {
+    ...payload,
+    items: Array.isArray(payload.items) ? payload.items : Array.isArray(payload.logs) ? payload.logs : [],
+  };
+}
+
 export const adminService = {
   async stats() {
     const { data } = await api.get<AdminStats>("/admin/stats");
@@ -104,10 +111,10 @@ export const adminService = {
     return data;
   },
   async logs(page = 1, pageSize = 40, level = "all") {
-    const { data } = await api.get<ApiListPayload<Record<string, unknown>>>("/admin/logs", {
+    const { data } = await api.get<ApiListPayload<Record<string, unknown>> & { logs?: Record<string, unknown>[] }>("/admin/logs", {
       params: { page, page_size: pageSize, level },
     });
-    return data;
+    return normalizeLogsResponse(data);
   },
   async systemInfo() {
     const { data } = await api.get<AdminSystemInfo>("/admin/system/info");

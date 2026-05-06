@@ -91,7 +91,7 @@ function AdminPaymentsPage() {
 
       if (effectiveSelectedUserId) {
         queryClient.invalidateQueries({
-          queryKey: ["admin-user-detail", Number(effectiveSelectedUserId)],
+          queryKey: ["admin-user-detail", effectiveSelectedUserId],
         });
       }
     },
